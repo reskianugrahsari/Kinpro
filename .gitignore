@@ -8,8 +8,16 @@ PRESENTASIII.MD
 # Archive
 sikinerja.rar
 
-# Database / SQL files
+# Database / SQL files & Dumps
 *.sql
+*.sql.gz
+*.sql.zip
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.bak
+database/*.sqlite*
 
 # Error log
 error
@@ -40,10 +48,13 @@ uploads/mitigapro/
 
 # Laravel & Environment
 .env
+.env.*
+!.env.example
 .env.backup
 .env.production
 .phpunit.result.cache
 node_modules/
+/storage/*.key
 
 # OS files
 Thumbs.db
