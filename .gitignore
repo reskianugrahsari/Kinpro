@@ -38,6 +38,13 @@ uploads/mitigapro/
 *.swo
 *~
 
+# Laravel & Environment
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+node_modules/
+
 # OS files
 Thumbs.db
 Desktop.ini

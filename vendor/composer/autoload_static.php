@@ -13,8 +13,8 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '606a39d89246991a373564698c2d8383' => __DIR__ . '/..' . '/symfony/polyfill-php85/bootstrap.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
-        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '5897ea0ac4cccf14d323035e65887801' => __DIR__ . '/..' . '/symfony/polyfill-php82/bootstrap.php',
@@ -134,6 +134,7 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
             'Laravel\\Prompts\\' => 16,
             'Laravel\\Pao\\' => 12,
             'Laravel\\Pail\\' => 13,
+            'Laravel\\Breeze\\' => 15,
             'Laravel\\AgentDetector\\' => 22,
         ),
         'I' =>
@@ -435,6 +436,10 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
         'Laravel\\Pail\\' =>
         array (
             0 => __DIR__ . '/..' . '/laravel/pail/src',
+        ),
+        'Laravel\\Breeze\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/laravel/breeze/src',
         ),
         'Laravel\\AgentDetector\\' =>
         array (
@@ -3248,6 +3253,12 @@ class ComposerStaticInitcda2add6397422fb1a2eb5b9207f1575
         'Laravel\\AgentDetector\\AgentDetector' => __DIR__ . '/..' . '/laravel/agent-detector/src/AgentDetector.php',
         'Laravel\\AgentDetector\\AgentResult' => __DIR__ . '/..' . '/laravel/agent-detector/src/AgentResult.php',
         'Laravel\\AgentDetector\\KnownAgent' => __DIR__ . '/..' . '/laravel/agent-detector/src/KnownAgent.php',
+        'Laravel\\Breeze\\BreezeServiceProvider' => __DIR__ . '/..' . '/laravel/breeze/src/BreezeServiceProvider.php',
+        'Laravel\\Breeze\\Console\\InstallCommand' => __DIR__ . '/..' . '/laravel/breeze/src/Console/InstallCommand.php',
+        'Laravel\\Breeze\\Console\\InstallsApiStack' => __DIR__ . '/..' . '/laravel/breeze/src/Console/InstallsApiStack.php',
+        'Laravel\\Breeze\\Console\\InstallsBladeStack' => __DIR__ . '/..' . '/laravel/breeze/src/Console/InstallsBladeStack.php',
+        'Laravel\\Breeze\\Console\\InstallsInertiaStacks' => __DIR__ . '/..' . '/laravel/breeze/src/Console/InstallsInertiaStacks.php',
+        'Laravel\\Breeze\\Console\\InstallsLivewireStack' => __DIR__ . '/..' . '/laravel/breeze/src/Console/InstallsLivewireStack.php',
         'Laravel\\Pail\\Console\\Commands\\PailCommand' => __DIR__ . '/..' . '/laravel/pail/src/Console/Commands/PailCommand.php',
         'Laravel\\Pail\\Contracts\\Printer' => __DIR__ . '/..' . '/laravel/pail/src/Contracts/Printer.php',
         'Laravel\\Pail\\File' => __DIR__ . '/..' . '/laravel/pail/src/File.php',
