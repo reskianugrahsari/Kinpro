@@ -45,4 +45,38 @@ class AuthRoleTest extends TestCase
         $this->assertAuthenticatedAs($pegawai);
         $response->assertRedirect('/dashboard');
     }
+
+    public function test_admin_cannot_create_submissions_and_sees_review_menus_only(): void
+    {
+        $admin = User::create([
+            'name' => 'Admin Test',
+            'email' => 'admin_role@test.com',
+            'role' => 'admin',
+            'password' => bcrypt('password'),
+        ]);
+
+        $this->actingAs($admin)->get(route('izin.create'))
+            ->assertRedirect(route('izin.index'))
+            ->assertSessionHas('error');
+
+        $this->actingAs($admin)->get(route('absen.create'))
+            ->assertRedirect(route('absen.index'))
+            ->assertSessionHas('error');
+
+        $this->actingAs($admin)->get(route('pengaduan.create'))
+            ->assertRedirect(route('pengaduan.index'))
+            ->assertSessionHas('error');
+
+        $this->actingAs($admin)->get(route('pajokka.create'))
+            ->assertRedirect(route('pajokka.index'))
+            ->assertSessionHas('error');
+
+        // Check sidebar menu
+        $dashboardResponse = $this->actingAs($admin)->get(route('dashboard'));
+        $dashboardResponse->assertStatus(200);
+        $dashboardResponse->assertSee('Kelola Izin');
+        $dashboardResponse->assertSee('Kelola Pengaduan');
+        $dashboardResponse->assertSee('Kelola Lupa Absen');
+        $dashboardResponse->assertSee('Review Perjalanan Dinas');
+    }
 }

@@ -1,32 +1,60 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-bold text-2xl text-[#0F2747] leading-tight">
-                {{ __('Modul Izin & Cuti Pegawai') }}
-            </h2>
-            <div class="flex items-center space-x-4">
-                <span class="bg-slate-100 text-[#0F2747] px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200">
-                    Kuota Bulan Ini: {{ $sisaKuota }} / 4 Tersedia (Terpakai: {{ $jumlahBulanIni }})
-                </span>
-                @if($sisaKuota > 0 || auth()->user()->role === 'admin')
-                    <a href="{{ route('izin.create') }}" class="bg-[#1769AA] hover:bg-[#0F2747] text-white px-4 py-2 rounded-lg font-medium text-sm transition">
-                        + Ajukan Izin / Cuti
-                    </a>
-                @endif
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div>
+                <h2 class="font-extrabold text-2xl text-[#0F2747] tracking-tight">
+                    {{ auth()->user()->role === 'admin' ? __('Kelola Izin Pegawai') : __('Modul Izin & Cuti Pegawai') }}
+                </h2>
+                <p class="text-xs text-slate-500 font-medium mt-0.5">Layanan administrasi permohonan izin dinas, sakit, dan cuti pegawai</p>
             </div>
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             @if(session('success'))
-                <div class="mb-4 bg-emerald-50 border-l-4 border-emerald-500 p-4 text-emerald-700">
+                <div class="p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-xl text-emerald-800 text-xs font-medium shadow-xs">
                     {{ session('success') }}
                 </div>
             @endif
             @if(session('error'))
-                <div class="mb-4 bg-rose-50 border-l-4 border-rose-500 p-4 text-rose-700">
+                <div class="p-4 bg-rose-50 border-l-4 border-rose-500 rounded-xl text-rose-800 text-xs font-medium shadow-xs">
                     {{ session('error') }}
+                </div>
+            @endif
+
+            @if(auth()->user()->role === 'pegawai')
+                <!-- Toolbar Kuota & Tombol Ajukan (Di Bawah Header, Di Atas Tabel Riwayat) -->
+                <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#1769AA] shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-800">
+                                Kuota Izin / Cuti Bulan Ini
+                            </div>
+                            <div class="text-[11px] text-slate-500 mt-0.5 flex items-center space-x-2">
+                                <span class="font-extrabold text-[#1769AA]">{{ $sisaKuota }} / 4 Tersedia</span>
+                                <span class="text-slate-300">•</span>
+                                <span class="text-slate-500 font-medium">Terpakai: {{ $jumlahBulanIni }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        @if($sisaKuota > 0)
+                            <a href="{{ route('izin.create') }}" class="inline-flex items-center space-x-1.5 px-4 py-2.5 bg-[#1769AA] hover:bg-[#0F2747] text-white text-xs font-bold rounded-xl shadow-xs transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                <span>Ajukan Izin / Cuti</span>
+                            </a>
+                        @else
+                            <button disabled class="inline-flex items-center space-x-1.5 px-4 py-2.5 bg-slate-100 text-slate-400 text-xs font-bold rounded-xl border border-slate-200 cursor-not-allowed">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                                <span>Kuota Bulan Ini Habis</span>
+                            </button>
+                        @endif
+                    </div>
                 </div>
             @endif
 

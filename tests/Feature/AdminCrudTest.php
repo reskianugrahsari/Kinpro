@@ -61,4 +61,52 @@ class AdminCrudTest extends TestCase
         $response = $this->actingAs($admin)->get(route('admin.pegawai.index'));
         $response->assertStatus(200);
     }
+
+    public function test_pegawai_card_shows_photo_or_avatar_fallback()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $pegawai = Pegawai::create([
+            'nama' => 'Budi Santoso',
+            'nip' => '198501012010011001',
+            'jabatan' => 'Analis Kepegawaian',
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.pegawai.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Budi Santoso');
+        // Initial fallback
+        $response->assertSee('BU');
+    }
+
+    public function test_pegawai_filters_and_view_toggle()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $p1 = Pegawai::create([
+            'nama' => 'Ahmad Kasim',
+            'nip' => '199001012015011001',
+            'jabatan' => 'Pranata Komputer',
+        ]);
+        $p2 = Pegawai::create([
+            'nama' => 'Siti Rahma',
+            'nip' => '199505052023212005', // PPPK format
+            'jabatan' => 'Pengelola Keuangan',
+        ]);
+
+        // Search test
+        $resSearch = $this->actingAs($admin)->get(route('admin.pegawai.index', ['search' => 'Ahmad']));
+        $resSearch->assertStatus(200);
+        $resSearch->assertSee('Ahmad Kasim');
+        $resSearch->assertDontSee('Siti Rahma');
+
+        // Status test
+        $resStatus = $this->actingAs($admin)->get(route('admin.pegawai.index', ['status' => 'PPPK']));
+        $resStatus->assertStatus(200);
+        $resStatus->assertSee('Siti Rahma');
+        $resStatus->assertDontSee('Ahmad Kasim');
+
+        // List view mode test
+        $resList = $this->actingAs($admin)->get(route('admin.pegawai.index', ['view' => 'list']));
+        $resList->assertStatus(200);
+        $resList->assertSee('Skor Kinerja');
+    }
 }

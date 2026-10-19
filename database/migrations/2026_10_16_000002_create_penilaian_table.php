@@ -19,6 +19,8 @@ return new class extends Migration
             $table->integer('kepemimpinan')->default(0);
             $table->integer('loyalitas')->default(0);
             $table->integer('it')->default(0);
+            $table->integer('total_nilai')->nullable();
+            $table->decimal('rata_rata', 5, 2)->nullable();
             $table->text('masukan_atasan')->nullable();
             $table->timestamps();
         });

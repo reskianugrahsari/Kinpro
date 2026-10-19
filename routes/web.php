@@ -49,13 +49,36 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('rating/{rating}', [RatingController::class, 'destroy'])->name('rating.destroy');
 
     // Modul Lupa Absen / Don't Forget (F3)
+    Route::get('absen/rekap-bulanan', [PengajuanAbsenController::class, 'rekapBulanan'])->name('absen.rekap-bulanan');
     Route::resource('absen', PengajuanAbsenController::class)->except(['edit', 'update']);
     Route::patch('absen/{absen}/status', [PengajuanAbsenController::class, 'updateStatus'])->name('absen.status');
 
-    // Modul Perjalanan Dinas / Pajokka (F4)
-    Route::resource('pajokka', ReportController::class)->except(['edit', 'update']);
+    // Modul Perjalanan Dinas / Pajokka (Full Module with OCR & Exports)
+    Route::get('pajokka', [ReportController::class, 'index'])->name('pajokka.index');
+    Route::get('pajokka/create', [ReportController::class, 'create'])->name('pajokka.create');
+    Route::post('pajokka', [ReportController::class, 'store'])->name('pajokka.store');
+    Route::post('pajokka/ocr-scan', [ReportController::class, 'scanOcr'])->name('pajokka.ocr-scan');
+    Route::get('pajokka/{report}', [ReportController::class, 'show'])->name('pajokka.show');
+    Route::delete('pajokka/{report}', [ReportController::class, 'destroy'])->name('pajokka.destroy');
+    Route::post('pajokka/{report}/approve', [ReportController::class, 'approve'])->name('pajokka.approve');
+    Route::post('pajokka/{report}/revision', [ReportController::class, 'requestRevision'])->name('pajokka.revision');
+    Route::post('pajokka/{report}/reject', [ReportController::class, 'reject'])->name('pajokka.reject');
     Route::patch('pajokka/{report}/status', [ReportController::class, 'updateStatus'])->name('pajokka.status');
+    Route::get('pajokka/{report}/pdf', [ReportController::class, 'exportPdf'])->name('pajokka.pdf');
     Route::get('pajokka/{report}/docx', [ReportController::class, 'exportDocx'])->name('pajokka.docx');
+
+    // Route aliases matching Pajokka template naming (reports.*)
+    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('reports/create', [ReportController::class, 'create'])->name('reports.create');
+    Route::post('reports', [ReportController::class, 'store'])->name('reports.store');
+    Route::post('reports/ocr-scan', [ReportController::class, 'scanOcr'])->name('reports.ocr-scan');
+    Route::get('reports/{report}', [ReportController::class, 'show'])->name('reports.show');
+    Route::delete('reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
+    Route::post('reports/{report}/approve', [ReportController::class, 'approve'])->name('reports.approve');
+    Route::post('reports/{report}/revision', [ReportController::class, 'requestRevision'])->name('reports.revision');
+    Route::post('reports/{report}/reject', [ReportController::class, 'reject'])->name('reports.reject');
+    Route::get('reports/{report}/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
+    Route::get('reports/{report}/docx', [ReportController::class, 'exportDocx'])->name('reports.export.docx');
 
     // Modul Rekap & Statistik (F5)
     Route::get('rekap', [RekapController::class, 'index'])->name('rekap.index');

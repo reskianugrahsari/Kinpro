@@ -220,17 +220,76 @@ if (!Schema::hasTable('reports')) {
     echo "Creating table: reports...\n";
     Schema::create('reports', function (Blueprint $table) {
         $table->increments('id');
-        $table->unsignedInteger('pegawai_id');
+        $table->unsignedBigInteger('user_id')->nullable();
+        $table->unsignedInteger('pegawai_id')->nullable();
         $table->unsignedInteger('ppk_id')->nullable();
+        $table->unsignedInteger('master_ppk_id')->nullable();
+        $table->string('nomor_surat_tugas', 100)->nullable();
+        $table->string('nomor_surat', 100)->nullable();
         $table->string('nomor_sppd', 100)->nullable();
-        $table->string('maksud_perjalanan', 255);
-        $table->string('tujuan', 150);
-        $table->date('tanggal_berangkat');
-        $table->date('tanggal_kembali');
-        $table->integer('lama_hari')->default(1);
-        $table->decimal('total_biaya', 15, 2)->default(0);
+        $table->date('tanggal_surat_tugas')->nullable();
+        $table->date('tgl_mulai_dinas')->nullable();
+        $table->date('tgl_selesai_dinas')->nullable();
+        $table->date('tanggal_berangkat')->nullable();
+        $table->date('tanggal_kembali')->nullable();
+        $table->string('kota_tujuan', 150)->nullable();
+        $table->string('tujuan', 150)->nullable();
+        $table->text('maksud_perjalanan')->nullable();
+        $table->json('daftar_pelaksana')->nullable();
+        $table->text('isi_pointer')->nullable();
+        $table->text('pointer_substansi')->nullable();
+        $table->date('tanggal_sppd')->nullable();
+        $table->string('opsi_tiket', 10)->default('kkp');
         $table->string('status', 30)->default('draft');
+        $table->timestamp('submitted_at')->nullable();
+        $table->unsignedBigInteger('reviewed_by')->nullable();
+        $table->timestamp('reviewed_at')->nullable();
+        $table->unsignedBigInteger('approved_by')->nullable();
+        $table->timestamp('approved_at')->nullable();
+        $table->timestamp('rejected_at')->nullable();
+        $table->timestamp('completed_at')->nullable();
+        $table->decimal('total_cost', 15, 2)->default(0);
+        $table->decimal('total_biaya', 15, 2)->default(0);
+        $table->unsignedInteger('revision_count')->default(0);
+        $table->unsignedInteger('completeness_score')->default(0);
         $table->text('catatan')->nullable();
+        $table->timestamps();
+    });
+} else {
+    Schema::table('reports', function (Blueprint $table) {
+        if (!Schema::hasColumn('reports', 'user_id')) $table->unsignedBigInteger('user_id')->nullable();
+        if (!Schema::hasColumn('reports', 'nomor_surat_tugas')) $table->string('nomor_surat_tugas', 100)->nullable();
+        if (!Schema::hasColumn('reports', 'tanggal_surat_tugas')) $table->date('tanggal_surat_tugas')->nullable();
+        if (!Schema::hasColumn('reports', 'tgl_mulai_dinas')) $table->date('tgl_mulai_dinas')->nullable();
+        if (!Schema::hasColumn('reports', 'tgl_selesai_dinas')) $table->date('tgl_selesai_dinas')->nullable();
+        if (!Schema::hasColumn('reports', 'kota_tujuan')) $table->string('kota_tujuan', 150)->nullable();
+        if (!Schema::hasColumn('reports', 'daftar_pelaksana')) $table->json('daftar_pelaksana')->nullable();
+        if (!Schema::hasColumn('reports', 'isi_pointer')) $table->text('isi_pointer')->nullable();
+        if (!Schema::hasColumn('reports', 'pointer_substansi')) $table->text('pointer_substansi')->nullable();
+        if (!Schema::hasColumn('reports', 'tanggal_sppd')) $table->date('tanggal_sppd')->nullable();
+        if (!Schema::hasColumn('reports', 'opsi_tiket')) $table->string('opsi_tiket', 10)->default('kkp');
+        if (!Schema::hasColumn('reports', 'submitted_at')) $table->timestamp('submitted_at')->nullable();
+        if (!Schema::hasColumn('reports', 'reviewed_by')) $table->unsignedBigInteger('reviewed_by')->nullable();
+        if (!Schema::hasColumn('reports', 'reviewed_at')) $table->timestamp('reviewed_at')->nullable();
+        if (!Schema::hasColumn('reports', 'approved_by')) $table->unsignedBigInteger('approved_by')->nullable();
+        if (!Schema::hasColumn('reports', 'approved_at')) $table->timestamp('approved_at')->nullable();
+        if (!Schema::hasColumn('reports', 'rejected_at')) $table->timestamp('rejected_at')->nullable();
+        if (!Schema::hasColumn('reports', 'completed_at')) $table->timestamp('completed_at')->nullable();
+        if (!Schema::hasColumn('reports', 'total_cost')) $table->decimal('total_cost', 15, 2)->default(0);
+        if (!Schema::hasColumn('reports', 'revision_count')) $table->unsignedInteger('revision_count')->default(0);
+        if (!Schema::hasColumn('reports', 'completeness_score')) $table->unsignedInteger('completeness_score')->default(0);
+    });
+}
+
+// 5b. Table report_schedules
+if (!Schema::hasTable('report_schedules')) {
+    echo "Creating table: report_schedules...\n";
+    Schema::create('report_schedules', function (Blueprint $table) {
+        $table->increments('id');
+        $table->unsignedInteger('report_id');
+        $table->date('tanggal');
+        $table->text('uraian_kegiatan');
+        $table->text('lokasi_keterangan')->nullable();
         $table->timestamps();
     });
 }
@@ -241,11 +300,138 @@ if (!Schema::hasTable('report_expenses')) {
     Schema::create('report_expenses', function (Blueprint $table) {
         $table->increments('id');
         $table->unsignedInteger('report_id');
-        $table->string('kategori', 50);
-        $table->string('keterangan', 255);
+        $table->string('expense_type', 50)->nullable();
+        $table->string('kategori', 50)->nullable();
+        $table->string('keterangan', 255)->nullable();
+        $table->decimal('amount', 15, 2)->default(0);
         $table->decimal('jumlah', 15, 2)->default(0);
+        $table->string('payment_method', 20)->default('kkp');
         $table->string('metode_pembayaran', 30)->default('tunai');
+        $table->date('transaction_date')->nullable();
+        $table->text('description')->nullable();
         $table->string('bukti_path', 255)->nullable();
+        $table->timestamps();
+    });
+} else {
+    Schema::table('report_expenses', function (Blueprint $table) {
+        if (!Schema::hasColumn('report_expenses', 'expense_type')) $table->string('expense_type', 50)->nullable();
+        if (!Schema::hasColumn('report_expenses', 'amount')) $table->decimal('amount', 15, 2)->default(0);
+        if (!Schema::hasColumn('report_expenses', 'payment_method')) $table->string('payment_method', 20)->default('kkp');
+        if (!Schema::hasColumn('report_expenses', 'transaction_date')) $table->date('transaction_date')->nullable();
+        if (!Schema::hasColumn('report_expenses', 'description')) $table->text('description')->nullable();
+    });
+}
+
+// 6b. Table report_attachments
+if (!Schema::hasTable('report_attachments')) {
+    echo "Creating table: report_attachments...\n";
+    Schema::create('report_attachments', function (Blueprint $table) {
+        $table->increments('id');
+        $table->unsignedInteger('report_id');
+        $table->string('category', 50);
+        $table->string('file_path', 255);
+        $table->integer('sort_order')->nullable();
+        $table->unsignedBigInteger('uploaded_by')->nullable();
+        $table->timestamps();
+    });
+}
+
+// 6c. Table report_revisions
+if (!Schema::hasTable('report_revisions')) {
+    echo "Creating table: report_revisions...\n";
+    Schema::create('report_revisions', function (Blueprint $table) {
+        $table->increments('id');
+        $table->unsignedInteger('report_id');
+        $table->unsignedBigInteger('requested_by');
+        $table->string('section', 50)->nullable();
+        $table->text('notes');
+        $table->timestamp('created_at')->nullable();
+        $table->timestamp('resolved_at')->nullable();
+    });
+}
+
+// 6d. Table kop_surat
+if (!Schema::hasTable('kop_surat')) {
+    echo "Creating table: kop_surat...\n";
+    Schema::create('kop_surat', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('nama_kementerian')->default('KEMENTERIAN PEKERJAAN UMUM');
+        $table->string('nama_badan')->default('BADAN PENGEMBANGAN SUMBER DAYA MANUSIA');
+        $table->string('nama_unit_kerja')->default('BALAI PENGEMBANGAN KOMPETENSI PUPR WILAYAH VIII MAKASSAR');
+        $table->string('alamat')->nullable();
+        $table->string('telepon')->nullable();
+        $table->string('email')->nullable();
+        $table->string('website')->nullable();
+        $table->string('logo_path')->nullable();
+        $table->timestamps();
+    });
+
+    DB::table('kop_surat')->insert([
+        'nama_kementerian' => 'KEMENTERIAN PEKERJAAN UMUM',
+        'nama_badan' => 'BADAN PENGEMBANGAN SUMBER DAYA MANUSIA',
+        'nama_unit_kerja' => 'BALAI PENGEMBANGAN KOMPETENSI PUPR WILAYAH VIII MAKASSAR',
+        'alamat' => 'Jl. Pengayoman No. 1, Panakkukang, Makassar 90231',
+        'telepon' => '(0411) 453123',
+        'email' => 'bapekom8@pu.go.id',
+        'website' => 'https://bpsdm.pu.go.id',
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+}
+
+// 6e. Table cities, transportation_types, business_processes
+if (!Schema::hasTable('cities')) {
+    echo "Creating table: cities...\n";
+    Schema::create('cities', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('name');
+        $table->string('province')->nullable();
+        $table->timestamps();
+    });
+
+    DB::table('cities')->insert([
+        ['name' => 'Makassar', 'province' => 'Sulawesi Selatan', 'created_at' => now(), 'updated_at' => now()],
+        ['name' => 'Jakarta', 'province' => 'DKI Jakarta', 'created_at' => now(), 'updated_at' => now()],
+        ['name' => 'Bandung', 'province' => 'Jawa Barat', 'created_at' => now(), 'updated_at' => now()],
+        ['name' => 'Yogyakarta', 'province' => 'DI Yogyakarta', 'created_at' => now(), 'updated_at' => now()],
+        ['name' => 'Surabaya', 'province' => 'Jawa Timur', 'created_at' => now(), 'updated_at' => now()],
+    ]);
+}
+
+if (!Schema::hasTable('transportation_types')) {
+    echo "Creating table: transportation_types...\n";
+    Schema::create('transportation_types', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('name');
+        $table->boolean('is_active')->default(true);
+        $table->timestamps();
+    });
+
+    DB::table('transportation_types')->insert([
+        ['name' => 'Pesawat Terbang', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+        ['name' => 'Kendaraan Dinas / Mobil', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+        ['name' => 'Kereta Api', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+        ['name' => 'Kapal Laut', 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+    ]);
+}
+
+if (!Schema::hasTable('business_processes')) {
+    echo "Creating table: business_processes...\n";
+    Schema::create('business_processes', function (Blueprint $table) {
+        $table->increments('id');
+        $table->string('name');
+        $table->string('code')->nullable();
+        $table->boolean('is_active')->default(true);
+        $table->timestamps();
+    });
+}
+
+if (!Schema::hasTable('report_business_processes')) {
+    echo "Creating table: report_business_processes...\n";
+    Schema::create('report_business_processes', function (Blueprint $table) {
+        $table->increments('id');
+        $table->unsignedInteger('report_id');
+        $table->unsignedInteger('business_process_id');
         $table->timestamps();
     });
 }
@@ -255,15 +441,29 @@ if (!Schema::hasTable('pengajuan_absen')) {
     echo "Creating table: pengajuan_absen...\n";
     Schema::create('pengajuan_absen', function (Blueprint $table) {
         $table->increments('id');
+        $table->string('nomor_surat', 100)->nullable();
         $table->unsignedInteger('pegawai_id');
-        $table->date('tanggal_absen');
-        $table->string('jenis_absen', 50); // Masuk / Pulang / Keduanya
+        $table->unsignedInteger('atasan_id')->nullable();
+        $table->string('jenis_absen', 100);
         $table->time('jam')->nullable();
         $table->text('alasan');
+        $table->date('tanggal_lupa')->nullable();
+        $table->date('tanggal_pengajuan')->nullable();
+        $table->date('tanggal_absen')->nullable();
+        $table->string('kota_surat', 50)->default('Makassar');
         $table->string('status', 30)->default('pending');
         $table->string('bukti_path', 255)->nullable();
         $table->text('catatan_admin')->nullable();
         $table->timestamps();
+    });
+} else {
+    Schema::table('pengajuan_absen', function (Blueprint $table) {
+        if (!Schema::hasColumn('pengajuan_absen', 'nomor_surat')) $table->string('nomor_surat', 100)->nullable();
+        if (!Schema::hasColumn('pengajuan_absen', 'atasan_id')) $table->unsignedInteger('atasan_id')->nullable();
+        if (!Schema::hasColumn('pengajuan_absen', 'tanggal_lupa')) $table->date('tanggal_lupa')->nullable();
+        if (!Schema::hasColumn('pengajuan_absen', 'tanggal_pengajuan')) $table->date('tanggal_pengajuan')->nullable();
+        if (!Schema::hasColumn('pengajuan_absen', 'kota_surat')) $table->string('kota_surat', 50)->default('Makassar');
+        if (!Schema::hasColumn('pengajuan_absen', 'keterangan')) $table->text('keterangan')->nullable();
     });
 }
 
@@ -307,6 +507,23 @@ if (Schema::hasTable('izin')) {
     if (!Schema::hasColumn('izin', 'updated_at')) {
         DB::statement("ALTER TABLE izin ADD COLUMN updated_at TIMESTAMP NULL AFTER created_at");
         DB::statement("UPDATE izin SET updated_at = COALESCE(tanggal_respon, tanggal_pengajuan) WHERE updated_at IS NULL");
+    }
+}
+
+// 9b. Table pengaduan
+if (Schema::hasTable('pengaduan')) {
+    echo "Harmonizing table: pengaduan...\n";
+    if (!Schema::hasColumn('pengaduan', 'created_at')) {
+        DB::statement("ALTER TABLE pengaduan ADD COLUMN created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP");
+        DB::statement("UPDATE pengaduan SET created_at = tanggal_pengaduan WHERE created_at IS NULL");
+    }
+    if (!Schema::hasColumn('pengaduan', 'updated_at')) {
+        DB::statement("ALTER TABLE pengaduan ADD COLUMN updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+        DB::statement("UPDATE pengaduan SET updated_at = tanggal_pengaduan WHERE updated_at IS NULL");
+    }
+    if (!Schema::hasColumn('pengaduan', 'pegawai_id')) {
+        DB::statement("ALTER TABLE pengaduan ADD COLUMN pegawai_id INT(11) NULL AFTER nip");
+        DB::statement("UPDATE pengaduan p JOIN pegawai pg ON p.nip = pg.nip SET p.pegawai_id = pg.id_pegawai");
     }
 }
 

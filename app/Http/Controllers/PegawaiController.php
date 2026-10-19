@@ -10,10 +10,49 @@ use Illuminate\Support\Facades\Hash;
 
 class PegawaiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pegawais = Pegawai::with(['unitKerja', 'user'])->latest()->paginate(10);
-        return view('admin.pegawai.index', compact('pegawais'));
+        $query = Pegawai::with(['unitKerja', 'user', 'latestPenilaian'])->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', "%{$search}%")
+                  ->orWhere('nama', 'like', "%{$search}%")
+                  ->orWhere('nip', 'like', "%{$search}%")
+                  ->orWhere('jabatan', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            if ($request->status === 'PPPK') {
+                $query->where(function ($q) {
+                    $q->where('pangkat_gol', 'like', '%PPPK%')
+                      ->orWhere('nip', 'like', '____________21%');
+                });
+            } elseif ($request->status === 'PNS') {
+                $query->where(function ($q) {
+                    $q->where(function ($sq) {
+                        $sq->whereNull('pangkat_gol')
+                           ->orWhere('pangkat_gol', 'not like', '%PPPK%');
+                    })->where('nip', 'not like', '____________21%');
+                });
+            }
+        }
+
+        if ($request->filled('jabatan')) {
+            $query->where('jabatan', $request->jabatan);
+        }
+
+        $pegawais = $query->paginate(12)->appends($request->all());
+
+        $jabatanList = Pegawai::whereNotNull('jabatan')
+            ->where('jabatan', '!=', '')
+            ->distinct()
+            ->orderBy('jabatan')
+            ->pluck('jabatan');
+
+        return view('admin.pegawai.index', compact('pegawais', 'jabatanList'));
     }
 
     public function create()
@@ -33,7 +72,15 @@ class PegawaiController extends Controller
             'unit_kerja_id' => 'nullable|exists:unit_kerja,id',
             'no_hp' => 'nullable|string|max:50',
             'role' => 'required|in:admin,pegawai',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
         ]);
+
+        $fotoProfil = null;
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $fotoProfil = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $file->getClientOriginalName());
+            $file->move(public_path('uploads'), $fotoProfil);
+        }
 
         $user = User::create([
             'name' => $request->nama,
@@ -50,6 +97,7 @@ class PegawaiController extends Controller
             'pangkat_gol' => $request->pangkat_gol,
             'unit_kerja_id' => $request->unit_kerja_id,
             'no_hp' => $request->no_hp,
+            'foto_profil' => $fotoProfil,
         ]);
 
         return redirect()->route('admin.pegawai.index')->with('success', 'Pegawai & Akun berhasil ditambahkan (Password default: password123).');
@@ -70,11 +118,21 @@ class PegawaiController extends Controller
             'pangkat_gol' => 'nullable|string|max:255',
             'unit_kerja_id' => 'nullable|exists:unit_kerja,id',
             'no_hp' => 'nullable|string|max:50',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
         ]);
 
-        $pegawai->update($request->only([
+        $data = $request->only([
             'nama', 'nip', 'jabatan', 'pangkat_gol', 'unit_kerja_id', 'no_hp'
-        ]));
+        ]);
+
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $file->getClientOriginalName());
+            $file->move(public_path('uploads'), $filename);
+            $data['foto_profil'] = $filename;
+        }
+
+        $pegawai->update($data);
 
         if ($pegawai->user) {
             $pegawai->user->update(['name' => $request->nama]);

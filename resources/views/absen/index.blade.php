@@ -1,25 +1,51 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-bold text-2xl text-[#0F2747] leading-tight">
-                {{ __('Modul Lupa Absen / Don\'t Forget') }}
-            </h2>
-            <a href="{{ route('absen.create') }}" class="bg-[#1769AA] hover:bg-[#0F2747] text-white px-4 py-2 rounded-lg font-medium text-sm transition">
-                + Ajukan Lupa Absen
-            </a>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div>
+                <h2 class="font-extrabold text-2xl text-[#0F2747] tracking-tight">
+                    {{ auth()->user()->role === 'admin' ? __('Kelola Pengajuan Lupa Absen') : __('Modul Lupa Absen / Don\'t Forget') }}
+                </h2>
+                <p class="text-xs text-slate-500 font-medium mt-0.5">Sistem Informasi Permohonan Lupa Absen & Tata Usaha Balai Wil. VIII Makassar</p>
+            </div>
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             @if(session('success'))
-                <div class="mb-4 bg-emerald-50 border-l-4 border-emerald-500 p-4 text-emerald-700">
+                <div class="p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-xl text-emerald-800 text-xs font-medium shadow-xs">
                     {{ session('success') }}
                 </div>
             @endif
             @if(session('error'))
-                <div class="mb-4 bg-rose-50 border-l-4 border-rose-500 p-4 text-rose-700">
+                <div class="p-4 bg-rose-50 border-l-4 border-rose-500 rounded-xl text-rose-800 text-xs font-medium shadow-xs">
                     {{ session('error') }}
+                </div>
+            @endif
+
+            @if(auth()->user()->role === 'pegawai')
+                <!-- Toolbar Tombol Ajukan (Di Bawah Header, Di Atas Tabel Riwayat) -->
+                <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#1769AA] shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-800">
+                                Permohonan Surat Lupa Absen
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-0.5">
+                                Buat surat dinas lupa absen masuk atau pulang dengan format resmi Balai Wil. VIII Makassar
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="{{ route('absen.create') }}" class="inline-flex items-center space-x-1.5 px-4 py-2.5 bg-[#1769AA] hover:bg-[#0F2747] text-white text-xs font-bold rounded-xl shadow-xs transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>Ajukan Lupa Absen</span>
+                        </a>
+                    </div>
                 </div>
             @endif
 
@@ -55,12 +81,12 @@
                                 <tr class="bg-slate-100 text-[#0F2747] uppercase text-xs tracking-wider border-b border-slate-200">
                                     <th class="p-3">No</th>
                                     @if(auth()->user()->role === 'admin')
-                                        <th class="p-3">Pegawai</th>
+                                        <th class="p-3">Pegawai Pemohon</th>
                                     @endif
-                                    <th class="p-3">Tanggal Absen</th>
+                                    <th class="p-3">Tanggal Lupa</th>
+                                    <th class="p-3">Jenis Lupa Absen</th>
                                     <th class="p-3">Alasan</th>
-                                    <th class="p-3">Keterangan</th>
-                                    <th class="p-3">Bukti</th>
+                                    <th class="p-3">Atasan Penandatangan</th>
                                     <th class="p-3 text-center">Status</th>
                                     <th class="p-3 text-center">Aksi</th>
                                 </tr>
@@ -75,21 +101,20 @@
                                                 <div class="text-xs text-slate-500 font-mono">{{ $item->pegawai->nip ?? '-' }}</div>
                                             </td>
                                         @endif
-                                        <td class="p-3 font-semibold text-[#1769AA]">
-                                            {{ $item->tanggal_absen }}
-                                        </td>
-                                        <td class="p-3 font-medium text-xs">
-                                            {{ ucwords(str_replace('_', ' ', $item->alasan)) }}
-                                        </td>
-                                        <td class="p-3 max-w-xs truncate" title="{{ $item->keterangan }}">
-                                            {{ $item->keterangan }}
+                                        <td class="p-3">
+                                            <div class="font-medium text-slate-800">{{ ($item->tanggal_lupa ?? $item->tanggal_absen)?->translatedFormat('d F Y') ?? '-' }}</div>
+                                            <div class="text-[11px] text-slate-400 font-semibold">{{ $item->hari_lupa }}</div>
                                         </td>
                                         <td class="p-3">
-                                            @if($item->bukti_path)
-                                                <a href="{{ asset($item->bukti_path) }}" target="_blank" class="text-[#1769AA] hover:underline text-xs font-semibold">Lihat Berkas</a>
-                                            @else
-                                                <span class="text-slate-400 text-xs">Tidak ada</span>
-                                            @endif
+                                            <span class="px-2 py-1 rounded-md text-[11px] font-bold {{ str_contains(strtolower($item->jenis_absen), 'masuk') ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800' }}">
+                                                {{ ucfirst($item->jenis_absen) }}
+                                            </span>
+                                        </td>
+                                        <td class="p-3 text-slate-700 max-w-xs truncate" title="{{ $item->alasan }}">
+                                            {{ $item->alasan }}
+                                        </td>
+                                        <td class="p-3 text-xs text-slate-600">
+                                            {{ $item->atasan?->nama ?? 'Atasan Langsung' }}
                                         </td>
                                         <td class="p-3 text-center">
                                             <span class="px-2.5 py-1 rounded-full text-xs font-bold {{ $item->status === 'approved' ? 'bg-emerald-100 text-emerald-800' : ($item->status === 'rejected' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800') }}">

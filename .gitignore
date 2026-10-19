@@ -34,6 +34,8 @@ uploads/pengaduan/*.jpeg
 uploads/pengajar/*.jpg
 uploads/pengajar/*.png
 uploads/mitigapro/
+public/uploads/*
+!public/uploads/.gitkeep
 
 # Keep folder structure with .htaccess
 !uploads/.htaccess

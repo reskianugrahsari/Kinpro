@@ -27,8 +27,8 @@ class RekapController extends Controller
         // Statistik Penilaian
         $totalPenilaian = class_exists(Penilaian::class) ? Penilaian::count() : 0;
         $avgPenilaian = class_exists(Penilaian::class) && Penilaian::count() > 0 
-            ? round(Penilaian::avg('nilai_akhir') ?? 91.2, 1) 
-            : 91.2;
+            ? round(Penilaian::avg('rata_rata') ?? 0, 1) 
+            : 0;
 
         // Statistik Izin & Cuti
         $totalIzin = class_exists(Izin::class) ? Izin::count() : 0;
@@ -46,7 +46,14 @@ class RekapController extends Controller
         // Statistik Perjalanan Dinas (Pajokka)
         $totalReports = class_exists(Report::class) ? Report::count() : 0;
         $reportsApproved = class_exists(Report::class) ? Report::where('status', 'approved')->count() : 0;
-        $totalBiaya = class_exists(ReportExpense::class) ? ReportExpense::sum('amount') : 0;
+        $totalBiaya = 0;
+        if (class_exists(ReportExpense::class)) {
+            if (\Illuminate\Support\Facades\Schema::hasColumn('report_expenses', 'jumlah')) {
+                $totalBiaya = (float) ReportExpense::sum('jumlah');
+            } elseif (\Illuminate\Support\Facades\Schema::hasColumn('report_expenses', 'nominal')) {
+                $totalBiaya = (float) ReportExpense::sum('nominal');
+            }
+        }
 
         return view('rekap.index', compact(
             'tahun',
@@ -94,7 +101,16 @@ class RekapController extends Controller
             fputcsv($handle, ['Pengajuan Izin / Cuti', class_exists(Izin::class) ? Izin::count() : 0, 'Izin & Cuti Pegawai']);
             fputcsv($handle, ['Pengajuan Lupa Absen', class_exists(PengajuanAbsen::class) ? PengajuanAbsen::count() : 0, 'Don\'t Forget Module']);
             fputcsv($handle, ['Pengaduan Masyarakat/Internal', class_exists(Pengaduan::class) ? Pengaduan::count() : 0, 'WBS & Pengaduan']);
-            fputcsv($handle, ['Perjalanan Dinas (Pajokka)', class_exists(Report::class) ? Report::count() : 0, 'Total Biaya: Rp ' . number_format(ReportExpense::sum('amount') ?? 0, 0, ',', '.')]);
+            $totalBiayaExport = 0;
+            if (class_exists(ReportExpense::class)) {
+                if (\Illuminate\Support\Facades\Schema::hasColumn('report_expenses', 'jumlah')) {
+                    $totalBiayaExport = (float) ReportExpense::sum('jumlah');
+                } elseif (\Illuminate\Support\Facades\Schema::hasColumn('report_expenses', 'nominal')) {
+                    $totalBiayaExport = (float) ReportExpense::sum('nominal');
+                }
+            }
+
+            fputcsv($handle, ['Perjalanan Dinas (Pajokka)', class_exists(Report::class) ? Report::count() : 0, 'Total Biaya: Rp ' . number_format($totalBiayaExport, 0, ',', '.')]);
 
             fputcsv($handle, []);
             fputcsv($handle, ['--- DAFTAR PEGAWAI PER UNIT KERJA ---']);

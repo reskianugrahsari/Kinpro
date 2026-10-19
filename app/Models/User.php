@@ -34,4 +34,19 @@ class User extends Authenticatable
     {
         return $this->hasOne(Pegawai::class, 'user_id');
     }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isPegawai(): bool
+    {
+        return $this->role !== 'admin';
+    }
+
+    public function getNipAttribute()
+    {
+        return $this->pegawai?->nip ?? null;
+    }
 }

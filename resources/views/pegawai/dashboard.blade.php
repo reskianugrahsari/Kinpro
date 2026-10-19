@@ -12,23 +12,6 @@
                 </div>
                 <p class="text-xs text-slate-500 font-medium mt-0.5">Portal Kinerja & Layanan Mandiri Pegawai Bapekom Wilayah VIII Makassar</p>
             </div>
-            <div class="mt-4 sm:mt-0 flex items-center space-x-3">
-                <a href="{{ route('pajokka.create') }}" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-[#1769AA] hover:bg-[#0F2747] text-white text-xs font-bold rounded-xl shadow-xs transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    <span>Buat Laporan Dinas</span>
-                </a>
-                <div class="flex items-center space-x-3 bg-white pl-2 pr-4 py-1.5 rounded-xl border border-slate-200 shadow-xs">
-                    <div class="w-8 h-8 rounded-lg bg-[#0F2747] text-white font-black flex items-center justify-center text-xs">
-                        {{ strtoupper(substr($pegawai->nama ?? Auth::user()->name, 0, 2)) }}
-                    </div>
-                    <div class="text-left">
-                        <div class="text-xs font-bold text-slate-800 leading-tight">{{ $pegawai->nama ?? Auth::user()->name }}</div>
-                        <div class="text-[10px] text-slate-500 font-medium flex items-center space-x-1">
-                            <span>NIP. {{ $pegawai->nip ?? '123456789012345678' }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </x-slot>
 

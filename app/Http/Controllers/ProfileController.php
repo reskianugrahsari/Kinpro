@@ -16,8 +16,12 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $pegawai = $user->pegawai()->with('unitKerja')->first();
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'pegawai' => $pegawai,
         ]);
     }
 

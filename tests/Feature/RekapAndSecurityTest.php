@@ -17,6 +17,24 @@ class RekapAndSecurityTest extends TestCase
             'role' => 'admin',
         ]);
 
+        $pegawai = \App\Models\Pegawai::create([
+            'nama' => 'Test Pegawai',
+            'nip' => '199001012020011001',
+        ]);
+
+        \App\Models\Penilaian::create([
+            'pegawai_id' => $pegawai->id,
+            'bulan' => 'Oktober',
+            'tahun' => 2026,
+            'nilai_kedisiplinan' => 90,
+            'kinerja' => 85,
+            'sikap' => 88,
+            'kepemimpinan' => 80,
+            'loyalitas' => 90,
+            'it' => 85,
+            'rata_rata' => 86.33,
+        ]);
+
         $response = $this->actingAs($user)->get(route('rekap.index'));
 
         $response->assertStatus(200);

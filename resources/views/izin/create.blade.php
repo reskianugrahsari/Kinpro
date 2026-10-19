@@ -1,73 +1,117 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-2xl text-[#0F2747] leading-tight">
-            {{ __('Ajukan Izin atau Cuti') }}
-        </h2>
+        <div>
+            <h2 class="font-extrabold text-2xl text-[#0F2747] tracking-tight">
+                {{ __('Formulir Pengajuan Izin & Cuti') }}
+            </h2>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">Ajukan permohonan cuti tahunan, sakit, dinas luar, atau izin khusus</p>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-slate-200 p-6">
-                <form action="{{ route('izin.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-                    @csrf
+    <div class="max-w-4xl mx-auto space-y-6">
 
-                    @if(auth()->user()->role === 'admin')
-                        <div>
-                            <x-input-label for="pegawai_id" :value="__('Ajukan Untuk Pegawai')" />
-                            <select id="pegawai_id" name="pegawai_id" class="block mt-1 w-full border-slate-300 focus:border-[#1769AA] focus:ring-[#1769AA] rounded-md shadow-sm" required autofocus>
-                                <option value="">-- Pilih Pegawai --</option>
-                                @foreach(\App\Models\Pegawai::all() as $p)
-                                    <option value="{{ $p->id }}" {{ old('pegawai_id') == $p->id ? 'selected' : '' }}>{{ $p->nama }} (NIP. {{ $p->nip }})</option>
-                                @endforeach
-                            </select>
-                            <x-input-error :messages="$errors->get('pegawai_id')" class="mt-2" />
-                        </div>
-                    @endif
-
-                    <div>
-                        <x-input-label for="jenis_izin" :value="__('Jenis Izin / Cuti')" />
-                        <select id="jenis_izin" name="jenis_izin" class="block mt-1 w-full border-slate-300 focus:border-[#1769AA] focus:ring-[#1769AA] rounded-md shadow-sm" required autofocus>
-                            <option value="cuti_tahunan" {{ old('jenis_izin') == 'cuti_tahunan' ? 'selected' : '' }}>Cuti Tahunan</option>
-                            <option value="sakit" {{ old('jenis_izin') == 'sakit' ? 'selected' : '' }}>Sakit</option>
-                            <option value="izin_khusus" {{ old('jenis_izin') == 'izin_khusus' ? 'selected' : '' }}>Izin Khusus</option>
-                            <option value="dinas_luar" {{ old('jenis_izin') == 'dinas_luar' ? 'selected' : '' }}>Dinas Luar</option>
-                        </select>
-                        <x-input-error :messages="$errors->get('jenis_izin')" class="mt-2" />
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <x-input-label for="tanggal_mulai" :value="__('Tanggal Mulai')" />
-                            <x-text-input id="tanggal_mulai" class="block mt-1 w-full" type="date" name="tanggal_mulai" :value="old('tanggal_mulai')" required />
-                            <x-input-error :messages="$errors->get('tanggal_mulai')" class="mt-2" />
-                        </div>
-                        <div>
-                            <x-input-label for="tanggal_selesai" :value="__('Tanggal Selesai')" />
-                            <x-text-input id="tanggal_selesai" class="block mt-1 w-full" type="date" name="tanggal_selesai" :value="old('tanggal_selesai')" required />
-                            <x-input-error :messages="$errors->get('tanggal_selesai')" class="mt-2" />
-                        </div>
-                    </div>
-
-                    <div>
-                        <x-input-label for="keterangan" :value="__('Keterangan / Alasan')" />
-                        <textarea id="keterangan" name="keterangan" rows="4" class="block mt-1 w-full border-slate-300 focus:border-[#1769AA] focus:ring-[#1769AA] rounded-md shadow-sm" required>{{ old('keterangan') }}</textarea>
-                        <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
-                    </div>
-
-                    <div>
-                        <x-input-label for="dokumen" :value="__('Unggah Berkas Pendukung / Surat (Opsional - PDF/JPG/PNG maks 2MB)')" />
-                        <input id="dokumen" type="file" name="dokumen" class="block mt-1 w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#1769AA] file:text-white hover:file:bg-[#0F2747]" />
-                        <x-input-error :messages="$errors->get('dokumen')" class="mt-2" />
-                    </div>
-
-                    <div class="flex items-center justify-end mt-4 space-x-2">
-                        <a href="{{ route('izin.index') }}" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-2 rounded-lg text-sm font-medium transition">Batal</a>
-                        <x-primary-button class="bg-[#1769AA] hover:bg-[#0F2747]">
-                            {{ __('Kirim Pengajuan') }}
-                        </x-primary-button>
-                    </div>
-                </form>
+        @if(session('error'))
+            <div class="p-4 bg-rose-50 border-l-4 border-rose-500 rounded-xl text-rose-800 text-xs font-medium shadow-xs">
+                {{ session('error') }}
             </div>
+        @endif
+
+        <!-- Card Single/Utuh (Tanpa Kolom Terpisah Yang Memperkecil Form) -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs p-6 sm:p-8 space-y-6">
+            
+            <!-- Ringkasan Identitas & Kuota (Satu Baris Bersih di Atas Form) -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200/80 dark:border-slate-700">
+                <div class="flex items-center space-x-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-[#0F2747] dark:bg-slate-700 text-white font-extrabold flex items-center justify-center text-xs shadow-xs shrink-0">
+                        {{ strtoupper(substr($pegawai->nama ?? Auth::user()->name, 0, 2)) }}
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-900 dark:text-slate-100 leading-tight">
+                            {{ $pegawai->nama ?? Auth::user()->name }}
+                        </div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                            NIP. <span class="font-mono">{{ $pegawai->nip ?? '-' }}</span> • {{ $pegawai->jabatan ?? 'Pegawai' }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <div class="text-right">
+                        <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Kuota Bulan Ini</div>
+                        <div class="text-xs font-extrabold text-[#1769AA] dark:text-blue-400">
+                            {{ $sisaKuota }} / 4 Tersedia <span class="text-slate-400 dark:text-slate-500 font-normal">(Terpakai: {{ $jumlahBulanIni }})</span>
+                        </div>
+                    </div>
+                    <a href="{{ route('izin.index') }}" class="px-3.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl shadow-xs transition">
+                        &larr; Kembali
+                    </a>
+                </div>
+            </div>
+
+            <form action="{{ route('izin.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6 pt-2">
+                @csrf
+
+                <!-- Jenis Izin / Cuti -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                        Jenis Izin / Cuti <span class="text-rose-500">*</span>
+                    </label>
+                    <select name="jenis_izin" class="w-full border border-slate-300 dark:border-slate-700 dark:bg-slate-800/90 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs text-slate-800 font-medium focus:ring-2 focus:ring-[#1769AA] focus:border-[#1769AA] outline-none" required>
+                        <option value="cuti_tahunan" {{ old('jenis_izin') == 'cuti_tahunan' ? 'selected' : '' }}>Cuti Tahunan</option>
+                        <option value="sakit" {{ old('jenis_izin') == 'sakit' ? 'selected' : '' }}>Sakit</option>
+                        <option value="izin_khusus" {{ old('jenis_izin') == 'izin_khusus' ? 'selected' : '' }}>Izin Khusus</option>
+                        <option value="dinas_luar" {{ old('jenis_izin') == 'dinas_luar' ? 'selected' : '' }}>Dinas Luar</option>
+                    </select>
+                    <x-input-error :messages="$errors->get('jenis_izin')" class="mt-1" />
+                </div>
+
+                <!-- Rentang Tanggal Mulai & Selesai -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                            Tanggal Mulai <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="date" name="tanggal_mulai" value="{{ old('tanggal_mulai') }}" class="w-full border border-slate-300 dark:border-slate-700 dark:bg-slate-800/90 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs text-slate-800 font-medium focus:ring-2 focus:ring-[#1769AA] focus:border-[#1769AA] outline-none" required>
+                        <x-input-error :messages="$errors->get('tanggal_mulai')" class="mt-1" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                            Tanggal Selesai <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="date" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}" class="w-full border border-slate-300 dark:border-slate-700 dark:bg-slate-800/90 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs text-slate-800 font-medium focus:ring-2 focus:ring-[#1769AA] focus:border-[#1769AA] outline-none" required>
+                        <x-input-error :messages="$errors->get('tanggal_selesai')" class="mt-1" />
+                    </div>
+                </div>
+
+                <!-- Keterangan / Keperluan -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                        Keterangan / Keperluan <span class="text-rose-500">*</span>
+                    </label>
+                    <textarea name="keterangan" rows="3" class="w-full border border-slate-300 dark:border-slate-700 dark:bg-slate-800/90 dark:text-slate-100 rounded-xl px-4 py-2.5 text-xs text-slate-800 font-medium focus:ring-2 focus:ring-[#1769AA] focus:border-[#1769AA] outline-none" placeholder="Tuliskan alasan permohonan izin atau cuti Anda secara jelas..." required>{{ old('keterangan') }}</textarea>
+                    <x-input-error :messages="$errors->get('keterangan')" class="mt-1" />
+                </div>
+
+                <!-- Upload Berkas Pendukung -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+                        Unggah Berkas Pendukung <span class="text-slate-400 dark:text-slate-500 font-normal lowercase">(opsional - surat dokter/surat tugas, maks 2MB)</span>
+                    </label>
+                    <input type="file" name="dokumen" accept=".pdf,.jpg,.jpeg,.png" class="w-full border border-slate-300 dark:border-slate-700 dark:bg-slate-800/90 dark:text-slate-300 rounded-xl px-4 py-2 text-xs text-slate-600 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#1769AA] file:text-white hover:file:bg-[#0F2747] cursor-pointer">
+                    <x-input-error :messages="$errors->get('dokumen')" class="mt-1" />
+                </div>
+
+                <!-- Tombol Aksi -->
+                <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end space-x-3">
+                    <a href="{{ route('izin.index') }}" class="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition">
+                        Batal
+                    </a>
+                    <button type="submit" class="px-6 py-2.5 bg-[#1769AA] hover:bg-[#0F2747] text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer">
+                        Kirim Pengajuan
+                    </button>
+                </div>
+            </form>
         </div>
+
     </div>
 </x-app-layout>

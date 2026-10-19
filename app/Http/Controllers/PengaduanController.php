@@ -31,23 +31,27 @@ class PengaduanController extends Controller
 
     public function create()
     {
-        return view('pengaduan.create');
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('pengaduan.index')->with('error', 'Administrator hanya bertugas memproses pengaduan. Pengaduan hanya dapat diajukan oleh pegawai.');
+        }
+
+        $pegawai = Pegawai::where('user_id', auth()->id())->with('unitKerja')->first();
+
+        return view('pengaduan.create', compact('pegawai'));
     }
 
     public function store(Request $request)
     {
         $user = auth()->user();
-        $pegawaiId = null;
-
-        if ($user->role === 'admin' && $request->filled('pegawai_id')) {
-            $pegawaiId = $request->pegawai_id;
-        } else {
-            $pegawai = Pegawai::where('user_id', $user->id)->first();
-            if (!$pegawai) {
-                return back()->with('error', 'Profil pegawai tidak ditemukan.');
-            }
-            $pegawaiId = $pegawai->id;
+        if ($user->role === 'admin') {
+            return redirect()->route('pengaduan.index')->with('error', 'Administrator tidak dapat membuat pengaduan.');
         }
+
+        $pegawai = Pegawai::where('user_id', $user->id)->first();
+        if (!$pegawai) {
+            return back()->with('error', 'Profil pegawai tidak ditemukan.');
+        }
+        $pegawaiId = $pegawai->id;
 
         $validated = $request->validate([
             'jenis_laporan' => 'required|string|max:255',

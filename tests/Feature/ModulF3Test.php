@@ -27,7 +27,8 @@ class ModulF3Test extends TestCase
              ->assertStatus(200);
 
         $response = $this->actingAs($user)->post(route('absen.store'), [
-            'tanggal_absen' => now()->format('Y-m-d'),
+            'tanggal_lupa' => now()->format('Y-m-d'),
+            'jenis_absen' => 'tidak mengisi absensi masuk',
             'alasan' => 'lupa_check_in',
             'keterangan' => 'Terburu-buru saat masuk kerja',
         ]);
@@ -35,6 +36,7 @@ class ModulF3Test extends TestCase
         $response->assertRedirect(route('absen.index'));
         $this->assertDatabaseHas('pengajuan_absen', [
             'pegawai_id' => $pegawai->id,
+            'jenis_absen' => 'tidak mengisi absensi masuk',
             'alasan' => 'lupa_check_in',
             'status' => 'pending',
         ]);
@@ -50,7 +52,9 @@ class ModulF3Test extends TestCase
         ]);
         $absen = PengajuanAbsen::create([
             'pegawai_id' => $pegawai->id,
+            'tanggal_lupa' => now()->format('Y-m-d'),
             'tanggal_absen' => now()->format('Y-m-d'),
+            'jenis_absen' => 'tidak mengisi absensi pulang',
             'alasan' => 'lupa_check_out',
             'keterangan' => 'Lupa absen pulang',
             'status' => 'pending',
@@ -84,7 +88,9 @@ class ModulF3Test extends TestCase
         ]);
         $absen = PengajuanAbsen::create([
             'pegawai_id' => $pegawai->id,
+            'tanggal_lupa' => now()->format('Y-m-d'),
             'tanggal_absen' => now()->format('Y-m-d'),
+            'jenis_absen' => 'tidak mengisi absensi masuk',
             'alasan' => 'kendala_sistem',
             'keterangan' => 'Server down',
             'status' => 'approved',
@@ -95,5 +101,14 @@ class ModulF3Test extends TestCase
              ->assertStatus(200)
              ->assertSee('Surat Permohonan Lupa Absen')
              ->assertSee($pegawai->nama);
+    }
+
+    public function test_rekap_bulanan_page_accessible()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->actingAs($admin)
+             ->get(route('absen.rekap-bulanan'))
+             ->assertStatus(200)
+             ->assertSee('Rekapitulasi Bulanan Lupa Absen');
     }
 }

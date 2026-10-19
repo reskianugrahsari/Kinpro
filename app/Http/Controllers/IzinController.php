@@ -30,9 +30,9 @@ class IzinController extends Controller
         $sisaKuota = 4;
 
         if ($pegawai) {
-            $currentMonth = Carbon::now()->format('Y-m');
             $jumlahBulanIni = Izin::where('pegawai_id', $pegawai->id)
-                ->whereRaw("strftime('%Y-%m', created_at) = ?", [$currentMonth])
+                ->whereYear('created_at', Carbon::now()->year)
+                ->whereMonth('created_at', Carbon::now()->month)
                 ->count();
             $sisaKuota = max(0, 4 - $jumlahBulanIni);
         }
@@ -43,26 +43,37 @@ class IzinController extends Controller
     public function create()
     {
         $user = auth()->user();
-        $pegawai = Pegawai::where('user_id', $user->id)->first();
-        
-        if (!$pegawai && $user->role === 'pegawai') {
+        if ($user->role === 'admin') {
+            return redirect()->route('izin.index')->with('error', 'Administrator hanya bertugas mengelola izin. Pengajuan hanya dapat dilakukan oleh pegawai.');
+        }
+
+        $pegawai = Pegawai::where('user_id', $user->id)->with('unitKerja')->first();
+        if (!$pegawai) {
             return redirect()->route('izin.index')->with('error', 'Data pegawai tidak ditemukan.');
         }
 
-        return view('izin.create');
+        $jumlahBulanIni = Izin::where('pegawai_id', $pegawai->id)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->count();
+        $sisaKuota = max(0, 4 - $jumlahBulanIni);
+
+        return view('izin.create', compact('pegawai', 'jumlahBulanIni', 'sisaKuota'));
     }
 
     public function store(Request $request)
     {
         $user = auth()->user();
-        $pegawai = Pegawai::where('user_id', $user->id)->first();
+        if ($user->role === 'admin') {
+            return redirect()->route('izin.index')->with('error', 'Administrator tidak dapat mengajukan izin.');
+        }
 
-        if (!$pegawai && $user->role === 'pegawai') {
+        $pegawai = Pegawai::where('user_id', $user->id)->first();
+        if (!$pegawai) {
             return redirect()->route('izin.index')->with('error', 'Data pegawai tidak ditemukan.');
         }
 
-        // If admin, they can pick pegawai_id or default to first
-        $pegawaiId = $pegawai ? $pegawai->id : $request->pegawai_id;
+        $pegawaiId = $pegawai->id;
 
         $request->validate([
             'jenis_izin' => 'required|string',
@@ -73,9 +84,9 @@ class IzinController extends Controller
         ]);
 
         // Check quota (max 4x per month)
-        $currentMonth = Carbon::now()->format('Y-m');
         $totalBulanIni = Izin::where('pegawai_id', $pegawaiId)
-            ->whereRaw("strftime('%Y-%m', created_at) = ?", [$currentMonth])
+            ->whereYear('created_at', Carbon::now()->year)
+            ->whereMonth('created_at', Carbon::now()->month)
             ->count();
 
         if ($totalBulanIni >= 4) {
@@ -91,6 +102,7 @@ class IzinController extends Controller
         }
 
         Izin::create([
+            'id_pegawai' => $pegawaiId,
             'pegawai_id' => $pegawaiId,
             'jenis_izin' => $request->jenis_izin,
             'tanggal_mulai' => $request->tanggal_mulai,

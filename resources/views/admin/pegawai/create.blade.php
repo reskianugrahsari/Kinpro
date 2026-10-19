@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-slate-200 p-6">
-                <form action="{{ route('admin.pegawai.store') }}" method="POST" class="space-y-4">
+                <form action="{{ route('admin.pegawai.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                     @csrf
                     <div>
                         <x-input-label for="nama" :value="__('Nama Lengkap')" />
@@ -66,6 +66,12 @@
                         <x-input-label for="no_hp" :value="__('No. HP / WhatsApp')" />
                         <x-text-input id="no_hp" class="block mt-1 w-full" type="text" name="no_hp" :value="old('no_hp')" />
                         <x-input-error :messages="$errors->get('no_hp')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <x-input-label for="foto" :value="__('Foto Pegawai (JPG, PNG, WebP max 3MB)')" />
+                        <input id="foto" name="foto" type="file" accept="image/*" class="block w-full mt-2 text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#1769AA] hover:file:bg-blue-100 cursor-pointer" />
+                        <x-input-error :messages="$errors->get('foto')" class="mt-2" />
                     </div>
 
                     <div class="flex items-center justify-end mt-4 space-x-2">

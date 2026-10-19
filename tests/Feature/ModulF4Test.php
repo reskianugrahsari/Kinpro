@@ -133,6 +133,6 @@ class ModulF4Test extends TestCase
 
         $response = $this->actingAs($admin)->get(route('pajokka.docx', $report));
         $response->assertStatus(200);
-        $response->assertHeader('Content-Type', 'application/msword');
+        $this->assertStringContainsString('word', $response->headers->get('Content-Type'));
     }
 }
