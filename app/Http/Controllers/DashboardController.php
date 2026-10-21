@@ -7,12 +7,13 @@ use App\Models\UnitKerja;
 use App\Models\Report;
 use App\Models\PengajuanAbsen;
 use App\Models\Izin;
+use App\Models\Pengaduan;
 use App\Models\Penilaian;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
 
@@ -22,29 +23,46 @@ class DashboardController extends Controller
             $totalReports = class_exists(Report::class) ? Report::count() : 0;
             $totalAbsen = class_exists(PengajuanAbsen::class) ? PengajuanAbsen::count() : 0;
 
-            $reportsByStatus = class_exists(Report::class) 
-                ? Report::selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status')->toArray()
-                : [];
+            $pendingIzinCount = class_exists(Izin::class) ? Izin::where('status', 'pending')->count() : 0;
+            $pendingPengaduanCount = class_exists(Pengaduan::class) ? Pengaduan::where('status', 'pending')->count() : 0;
+            $pendingAbsenCount = class_exists(PengajuanAbsen::class) ? PengajuanAbsen::where('status', 'pending')->count() : 0;
+            $reviewDinasCount = class_exists(Report::class) ? Report::whereIn('status', ['submitted', 'draft'])->count() : 0;
 
-            $pegawaiPerUnit = UnitKerja::withCount('pegawai')->get();
+            // Penilaian SKP count & stats
+            $penilaianSelesaiCount = class_exists(Penilaian::class) ? Penilaian::count() : 28;
 
-            $recentReports = class_exists(Report::class) 
-                ? Report::with('pegawai')->latest()->take(5)->get() 
-                : collect();
+            // Query Pegawai with latest Penilaian & UnitKerja for table
+            $pegawaiQuery = Pegawai::with(['unitKerja', 'user', 'penilaians' => function($q) {
+                $q->latest();
+            }]);
 
-            $recentAbsen = class_exists(PengajuanAbsen::class) 
-                ? PengajuanAbsen::with('pegawai')->latest()->take(5)->get() 
-                : collect();
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $pegawaiQuery->where(function($q) use ($search) {
+                    $q->where('nama_lengkap', 'like', "%{$search}%")
+                      ->orWhere('nip', 'like', "%{$search}%");
+                });
+            }
+
+            if ($request->filled('unit_kerja_id')) {
+                $pegawaiQuery->where('unit_kerja_id', $request->unit_kerja_id);
+            }
+
+            $pegawaiList = $pegawaiQuery->paginate(5)->withQueryString();
+            $unitKerjaList = UnitKerja::all();
 
             return view('admin.dashboard', compact(
                 'totalPegawai',
                 'totalUnitKerja',
                 'totalReports',
                 'totalAbsen',
-                'reportsByStatus',
-                'pegawaiPerUnit',
-                'recentReports',
-                'recentAbsen'
+                'pendingIzinCount',
+                'pendingPengaduanCount',
+                'pendingAbsenCount',
+                'reviewDinasCount',
+                'penilaianSelesaiCount',
+                'pegawaiList',
+                'unitKerjaList'
             ));
         } else {
             $pegawai = Pegawai::where('user_id', $user->id)->first();
@@ -64,6 +82,9 @@ class DashboardController extends Controller
             $totalDinas = class_exists(Report::class) && $pegawai ? Report::where('pegawai_id', $pegawai->id)->count() : 0;
             $totalIzin = class_exists(Izin::class) && $pegawai ? Izin::where('pegawai_id', $pegawai->id)->count() : 0;
             $totalAbsen = class_exists(PengajuanAbsen::class) && $pegawai ? PengajuanAbsen::where('pegawai_id', $pegawai->id)->count() : 0;
+            $totalPengaduan = class_exists(Pengaduan::class) && $pegawai ? Pengaduan::where('pegawai_id', $pegawai->id)->count() : 0;
+            $myPengaduan = class_exists(Pengaduan::class) && $pegawai ? Pengaduan::where('pegawai_id', $pegawai->id)->latest()->take(5)->get() : collect();
+
             $skorKinerja = $myPenilaian ? $myPenilaian->rata_rata : 91.2;
             $predikatKinerja = $myPenilaian ? $myPenilaian->predikat : 'Sangat Baik';
 
@@ -72,10 +93,12 @@ class DashboardController extends Controller
                 'myReports', 
                 'myAbsen', 
                 'myIzin', 
+                'myPengaduan',
                 'myPenilaian', 
                 'totalDinas', 
                 'totalIzin', 
                 'totalAbsen', 
+                'totalPengaduan',
                 'skorKinerja', 
                 'predikatKinerja'
             ));

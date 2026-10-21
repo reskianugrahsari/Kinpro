@@ -1,147 +1,212 @@
 <x-guest-layout>
-    <div class="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2 bg-[#0B132B]">
-        <!-- Left Pane (Dark Navy #0B132B) -->
-        <div class="bg-[#0B132B] text-white p-8 lg:p-16 flex flex-col justify-between relative overflow-hidden">
-            <!-- Background glow effects -->
-            <div class="absolute -top-24 -left-24 w-96 h-96 bg-[#00B4D8]/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="min-h-screen w-full grid grid-cols-1 lg:grid-cols-12 bg-white antialiased font-sans" x-data="{ showPassword: false }">
+        <!-- LEFT HERO SECTION (Dark Navy #0A1128 with grid) -->
+        <div class="lg:col-span-6 xl:col-span-6 bg-[#0A1128] text-white p-8 sm:p-12 lg:p-14 flex flex-col justify-between relative overflow-hidden">
+            <!-- Subtle Grid Background -->
+            <div class="absolute inset-0 opacity-[0.07] pointer-events-none" style="background-image: linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px); background-size: 36px 36px;"></div>
 
+            <!-- Soft cyan & navy ambient glows -->
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-[#00B4D8]/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-10 -right-20 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Content Area -->
             <div class="relative z-10">
-                <!-- Circular Emblem & App Name -->
-                <div class="flex items-center space-x-4 mb-8">
-                    <div class="w-16 h-16 rounded-2xl bg-[#0F172A]/80 border border-[#00B4D8]/30 flex items-center justify-center p-2 shadow-xl shadow-[#00B4D8]/10 backdrop-blur-md">
-                        <img src="{{ asset('images/logo-kinpro.png') }}" alt="KinPro Logo" class="w-full h-full object-contain filter drop-shadow">
+                <!-- Top Brand Header -->
+                <div class="flex items-center space-x-3.5 mb-8">
+                    <!-- Clean Logo without wrapper -->
+                    <div class="w-12 h-12 flex items-center justify-center shrink-0">
+                        <img src="{{ asset('images/logo-kinpro.png') }}?v={{ filemtime(public_path('images/logo-kinpro.png')) }}" alt="KinPro Logo" class="w-full h-full object-contain filter drop-shadow-[0_4px_12px_rgba(0,180,216,0.25)]">
                     </div>
                     <div>
-                        <h1 class="text-3xl font-extrabold tracking-wide text-white">KinPro</h1>
-                        <p class="text-xs text-slate-300 font-medium">Balai Pengembangan Kompetensi PU / Wilayah VIII Makassar</p>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl font-extrabold tracking-tight text-white">KinPro</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider text-cyan-300 border border-cyan-400/50 bg-cyan-950/40">ENTERPRISE</span>
+                        </div>
+                        <p class="text-xs text-slate-300/80 font-normal">Balai Pengembangan Kompetensi PUPR Wilayah VIII Makassar</p>
                     </div>
                 </div>
 
-                <!-- Dark Pill Tag with Lightning Icon -->
-                <div class="inline-flex items-center bg-[#1E293B] border border-[#00B4D8]/30 text-[#00B4D8] text-xs font-semibold px-4 py-2 rounded-full mb-8 shadow-sm">
-                    <svg class="w-4 h-4 mr-2 text-[#00B4D8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    Sistem Kinerja Pegawai v2.0
+                <!-- Tagline Pill Badge -->
+                <div class="inline-flex items-center gap-2 bg-[#101C38] border border-cyan-500/30 text-cyan-300 text-xs font-semibold px-3.5 py-1.5 rounded-full mb-7 shadow-sm">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span>Sistem Kinerja Pegawai v2.0 Terintegrasi</span>
                 </div>
 
-                <!-- Main Heading & Subtitle -->
-                <h2 class="text-4xl lg:text-5xl font-extrabold text-white mb-4 leading-tight tracking-tight">
-                    Kelola Kinerja Lebih Efisien
-                </h2>
-                <p class="text-slate-300 text-base lg:text-lg mb-10 font-normal">
-                    Platform monitoring & penilaian kinerja terintegrasi
+                <!-- Large Headline -->
+                <h1 class="text-3xl sm:text-4xl lg:text-[40px] font-extrabold leading-tight tracking-tight mb-4 text-white">
+                    Kelola Kinerja Lebih <br>
+                    <span class="text-cyan-400">Efisien & Terukur.</span>
+                </h1>
+
+                <!-- Body description -->
+                <p class="text-slate-300/90 text-sm sm:text-base leading-relaxed mb-10 max-w-xl font-normal">
+                    Platform cerdas pemantauan, evaluasi berkala, dan penilaian kinerja ASN Bapekom Wilayah VIII Makassar yang transparan, akurat, dan berbasis data realtime.
                 </p>
 
-                <!-- Metric Cards (3) -->
-                <div class="grid grid-cols-3 gap-4 mb-10">
-                    <div class="bg-[#111827] border border-slate-800 p-4 rounded-xl text-center shadow-md">
-                        <div class="text-xl lg:text-2xl font-black text-[#00B4D8]">32</div>
-                        <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-1">PEGAWAI</div>
+                <!-- Stats 3 Cards -->
+                <div class="grid grid-cols-3 gap-3 sm:gap-4 mb-10 max-w-lg">
+                    <div class="bg-[#121E38]/90 border border-slate-700/60 rounded-2xl p-4 text-center backdrop-blur-sm shadow-md">
+                        <div class="text-2xl sm:text-3xl font-black text-cyan-400">32+</div>
+                        <div class="text-[10px] sm:text-[11px] uppercase font-bold text-slate-400 tracking-wider mt-1">PEGAWAI AKTIF</div>
                     </div>
-                    <div class="bg-[#111827] border border-slate-800 p-4 rounded-xl text-center shadow-md">
-                        <div class="text-xl lg:text-2xl font-black text-purple-400">96%</div>
-                        <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-1">AKURASI</div>
+                    <div class="bg-[#121E38]/90 border border-slate-700/60 rounded-2xl p-4 text-center backdrop-blur-sm shadow-md">
+                        <div class="text-2xl sm:text-3xl font-black text-sky-300">96.8%</div>
+                        <div class="text-[10px] sm:text-[11px] uppercase font-bold text-slate-400 tracking-wider mt-1">AKURASI SKP</div>
                     </div>
-                    <div class="bg-[#111827] border border-slate-800 p-4 rounded-xl text-center shadow-md">
-                        <div class="text-xl lg:text-2xl font-black text-[#00B4D8]">24/7</div>
-                        <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mt-1">24 JAM / 7 HARI</div>
+                    <div class="bg-[#121E38]/90 border border-slate-700/60 rounded-2xl p-4 text-center backdrop-blur-sm shadow-md">
+                        <div class="text-2xl sm:text-3xl font-black text-emerald-400">24/7</div>
+                        <div class="text-[10px] sm:text-[11px] uppercase font-bold text-slate-400 tracking-wider mt-1">LAYANAN REALTIME</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Bottom Feature Badges (4) -->
-            <div class="relative z-10 flex flex-wrap gap-3 pt-6 border-t border-slate-800 text-xs text-slate-300 font-medium">
-                <span class="inline-flex items-center bg-[#111827] px-3 py-1.5 rounded-lg border border-slate-800">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2"></span> Real-time
+            <!-- Bottom Badges Row (4) -->
+            <div class="relative z-10 flex flex-nowrap items-center gap-2 pt-6 border-t border-slate-800/80 text-[11px] text-slate-300 font-medium overflow-x-auto">
+                <span class="inline-flex items-center gap-1.5 bg-[#121E38]/80 px-2.5 py-1.5 rounded-full border border-slate-700/60 shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span> Real-time Sync
                 </span>
-                <span class="inline-flex items-center bg-[#111827] px-3 py-1.5 rounded-lg border border-slate-800">
-                    <span class="w-2 h-2 rounded-full bg-blue-400 mr-2"></span> Terstruktur
+                <span class="inline-flex items-center gap-1.5 bg-[#121E38]/80 px-2.5 py-1.5 rounded-full border border-slate-700/60 shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Terstruktur
                 </span>
-                <span class="inline-flex items-center bg-[#111827] px-3 py-1.5 rounded-lg border border-slate-800">
-                    <span class="w-2 h-2 rounded-full bg-purple-400 mr-2"></span> Otomatis
+                <span class="inline-flex items-center gap-1.5 bg-[#121E38]/80 px-2.5 py-1.5 rounded-full border border-slate-700/60 shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Otomatisasi SKP
                 </span>
-                <span class="inline-flex items-center bg-[#111827] px-3 py-1.5 rounded-lg border border-slate-800">
-                    <span class="w-2 h-2 rounded-full bg-amber-400 mr-2"></span> Aman
+                <span class="inline-flex items-center gap-1.5 bg-[#121E38]/80 px-2.5 py-1.5 rounded-full border border-slate-700/60 shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Keamanan Berlapis
                 </span>
             </div>
         </div>
 
-        <!-- Right Pane (White Login Card) -->
-        <div class="bg-white p-8 lg:p-16 flex flex-col justify-between shadow-2xl">
-            <div>
-                <!-- Top Badge & Header -->
+        <!-- RIGHT LOGIN FORM SECTION (Clean White) -->
+        <div class="lg:col-span-6 xl:col-span-6 bg-white p-8 sm:p-12 lg:p-14 flex flex-col justify-between">
+            <div class="max-w-md w-full mx-auto my-auto">
+                <!-- Form Header -->
                 <div class="mb-8">
-                    <div class="inline-flex items-center bg-slate-100 text-slate-700 px-3.5 py-1.5 rounded-full text-xs font-semibold mb-6">
-                        <svg class="w-4 h-4 mr-2 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        Selamat Malam
-                    </div>
-
-                    <div class="flex items-center space-x-4 mb-4">
-                        <div class="w-14 h-14 bg-white border border-slate-200 rounded-2xl flex items-center justify-center p-1.5 shadow-md">
-                            <img src="{{ asset('images/logo-kinpro.png') }}" alt="KinPro Logo" class="w-full h-full object-contain">
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-extrabold text-[#0F2747]">Selamat Datang!</h3>
-                            <p class="text-sm text-slate-500">Masuk ke sistem untuk melanjutkan</p>
-                        </div>
-                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0F2747] tracking-tight mb-2">Selamat Datang!</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                        Masuk menggunakan kredensial NIP, email, atau username resmi Anda untuk melanjutkan.
+                    </p>
                 </div>
 
-                <x-auth-session-status class="mb-4" :status="session('status')" />
+                <x-auth-session-status class="mb-5" :status="session('status')" />
 
-                <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                <!-- Form -->
+                <form method="POST" action="{{ route('login') }}" class="space-y-5">
                     @csrf
 
-                    <!-- Email / Username / NIP -->
+                    <!-- Field 1: Email / Username / NIP -->
                     <div>
-                        <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Email, Username, atau NIP</label>
+                        <label for="email" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                            EMAIL, USERNAME, ATAU NIP
+                        </label>
                         <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
                             </span>
-                            <input id="email" class="block w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-300 rounded-xl text-[#0F2747] text-sm font-medium focus:outline-none focus:border-[#00B4D8] focus:ring-1 focus:ring-[#00B4D8]" type="text" name="email" value="{{ old('email', 'amiruddin01@pu.go.id') }}" required autofocus autocomplete="username" placeholder="amiruddin01@pu.go.id" />
+                            <input
+                                id="email"
+                                type="text"
+                                name="email"
+                                value="{{ old('email', 'amiruddin01@pu.go.id') }}"
+                                required
+                                autofocus
+                                autocomplete="username"
+                                placeholder="amiruddin01@pu.go.id"
+                                class="w-full pl-11 pr-4 py-3 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-[#0F2747] font-medium placeholder-slate-400 focus:outline-none focus:border-[#1769AA] focus:ring-2 focus:ring-[#1769AA]/20 transition shadow-xs"
+                            />
                         </div>
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('email')" class="mt-1.5" />
                     </div>
 
-                    <!-- Password -->
+                    <!-- Field 2: Password -->
                     <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-700">Password</label>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="password" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                                PASSWORD
+                            </label>
                             @if (Route::has('password.request'))
-                                <a class="text-xs text-[#00B4D8] hover:underline font-semibold" href="{{ route('password.request') }}">
+                                <a class="text-xs text-[#1769AA] hover:text-[#0F2747] font-semibold hover:underline" href="{{ route('password.request') }}">
                                     Lupa password?
                                 </a>
                             @endif
                         </div>
                         <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
                             </span>
-                            <input id="password" class="block w-full pl-12 pr-12 py-3.5 bg-slate-50 border border-slate-300 rounded-xl text-[#0F2747] text-sm font-medium focus:outline-none focus:border-[#00B4D8] focus:ring-1 focus:ring-[#00B4D8]" type="password" name="password" required autocomplete="current-password" placeholder="••••••••••••" />
+                            <input
+                                id="password"
+                                :type="showPassword ? 'text' : 'password'"
+                                name="password"
+                                required
+                                autocomplete="current-password"
+                                placeholder="••••••••••••"
+                                class="w-full pl-11 pr-11 py-3 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-[#0F2747] font-medium placeholder-slate-400 focus:outline-none focus:border-[#1769AA] focus:ring-2 focus:ring-[#1769AA]/20 transition shadow-xs"
+                            />
+                            <!-- Eye toggle icon -->
+                            <button
+                                type="button"
+                                @click="showPassword = !showPassword"
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
+                                tabindex="-1"
+                                aria-label="Toggle password visibility"
+                            >
+                                <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                                </svg>
+                            </button>
                         </div>
-                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('password')" class="mt-1.5" />
                     </div>
 
                     <!-- Remember Me -->
                     <div class="flex items-center">
-                        <input id="remember_me" type="checkbox" class="rounded border-slate-300 text-blue-600 shadow-sm focus:ring-blue-500 w-4 h-4" name="remember">
-                        <label for="remember_me" class="ms-2 text-sm text-slate-600 font-medium">Ingat saya</label>
+                        <input
+                            id="remember_me"
+                            type="checkbox"
+                            name="remember"
+                            class="w-4 h-4 rounded border-slate-300 text-[#1769AA] focus:ring-[#1769AA] focus:ring-offset-0"
+                            checked
+                        />
+                        <label for="remember_me" class="ms-2 text-xs sm:text-sm text-slate-600 font-medium select-none cursor-pointer">
+                            Ingat sesi saya di browser ini
+                        </label>
                     </div>
 
                     <!-- Submit Button -->
                     <div>
-                        <button type="submit" class="w-full py-4 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 transition duration-200 flex items-center justify-center space-x-2 text-base">
-                            <span>Masuk</span>
-                            <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        <button
+                            type="submit"
+                            class="w-full py-3.5 px-5 bg-[#1769AA] hover:bg-[#0F2747] text-white font-bold rounded-xl shadow-md shadow-[#1769AA]/20 hover:shadow-lg transition-all duration-200 flex items-center justify-center space-x-2 text-sm sm:text-base group"
+                        >
+                            <span>Masuk ke Sistem KinPro</span>
+                            <span class="group-hover:translate-x-1 transition-transform duration-200 font-bold">&rarr;</span>
                         </button>
                     </div>
                 </form>
+
+                <!-- Help Callout Box -->
+                <div class="mt-6 p-3.5 bg-slate-50 border border-slate-200/90 rounded-xl flex items-start space-x-3 text-xs text-slate-600 leading-relaxed">
+                    <svg class="w-4 h-4 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>
+                        Mengalami kendala saat login atau lupa NIP? Silakan hubungi <a href="#" class="text-[#1769AA] font-semibold hover:underline">Tim IT & Kepegawaian Bapekom Wilayah VIII</a>.
+                    </span>
+                </div>
             </div>
 
             <!-- Footer -->
-            <div class="pt-8 text-center text-xs text-slate-400 border-t border-slate-100 mt-8">
-                &copy; Bapekom PU Wilayah VIII Makassar 2026
+            <div class="max-w-md w-full mx-auto pt-8 border-t border-slate-100 text-center text-[11px] text-slate-400 leading-normal">
+                &copy; {{ date('Y') }} Balai Pengembangan Kompetensi Wilayah VIII Makassar. Seluruh hak cipta dilindungi undang-undang.
             </div>
         </div>
     </div>

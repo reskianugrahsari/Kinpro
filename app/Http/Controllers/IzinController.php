@@ -9,10 +9,10 @@ use Carbon\Carbon;
 
 class IzinController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
-        $query = Izin::with('pegawai');
+        $query = Izin::with(['pegawai.unitKerja']);
 
         if ($user->role === 'pegawai') {
             $pegawai = Pegawai::where('user_id', $user->id)->first();
@@ -23,21 +23,78 @@ class IzinController extends Controller
             }
         }
 
-        $izins = $query->latest()->paginate(10);
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->whereHas('pegawai', function($pq) use ($search) {
+                    $pq->where('nama', 'like', "%{$search}%")
+                      ->orWhere('nip', 'like', "%{$search}%");
+                })->orWhere('keterangan', 'like', "%{$search}%")
+                  ->orWhere('jenis_izin', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status') && $request->status !== 'all' && $request->status !== 'Semua') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('jenis_izin') && $request->jenis_izin !== 'all' && $request->jenis_izin !== '') {
+            $query->where('jenis_izin', $request->jenis_izin);
+        }
+
+        if ($request->filled('bulan') && $request->bulan !== 'all' && $request->bulan !== '') {
+            $query->whereMonth('tanggal_mulai', $request->bulan);
+        }
+
+        $perPage = in_array((int)$request->input('per_page', 10), [5, 10, 25, 50]) ? (int)$request->input('per_page', 10) : 10;
+        $izins = $query->latest()->paginate($perPage)->withQueryString();
         
+        $now = Carbon::now();
+        $pendingCount = Izin::where('status', 'pending')->count();
+        $approvedThisMonth = Izin::where('status', 'approved')
+            ->whereYear('tanggal_mulai', $now->year)
+            ->whereMonth('tanggal_mulai', $now->month)
+            ->count();
+
+        $todayActiveCount = Izin::where('status', 'approved')
+            ->whereDate('tanggal_mulai', '<=', Carbon::today())
+            ->whereDate('tanggal_selesai', '>=', Carbon::today())
+            ->count();
+
+        $pegawaiCount = Pegawai::count() ?: 1;
+        $totalKuota = $pegawaiCount * 12;
+        $terpakai = Izin::where('status', 'approved')->where('jenis_izin', 'cuti_tahunan')->count();
+        $sisaKuotaBalaiPct = max(0, min(100, round((($totalKuota - $terpakai) / max(1, $totalKuota)) * 100)));
+
         $pegawai = Pegawai::where('user_id', $user->id)->first();
         $jumlahBulanIni = 0;
         $sisaKuota = 4;
 
         if ($pegawai) {
             $jumlahBulanIni = Izin::where('pegawai_id', $pegawai->id)
-                ->whereYear('created_at', Carbon::now()->year)
-                ->whereMonth('created_at', Carbon::now()->month)
+                ->whereYear('created_at', $now->year)
+                ->whereMonth('created_at', $now->month)
                 ->count();
             $sisaKuota = max(0, 4 - $jumlahBulanIni);
         }
 
-        return view('izin.index', compact('izins', 'jumlahBulanIni', 'sisaKuota'));
+        // Active leaves for calendar modal
+        $calendarLeaves = Izin::with('pegawai')
+            ->where('status', 'approved')
+            ->whereYear('tanggal_mulai', $now->year)
+            ->whereMonth('tanggal_mulai', $now->month)
+            ->get();
+
+        return view('izin.index', compact(
+            'izins',
+            'pendingCount',
+            'approvedThisMonth',
+            'todayActiveCount',
+            'sisaKuotaBalaiPct',
+            'jumlahBulanIni',
+            'sisaKuota',
+            'calendarLeaves'
+        ));
     }
 
     public function create()

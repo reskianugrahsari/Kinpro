@@ -25,16 +25,16 @@
 
             @if(auth()->user()->role === 'pegawai')
                 <!-- Toolbar Tombol Buat Laporan Dinas (Di Bawah Header, Di Atas Tabel Riwayat) -->
-                <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors">
                     <div class="flex items-center space-x-3.5">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-[#1769AA] shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-800 border border-blue-200 dark:border-slate-700 flex items-center justify-center text-[#1769AA] dark:text-blue-400 shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         </div>
                         <div>
-                            <div class="text-xs font-bold text-slate-800">
+                            <div class="text-xs font-bold text-slate-800 dark:text-slate-100">
                                 Laporan Pertanggungjawaban Perjalanan Dinas (Pajokka)
                             </div>
-                            <p class="text-[11px] text-slate-500 mt-0.5">
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                                 Susun laporan dinas dengan scan otomatis OCR surat tugas, rincian biaya KKP & Cash, serta ekspor resmi Word/PDF
                             </p>
                         </div>
@@ -49,12 +49,12 @@
                 </div>
             @endif
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-slate-200">
-                <div class="p-6 text-slate-900">
+            <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-xs sm:rounded-2xl border border-slate-200 dark:border-slate-800 transition-colors">
+                <div class="p-6 text-slate-900 dark:text-slate-100">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="bg-slate-100 text-[#0F2747] uppercase text-xs tracking-wider border-b border-slate-200">
+                                <tr class="bg-slate-100 dark:bg-slate-800 text-[#0F2747] dark:text-slate-200 uppercase text-xs tracking-wider border-b border-slate-200 dark:border-slate-700">
                                     <th class="p-3">No</th>
                                     @if(auth()->user()->role === 'admin')
                                         <th class="p-3">Pegawai / Pelaksana</th>
@@ -67,37 +67,37 @@
                                     <th class="p-3 text-center">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-200 text-sm">
+                            <tbody class="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
                                 @forelse($reports as $index => $item)
-                                    <tr>
-                                        <td class="p-3">{{ $reports->firstItem() + $index }}</td>
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                                        <td class="p-3 text-slate-500 dark:text-slate-400">{{ $reports->firstItem() + $index }}</td>
                                         @if(auth()->user()->role === 'admin')
                                             <td class="p-3">
-                                                <div class="font-bold text-[#0F2747]">{{ $item->pegawai->nama ?? '-' }}</div>
-                                                <div class="text-xs text-slate-500 font-mono">{{ $item->pegawai->nip ?? '-' }}</div>
+                                                <div class="font-bold text-[#0F2747] dark:text-slate-100">{{ $item->pegawai->nama ?? '-' }}</div>
+                                                <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">{{ $item->pegawai->nip ?? '-' }}</div>
                                             </td>
                                         @endif
-                                        <td class="p-3 font-semibold text-[#1769AA]">
+                                        <td class="p-3 font-semibold text-[#1769AA] dark:text-blue-400">
                                             {{ $item->nomor_surat_tugas ?? $item->nomor_surat }}
                                         </td>
-                                        <td class="p-3 font-medium">
+                                        <td class="p-3 font-medium text-slate-800 dark:text-slate-200">
                                             {{ $item->kota_tujuan ?? $item->tujuan }}
                                         </td>
-                                        <td class="p-3 text-xs">
+                                        <td class="p-3 text-xs text-slate-600 dark:text-slate-400">
                                             {{ ($item->tgl_mulai_dinas ?? $item->tanggal_berangkat)?->format('d/m/Y') ?? '-' }} s.d. {{ ($item->tgl_selesai_dinas ?? $item->tanggal_kembali)?->format('d/m/Y') ?? '-' }}
                                         </td>
-                                        <td class="p-3 text-xs">
+                                        <td class="p-3 text-xs text-slate-600 dark:text-slate-400">
                                             {{ $item->ppk->nama ?? ($item->masterPpk->nama ?? '-') }}
                                         </td>
                                         <td class="p-3 text-center">
                                             @php
                                                 $st = $item->status;
                                                 $bgClass = match($st) {
-                                                    'approved' => 'bg-emerald-100 text-emerald-800',
-                                                    'rejected' => 'bg-rose-100 text-rose-800',
-                                                    'revision_required', 'revision' => 'bg-amber-100 text-amber-800',
-                                                    'submitted' => 'bg-blue-100 text-blue-800',
-                                                    default => 'bg-slate-100 text-slate-800',
+                                                    'approved' => 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300',
+                                                    'rejected' => 'bg-rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300',
+                                                    'revision_required', 'revision' => 'bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300',
+                                                    'submitted' => 'bg-blue-100 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300',
+                                                    default => 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-300',
                                                 };
                                             @endphp
                                             <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase {{ $bgClass }}">
@@ -105,34 +105,36 @@
                                             </span>
                                         </td>
                                         <td class="p-3 text-center space-x-1">
-                                            <a href="{{ route('pajokka.show', $item) }}" class="text-[#1769AA] hover:underline font-medium text-xs bg-slate-100 px-2.5 py-1 rounded inline-block">Detail</a>
-                                            <a href="{{ route('pajokka.docx', $item) }}" class="text-indigo-700 hover:underline font-medium text-xs bg-indigo-50 px-2 py-1 rounded inline-block" title="Download Word (.docx)">DOCX</a>
-                                            <a href="{{ route('pajokka.pdf', $item) }}" class="text-rose-700 hover:underline font-medium text-xs bg-rose-50 px-2 py-1 rounded inline-block" title="Download PDF">PDF</a>
+                                            <a href="{{ route('pajokka.show', $item) }}" class="text-[#1769AA] dark:text-blue-400 hover:underline font-medium text-xs bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg inline-block">Detail</a>
+                                            <a href="{{ route('pajokka.docx', $item) }}" class="text-indigo-700 dark:text-indigo-400 hover:underline font-medium text-xs bg-indigo-50 dark:bg-indigo-950/70 px-2 py-1 rounded-lg inline-block" title="Download Word (.docx)">DOCX</a>
+                                            <a href="{{ route('pajokka.pdf', $item) }}" class="text-rose-700 dark:text-rose-400 hover:underline font-medium text-xs bg-rose-50 dark:bg-rose-950/70 px-2 py-1 rounded-lg inline-block" title="Download PDF">PDF</a>
 
                                             @if(auth()->user()->role === 'admin')
                                                 <div x-data="{ openModal: false }" class="inline-block">
-                                                    <button @click="openModal = true" class="text-emerald-700 hover:underline font-medium text-xs bg-emerald-50 px-2.5 py-1 rounded">Review</button>
+                                                    <button @click="openModal = true" class="text-emerald-700 dark:text-emerald-400 hover:underline font-medium text-xs bg-emerald-50 dark:bg-emerald-950/70 px-2.5 py-1 rounded-lg">Review</button>
                                                     
                                                     <!-- Review Modal -->
-                                                    <div x-show="openModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" style="display: none;">
-                                                        <div @click.away="openModal = false" class="bg-white p-6 rounded-xl shadow-lg max-w-md w-full text-left">
-                                                            <h3 class="font-bold text-lg text-[#0F2747] mb-4">Review Perjalanan Dinas</h3>
+                                                    <div x-show="openModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60" style="display: none;">
+                                                        <div @click.away="openModal = false" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xl max-w-md w-full text-left">
+                                                            <h3 class="font-bold text-lg text-[#0F2747] dark:text-slate-100 mb-4">Review Perjalanan Dinas</h3>
                                                             <form action="{{ route('pajokka.status', $item) }}" method="POST">
                                                                 @csrf
                                                                 @method('PATCH')
                                                                 <div class="mb-4">
-                                                                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Status</label>
-                                                                    <select name="status" class="w-full border-slate-300 rounded-md text-sm">
+                                                                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Status Laporan</label>
+                                                                    <select name="status" class="w-full border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-xl text-sm">
                                                                         <option value="approved" {{ $item->status === 'approved' ? 'selected' : '' }}>Setujui (Approved)</option>
-                                                                        <option value="revision" {{ $item->status === 'revision' ? 'selected' : '' }}>Revisi (Revision)</option>
+                                                                        <option value="revision_required" {{ $item->status === 'revision_required' ? 'selected' : '' }}>Perlu Revisi (Revision)</option>
                                                                         <option value="rejected" {{ $item->status === 'rejected' ? 'selected' : '' }}>Tolak (Rejected)</option>
-                                                                        <option value="submitted" {{ $item->status === 'submitted' ? 'selected' : '' }}>Submitted</option>
-                                                                        <option value="draft" {{ $item->status === 'draft' ? 'selected' : '' }}>Draft</option>
                                                                     </select>
                                                                 </div>
+                                                                <div class="mb-4">
+                                                                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-300 mb-1">Catatan / Arahan Revisi</label>
+                                                                    <textarea name="admin_notes" rows="3" class="w-full border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-xl text-sm" placeholder="Tambahkan catatan jika perlu revisi...">{{ $item->admin_notes }}</textarea>
+                                                                </div>
                                                                 <div class="flex justify-end space-x-2">
-                                                                    <button type="button" @click="openModal = false" class="bg-slate-200 text-slate-800 px-3 py-1.5 rounded text-xs">Batal</button>
-                                                                    <button type="submit" class="bg-[#1769AA] text-white px-3 py-1.5 rounded text-xs font-bold">Simpan</button>
+                                                                    <button type="button" @click="openModal = false" class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 px-3.5 py-1.5 rounded-xl text-xs font-bold">Batal</button>
+                                                                    <button type="submit" class="bg-[#1769AA] text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-xs">Simpan Status</button>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -140,18 +142,18 @@
                                                 </div>
                                             @endif
 
-                                            @if($item->status === 'draft' || auth()->user()->role === 'admin')
-                                                <form action="{{ route('pajokka.destroy', $item) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus laporan ini?')">
+                                            @if($item->status === 'draft' || $item->status === 'submitted')
+                                                <form action="{{ route('pajokka.destroy', $item) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin membatalkan laporan ini?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="text-rose-600 hover:underline font-medium text-xs">Hapus</button>
+                                                    <button type="submit" class="text-rose-600 dark:text-rose-400 hover:underline font-medium text-xs">Batalkan</button>
                                                 </form>
                                             @endif
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="{{ auth()->user()->role === 'admin' ? 8 : 7 }}" class="p-4 text-center text-slate-500">Belum ada laporan perjalanan dinas.</td>
+                                        <td colspan="{{ auth()->user()->role === 'admin' ? 8 : 7 }}" class="p-6 text-center text-slate-500 dark:text-slate-400">Belum ada riwayat laporan perjalanan dinas.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

@@ -11,22 +11,49 @@ class PengaduanController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        $query = Pengaduan::with('pegawai')->latest();
+        $query = Pengaduan::with(['pegawai.unitKerja'])->latest();
 
         if ($user->role !== 'admin') {
             $pegawai = Pegawai::where('user_id', $user->id)->first();
             $query->where('pegawai_id', $pegawai ? $pegawai->id : 0);
         } else {
-            if ($request->filled('status')) {
+            if ($request->filled('status') && $request->status !== 'all' && $request->status !== 'Semua') {
                 $query->where('status', $request->status);
             }
-            if ($request->filled('jenis')) {
+            if ($request->filled('jenis') && $request->jenis !== 'all' && $request->jenis !== '') {
                 $query->where('jenis_laporan', $request->jenis);
+            }
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->whereHas('pegawai', function($pq) use ($search) {
+                        $pq->where('nama', 'like', "%{$search}%")
+                          ->orWhere('nip', 'like', "%{$search}%");
+                    })->orWhere('keterangan', 'like', "%{$search}%")
+                      ->orWhere('jenis_laporan', 'like', "%{$search}%");
+                });
             }
         }
 
-        $pengaduans = $query->paginate(10)->withQueryString();
-        return view('pengaduan.index', compact('pengaduans'));
+        $allPengaduans = Pengaduan::all();
+        $totalAll = $allPengaduans->count();
+        $pendingCount = $allPengaduans->where('status', 'pending')->count();
+        $approvedCount = $allPengaduans->where('status', 'approved')->count();
+        $rejectedCount = $allPengaduans->where('status', 'rejected')->count();
+
+        $perPage = in_array((int)$request->input('per_page', 10), [5, 10, 25, 50]) ? (int)$request->input('per_page', 10) : 10;
+        $pengaduans = $query->paginate($perPage)->withQueryString();
+
+        $categories = Pengaduan::select('jenis_laporan')->distinct()->whereNotNull('jenis_laporan')->pluck('jenis_laporan')->toArray();
+
+        return view('pengaduan.index', compact(
+            'pengaduans',
+            'totalAll',
+            'pendingCount',
+            'approvedCount',
+            'rejectedCount',
+            'categories'
+        ));
     }
 
     public function create()

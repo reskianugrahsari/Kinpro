@@ -19,21 +19,34 @@ class PengajuanAbsenController extends Controller
             $pegawai = Pegawai::where('user_id', $user->id)->first();
             $query->where('pegawai_id', $pegawai ? $pegawai->id : 0);
         } else {
-            if ($request->filled('status')) {
+            if ($request->filled('status') && $request->status !== 'all' && $request->status !== '') {
                 $query->where('status', $request->status);
+            }
+            if ($request->filled('jenis') && $request->jenis !== 'all' && $request->jenis !== '') {
+                $query->where('jenis_absen', 'like', "%{$request->jenis}%");
             }
             if ($request->filled('search')) {
                 $search = $request->search;
-                $query->whereHas('pegawai', function($q) use ($search) {
-                    $q->where('nama', 'like', "%{$search}%")
-                      ->orWhere('nama_lengkap', 'like', "%{$search}%")
-                      ->orWhere('nip', 'like', "%{$search}%");
+                $query->where(function($q) use ($search) {
+                    $q->whereHas('pegawai', function($pq) use ($search) {
+                        $pq->where('nama', 'like', "%{$search}%")
+                          ->orWhere('nama_lengkap', 'like', "%{$search}%")
+                          ->orWhere('nip', 'like', "%{$search}%");
+                    })->orWhere('alasan', 'like', "%{$search}%")
+                      ->orWhere('jenis_absen', 'like', "%{$search}%");
                 });
             }
         }
 
-        $pengaduans = $query->paginate(10)->withQueryString();
-        return view('absen.index', compact('pengaduans'));
+        $allAbsen = PengajuanAbsen::all();
+        $totalAll = $allAbsen->count();
+        $pendingCount = $allAbsen->where('status', 'pending')->count();
+        $approvedCount = $allAbsen->where('status', 'approved')->count();
+        $rejectedCount = $allAbsen->where('status', 'rejected')->count();
+
+        $perPage = in_array((int)$request->input('per_page', 10), [5, 10, 25, 50]) ? (int)$request->input('per_page', 10) : 10;
+        $pengaduans = $query->paginate($perPage)->withQueryString();
+        return view('absen.index', compact('pengaduans', 'totalAll', 'pendingCount', 'approvedCount', 'rejectedCount'));
     }
 
     public function create()

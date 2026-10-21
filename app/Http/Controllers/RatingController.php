@@ -10,13 +10,66 @@ class RatingController extends Controller
 {
     public function index(Request $request)
     {
-        $pegawais = Pegawai::withCount('ratings')
+        $query = Pegawai::with(['unitKerja', 'ratings.penilai'])
+            ->withCount('ratings')
+            ->withAvg('ratings', 'rating');
+
+        if ($request->filled('unit_id') && $request->unit_id !== 'all' && $request->unit_id !== 'Semua Unit') {
+            $query->where('unit_kerja_id', $request->unit_id);
+        }
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->where(function($q) use ($s) {
+                $q->where('nama', 'like', "%{$s}%")
+                  ->orWhere('nama_lengkap', 'like', "%{$s}%")
+                  ->orWhere('nip', 'like', "%{$s}%")
+                  ->orWhere('jabatan', 'like', "%{$s}%");
+            });
+        }
+
+        $sort = $request->input('sort', 'highest');
+        switch ($sort) {
+            case 'reviews':
+                $query->orderByDesc('ratings_count')->orderByDesc('ratings_avg_rating');
+                break;
+            case 'name':
+                $query->orderBy('nama');
+                break;
+            case 'lowest':
+                $query->orderBy('ratings_avg_rating')->orderBy('nama');
+                break;
+            case 'highest':
+            default:
+                $query->orderByDesc('ratings_avg_rating')->orderByDesc('ratings_count')->orderBy('nama');
+                break;
+        }
+
+        $pegawais = $query->paginate(9)->withQueryString();
+
+        $allRatings = RatingKomentar::all();
+        $totalReviews = $allRatings->count();
+        $avgBalai = $totalReviews > 0 ? round($allRatings->avg('rating'), 1) : 4.8;
+        $totalPegawai = Pegawai::count();
+
+        $topRatedPegawai = Pegawai::with(['unitKerja'])
+            ->withCount('ratings')
             ->withAvg('ratings', 'rating')
             ->orderByDesc('ratings_avg_rating')
-            ->paginate(12)
-            ->withQueryString();
+            ->orderByDesc('ratings_count')
+            ->first();
 
-        return view('rating.index', compact('pegawais'));
+        $unitKerjas = \App\Models\UnitKerja::all();
+
+        return view('rating.index', compact(
+            'pegawais',
+            'allRatings',
+            'totalReviews',
+            'avgBalai',
+            'totalPegawai',
+            'topRatedPegawai',
+            'unitKerjas'
+        ));
     }
 
     public function store(Request $request)
