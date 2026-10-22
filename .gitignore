@@ -57,6 +57,7 @@ public/uploads/
 .phpunit.result.cache
 node_modules/
 /storage/*.key
+public/hot
 
 # OS files
 Thumbs.db

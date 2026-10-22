@@ -51,10 +51,12 @@
 
             <!-- Quick Top Action Controls -->
             <div class="flex items-center gap-2">
-                <a href="{{ route('absen.rekap-bulanan') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 shadow-2xs transition-colors cursor-pointer">
-                    <span class="material-symbols-outlined text-[16px]">bar_chart</span>
-                    <span>Rekap Bulanan</span>
-                </a>
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('absen.rekap-bulanan') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 shadow-2xs transition-colors cursor-pointer">
+                        <span class="material-symbols-outlined text-[16px]">bar_chart</span>
+                        <span>Rekap Bulanan</span>
+                    </a>
+                @endif
                 <a href="{{ route('rekap.export', 'excel') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 shadow-2xs transition-colors cursor-pointer">
                     <span class="material-symbols-outlined text-[16px]">file_download</span>
                     <span>Ekspor Data</span>

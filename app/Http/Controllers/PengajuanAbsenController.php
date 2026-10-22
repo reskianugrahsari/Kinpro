@@ -164,6 +164,10 @@ class PengajuanAbsenController extends Controller
 
     public function rekapBulanan(Request $request)
     {
+        if (auth()->user()->role !== 'admin') {
+            abort(403, 'Hanya Administrator yang dapat mengakses rekapitulasi ini.');
+        }
+
         $bulan = $request->get('bulan', date('n'));
         $tahun = $request->get('tahun', date('Y'));
         $search = $request->get('search');

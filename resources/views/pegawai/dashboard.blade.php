@@ -184,7 +184,7 @@
                     <div>
                         <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 block">PENGAJUAN IZIN / CUTI</span>
                         <div class="text-3xl font-extrabold text-slate-800 dark:text-white mt-1 tabular-nums">
-                            {{ $totalIzin ?? 1 }}
+                            {{ $totalIzin ?? 0 }}
                         </div>
                     </div>
                     <div class="w-10 h-10 rounded-lg bg-[#FFFBEB] text-[#D97706] flex items-center justify-center border border-[#FDE68A]">
@@ -193,9 +193,9 @@
                 </div>
                 <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
                     <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded bg-[#FFFBEB] text-[#B45309]">
-                        Kuota: 12 Hari/Thn
+                        Total Diajukan
                     </span>
-                    <span class="text-xs text-amber-600 font-semibold">Cuti & Izin Sah</span>
+                    <span class="text-xs text-amber-600 font-semibold">Cuti & Izin Pegawai</span>
                 </div>
             </div>
 
@@ -205,7 +205,7 @@
                     <div>
                         <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 block">LUPA PRESENSI</span>
                         <div class="text-3xl font-extrabold text-slate-800 dark:text-white mt-1 tabular-nums">
-                            {{ $totalAbsen ?? 1 }}
+                            {{ $totalAbsen ?? 0 }}
                         </div>
                     </div>
                     <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-200">
@@ -214,7 +214,7 @@
                 </div>
                 <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
                     <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700">
-                        Presensi Sesuai
+                        Total Diajukan
                     </span>
                     <span class="text-xs text-slate-400 font-medium">Bulan Berjalan</span>
                 </div>

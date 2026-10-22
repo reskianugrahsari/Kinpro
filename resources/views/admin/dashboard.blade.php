@@ -148,12 +148,12 @@
                         </div>
                     </div>
                     <div class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">
-                        {{ $pendingIzinCount ?? 2 }}
+                        {{ $pendingIzinCount ?? 0 }}
                     </div>
                 </div>
                 <div class="pt-4 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
                     <span class="text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-md text-[10px]">Perlu Diproses</span>
-                    <span class="text-slate-400 font-medium">Tenggat 24 Jam</span>
+                    <span class="text-slate-400 font-medium">Izin & Cuti Masuk</span>
                 </div>
             </div>
 
@@ -168,12 +168,12 @@
                         </div>
                     </div>
                     <div class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">
-                        {{ $pendingPengaduanCount ?? 10 }}
+                        {{ $pendingPengaduanCount ?? 0 }}
                     </div>
                 </div>
                 <div class="pt-4 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
                     <span class="text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-md text-[10px]">Perlu Ditangani</span>
-                    <span class="text-slate-400 font-medium">3 Prioritas Tinggi</span>
+                    <span class="text-slate-400 font-medium">Aspirasi Belum Selesai</span>
                 </div>
             </div>
         </div>
@@ -359,7 +359,7 @@
                     <div class="grid grid-cols-2 gap-2.5">
                         <a href="{{ route('izin.index') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-xs">
                             <span class="material-symbols-outlined text-[16px]">check_circle</span>
-                            <span>Validasi Izin ({{ $pendingIzinCount ?? 2 }})</span>
+                            <span>Validasi Izin ({{ $pendingIzinCount ?? 0 }})</span>
                         </a>
                         <a href="{{ route('penilaian.create') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-600 transition">
                             <span class="material-symbols-outlined text-[16px]">edit_note</span>

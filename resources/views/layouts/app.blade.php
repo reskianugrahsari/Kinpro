@@ -87,28 +87,36 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                         <span>Kelola Izin</span>
                                     </span>
-                                    <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] px-2 py-0.5 rounded-full font-bold">2</span>
+                                    @if(($badgeCounts['izin'] ?? 0) > 0)
+                                        <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] px-2 py-0.5 rounded-full font-bold">{{ $badgeCounts['izin'] }}</span>
+                                    @endif
                                 </a>
                                 <a href="{{ route('pengaduan.index') }}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition {{ request()->routeIs('pengaduan.*') ? 'bg-blue-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white' }}">
                                     <span class="flex items-center space-x-3">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
                                         <span>Kelola Pengaduan</span>
                                     </span>
-                                    <span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] px-2 py-0.5 rounded-full font-bold">10</span>
+                                    @if(($badgeCounts['pengaduan'] ?? 0) > 0)
+                                        <span class="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] px-2 py-0.5 rounded-full font-bold">{{ $badgeCounts['pengaduan'] }}</span>
+                                    @endif
                                 </a>
                                 <a href="{{ route('absen.index') }}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition {{ request()->routeIs('absen.*') ? 'bg-blue-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white' }}">
                                     <span class="flex items-center space-x-3">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         <span>Kelola Lupa Absen</span>
                                     </span>
-                                    <span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px] px-2 py-0.5 rounded-full font-bold">1</span>
+                                    @if(($badgeCounts['absen'] ?? 0) > 0)
+                                        <span class="bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px] px-2 py-0.5 rounded-full font-bold">{{ $badgeCounts['absen'] }}</span>
+                                    @endif
                                 </a>
                                 <a href="{{ route('pajokka.index') }}" class="flex items-center justify-between px-3 py-2.5 rounded-xl transition {{ request()->routeIs('pajokka.*') ? 'bg-blue-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white' }}">
                                     <span class="flex items-center space-x-3">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                         <span>Review Perjalanan Dinas</span>
                                     </span>
-                                    <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] px-2 py-0.5 rounded-full font-bold">3</span>
+                                    @if(($badgeCounts['pajokka'] ?? 0) > 0)
+                                        <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] px-2 py-0.5 rounded-full font-bold">{{ $badgeCounts['pajokka'] }}</span>
+                                    @endif
                                 </a>
                             </div>
                         </div>
@@ -234,11 +242,73 @@
                             </svg>
                         </button>
 
-                        <!-- Notification Button -->
-                        <button type="button" class="w-9 h-9 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl flex items-center justify-center relative shadow-xs transition cursor-pointer" title="Notifikasi">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                            <span class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white dark:ring-slate-800"></span>
-                        </button>
+                        <!-- Notification Dropdown -->
+                        <div class="relative" x-data="{ openNotif: false }" @click.outside="openNotif = false">
+                            <button type="button" @click="openNotif = !openNotif" class="w-9 h-9 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl flex items-center justify-center relative shadow-xs transition cursor-pointer" title="Notifikasi Masuk">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                                @if(($badgeCounts['total'] ?? 0) > 0)
+                                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-rose-500 text-white rounded-full ring-2 ring-white dark:ring-slate-800 text-[10px] font-bold flex items-center justify-center tabular-nums">
+                                        {{ $badgeCounts['total'] > 99 ? '99+' : $badgeCounts['total'] }}
+                                    </span>
+                                @endif
+                            </button>
+
+                            <!-- Notification Panel -->
+                            <div x-show="openNotif" 
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 scale-95"
+                                 x-transition:enter-end="opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 scale-100"
+                                 x-transition:leave-end="opacity-0 scale-95"
+                                 class="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 overflow-hidden" 
+                                 style="display: none;">
+                                <div class="px-4 py-3 bg-[#0F2747] text-white flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-[18px] text-amber-400">notifications_active</span>
+                                        <span class="font-bold text-xs">Pemberitahuan Masuk</span>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-white/20 text-white">
+                                        {{ $badgeCounts['total'] ?? 0 }} Baru
+                                    </span>
+                                </div>
+
+                                <div class="max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+                                    @forelse($headerNotifications ?? [] as $notif)
+                                        <a href="{{ $notif['url'] }}" class="p-3.5 flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition group">
+                                            <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 {{ $notif['color'] }}">
+                                                <span class="material-symbols-outlined text-[16px]">{{ $notif['icon'] }}</span>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between gap-2">
+                                                    <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{{ $notif['title'] }}</h4>
+                                                    <span class="text-[10px] text-slate-400 shrink-0 tabular-nums">
+                                                        {{ $notif['time'] ? \Carbon\Carbon::parse($notif['time'])->diffForHumans(null, true) : 'Baru' }}
+                                                    </span>
+                                                </div>
+                                                <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-0.5 leading-relaxed">{{ $notif['desc'] }}</p>
+                                            </div>
+                                        </a>
+                                    @empty
+                                        <div class="py-8 px-4 text-center">
+                                            <div class="w-10 h-10 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mb-2">
+                                                <span class="material-symbols-outlined text-[20px]">notifications_off</span>
+                                            </div>
+                                            <p class="text-xs font-semibold text-slate-600 dark:text-slate-300">Tidak ada pemberitahuan baru</p>
+                                            <p class="text-[11px] text-slate-400 mt-0.5">Semua permohonan dan laporan telah ditindaklanjuti.</p>
+                                        </div>
+                                    @endforelse
+                                </div>
+
+                                @if(auth()->user()->role === 'admin')
+                                    <div class="p-2.5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 text-center">
+                                        <a href="{{ route('dashboard') }}" class="text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:underline">
+                                            Lihat Rekap Dashboard Admin &rarr;
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
 
                         <!-- Activity Clock Button -->
                         <button type="button" class="w-9 h-9 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl flex items-center justify-center shadow-xs transition cursor-pointer" title="Aktivitas Waktu">
