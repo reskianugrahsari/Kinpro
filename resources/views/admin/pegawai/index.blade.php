@@ -162,43 +162,17 @@
                             $score = $penilaian ? (string) round($penilaian->rata_rata) : '-';
                             $numScore = $penilaian ? round($penilaian->rata_rata) : 0;
 
-                            if ($numScore >= 85 || ($score == '-' && $loop->first)) {
-                                // Dark Blue Rare
-                                $cardWrap = 'bg-gradient-to-b from-[#0F172A] via-[#1E293B] to-[#0A101D] text-white border-2 border-blue-400/50 shadow-2xl shadow-blue-950/40';
-                                $ratingCol = 'text-amber-300';
-                                $subCol = 'text-blue-200';
-                                $nameCol = 'text-white';
-                                $roleCol = 'text-blue-300';
-                                $lineCol = 'border-blue-400/30';
-                                $numCol = 'text-white';
-                                $lblCol = 'text-blue-200';
-                                $badgeStyle = 'bg-amber-900/60 text-amber-200 border border-amber-600/40';
-                                $avatarGrad = 'from-blue-600 to-indigo-900';
-                            } elseif ($numScore >= 75) {
-                                // Gold
-                                $cardWrap = 'bg-gradient-to-b from-[#FDE047] via-[#CA8A04] to-[#713F12] text-[#3B2406] border-2 border-amber-300 shadow-2xl shadow-amber-950/30';
-                                $ratingCol = 'text-[#2C1802]';
-                                $subCol = 'text-[#452203]';
-                                $nameCol = 'text-[#2C1802]';
-                                $roleCol = 'text-[#3B2406]/90';
-                                $lineCol = 'border-amber-900/30';
-                                $numCol = 'text-[#2C1802]';
-                                $lblCol = 'text-[#452203]';
-                                $badgeStyle = 'bg-[#452203] text-amber-200 border border-amber-900/50';
-                                $avatarGrad = 'from-amber-600 to-yellow-800';
-                            } else {
-                                // Silver
-                                $cardWrap = 'bg-gradient-to-b from-[#F8FAFC] via-[#CBD5E1] to-[#64748B] text-[#1E293B] border-2 border-slate-300 shadow-xl shadow-slate-900/15';
-                                $ratingCol = 'text-[#0F172A]';
-                                $subCol = 'text-slate-600';
-                                $nameCol = 'text-[#0F172A]';
-                                $roleCol = 'text-slate-700';
-                                $lineCol = 'border-slate-400/40';
-                                $numCol = 'text-[#0F172A]';
-                                $lblCol = 'text-slate-600';
-                                $badgeStyle = 'bg-slate-700 text-slate-100 border border-slate-600';
-                                $avatarGrad = 'from-slate-400 to-slate-600';
-                            }
+                            // Silver — single color for all cards
+                            $cardWrap = 'bg-gradient-to-b from-[#F8FAFC] via-[#CBD5E1] to-[#64748B] text-[#1E293B] border-2 border-slate-300 shadow-xl shadow-slate-900/15';
+                            $ratingCol = 'text-[#0F172A]';
+                            $subCol = 'text-slate-600';
+                            $nameCol = 'text-[#0F172A]';
+                            $roleCol = 'text-slate-700';
+                            $lineCol = 'border-slate-400/40';
+                            $numCol = 'text-[#0F172A]';
+                            $lblCol = 'text-slate-600';
+                            $badgeStyle = 'bg-slate-700 text-slate-100 border border-slate-600';
+                            $avatarGrad = 'from-slate-400 to-slate-600';
 
                             $disVal = $penilaian ? round($penilaian->nilai_kedisiplinan) : '-';
                             $kepVal = $penilaian ? round($penilaian->kepemimpinan) : '-';
@@ -208,110 +182,158 @@
                             $itVal = $penilaian ? round($penilaian->it) : '-';
                         @endphp
 
-                        <!-- Width adjusted for balanced card proportion -->
-                        <div class="w-full max-w-[290px] flex flex-col items-center group transition-all duration-300 hover:-translate-y-2">
-                            <!-- FUT Shield Container with Reduced Length -->
-                            <div class="{{ $cardWrap }} w-full p-4 rounded-[2.5rem] relative overflow-hidden flex flex-col justify-between"
-                                 style="clip-path: polygon(0% 0%, 100% 0%, 100% 92%, 50% 100%, 0% 92%); height: 395px;">
-                                
-                                <!-- Header / Upper Region -->
-                                <div class="flex justify-between items-start pt-0.5 px-1">
-                                    <!-- Rating & Emblems Column -->
-                                    <div class="flex flex-col items-center pl-1">
-                                        <span class="text-3xl font-black font-sans leading-none {{ $ratingCol }} tracking-tight">{{ $score }}</span>
-                                        <span class="text-[8px] font-black uppercase tracking-widest mt-1 {{ $subCol }}">BAPEKOM8MKS</span>
-                                        
-                                        <!-- Emblems -->
-                                        <div class="flex flex-col items-center space-y-1 mt-2">
-                                            <!-- Indonesia Flag -->
-                                            <div class="w-5 h-3.5 bg-red-600 border border-white/60 rounded-xs overflow-hidden shadow-xs">
-                                                <div class="h-1/2 bg-red-600"></div>
-                                                <div class="h-1/2 bg-white"></div>
+                        <!-- Flip Card Container -->
+                        <div class="w-full max-w-[290px] flex flex-col items-center group" style="perspective: 1000px;">
+                            <div class="relative w-full transition-transform duration-700 group-hover:[transform:rotateY(180deg)]" style="transform-style: preserve-3d; height: 395px;">
+
+                                <!-- ===== FRONT FACE ===== -->
+                                <div class="absolute inset-0 [backface-visibility:hidden]">
+                                    <div class="{{ $cardWrap }} w-full h-full p-4 rounded-[2.5rem] relative overflow-hidden flex flex-col justify-between"
+                                         style="clip-path: polygon(0% 0%, 100% 0%, 100% 92%, 50% 100%, 0% 92%);">
+
+                                        <!-- Header / Upper Region -->
+                                        <div class="flex justify-between items-start pt-0.5 px-1">
+                                            <div class="flex flex-col items-center pl-1">
+                                                <span class="text-3xl font-black font-sans leading-none {{ $ratingCol }} tracking-tight">{{ $score }}</span>
+                                                <span class="text-[8px] font-black uppercase tracking-widest mt-1 {{ $subCol }}">BAPEKOM8MKS</span>
+                                                <div class="flex flex-col items-center space-y-1 mt-2">
+                                                    <div class="w-5 h-3.5 bg-red-600 border border-white/60 rounded-xs overflow-hidden shadow-xs">
+                                                        <div class="h-1/2 bg-red-600"></div>
+                                                        <div class="h-1/2 bg-white"></div>
+                                                    </div>
+                                                    <div class="w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center border border-amber-600/40 shadow-xs">
+                                                        <span class="text-[7px] font-black text-blue-900 leading-none">PU</span>
+                                                    </div>
+                                                    <div class="w-5 h-5 rounded-full bg-blue-900 flex items-center justify-center border border-amber-400/60 shadow-xs">
+                                                        <span class="text-[6px] font-black text-amber-300 leading-none">VIII</span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <!-- PU Badge -->
-                                            <div class="w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center border border-amber-600/40 shadow-xs">
-                                                <span class="text-[7px] font-black text-blue-900 leading-none">PU</span>
+
+                                            <div class="w-32 h-32 rounded-2xl flex items-center justify-center relative overflow-hidden -mr-1">
+                                                @if($p->foto_url)
+                                                    <img src="{{ $p->foto_url }}" alt="{{ $p->nama }}" class="w-28 h-32 object-cover object-top rounded-2xl shadow-md border-2 border-white/40" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="w-28 h-32 rounded-2xl bg-gradient-to-tr {{ $avatarGrad }} hidden items-center justify-center font-black text-2xl text-white shadow-md border-2 border-white/30">
+                                                        <span class="drop-shadow">{{ strtoupper(substr($p->nama, 0, 2)) }}</span>
+                                                    </div>
+                                                @else
+                                                    <div class="w-28 h-32 rounded-2xl bg-gradient-to-tr {{ $avatarGrad }} flex items-center justify-center font-black text-2xl text-white shadow-md border-2 border-white/30">
+                                                        <span class="drop-shadow">{{ strtoupper(substr($p->nama, 0, 2)) }}</span>
+                                                    </div>
+                                                @endif
                                             </div>
-                                            <!-- Region VIII Badge -->
-                                            <div class="w-5 h-5 rounded-full bg-blue-900 flex items-center justify-center border border-amber-400/60 shadow-xs">
-                                                <span class="text-[6px] font-black text-amber-300 leading-none">VIII</span>
+                                        </div>
+
+                                        <!-- Mid Section -->
+                                        <div class="text-center px-2">
+                                            <div class="w-full border-t {{ $lineCol }} mb-1.5"></div>
+                                            <h4 class="font-black text-xs uppercase tracking-wide truncate {{ $nameCol }}" title="{{ $p->nama }}">{{ $p->nama }}</h4>
+                                            <p class="text-[8px] font-bold uppercase tracking-wider {{ $roleCol }} line-clamp-1 mt-0.5">{{ $p->jabatan ?? 'OPERATOR LAYANAN OPERASIONAL' }}</p>
+                                            <div class="inline-block mt-1">
+                                                <span class="{{ $badgeStyle }} text-[8px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">{{ $p->status_kepegawaian }}</span>
+                                            </div>
+                                            <div class="w-full border-t {{ $lineCol }} mt-1.5"></div>
+                                        </div>
+
+                                        <!-- Bottom: 6 Metrik -->
+                                        <div class="grid grid-cols-2 gap-x-6 gap-y-0.5 px-5 pb-5 text-center font-bold">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-xs font-black {{ $numCol }}">{{ $disVal }}</span>
+                                                <span class="text-[9px] uppercase font-bold {{ $lblCol }}">DIS</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-xs font-black {{ $numCol }}">{{ $kepVal }}</span>
+                                                <span class="text-[9px] uppercase font-bold {{ $lblCol }}">KEP</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-xs font-black {{ $numCol }}">{{ $kinVal }}</span>
+                                                <span class="text-[9px] uppercase font-bold {{ $lblCol }}">KIN</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-xs font-black {{ $numCol }}">{{ $loyVal }}</span>
+                                                <span class="text-[9px] uppercase font-bold {{ $lblCol }}">LOY</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-xs font-black {{ $numCol }}">{{ $sikVal }}</span>
+                                                <span class="text-[9px] uppercase font-bold {{ $lblCol }}">SIK</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-xs font-black {{ $numCol }}">{{ $itVal }}</span>
+                                                <span class="text-[9px] uppercase font-bold {{ $lblCol }}">IT</span>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <!-- Employee Avatar Portrait -->
-                                    <div class="w-32 h-32 rounded-2xl flex items-center justify-center relative overflow-hidden -mr-1">
-                                        @if($p->foto_url)
-                                            <img src="{{ $p->foto_url }}" 
-                                                 alt="{{ $p->nama }}" 
-                                                 class="w-28 h-32 object-cover object-top rounded-2xl shadow-md border-2 border-white/40"
-                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                            <div class="w-28 h-32 rounded-2xl bg-gradient-to-tr {{ $avatarGrad }} hidden items-center justify-center font-black text-2xl text-white shadow-md border-2 border-white/30">
-                                                <span class="drop-shadow">{{ strtoupper(substr($p->nama, 0, 2)) }}</span>
+                                <!-- ===== BACK FACE ===== -->
+                                <div class="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                                    <div class="{{ $cardWrap }} w-full h-full p-5 rounded-[2.5rem] relative overflow-hidden flex flex-col justify-between"
+                                         style="clip-path: polygon(0% 0%, 100% 0%, 100% 92%, 50% 100%, 0% 92%);">
+
+                                        <!-- Back Header -->
+                                        <div class="text-center pt-1">
+                                            <div class="w-16 h-16 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white/40 shadow-md">
+                                                @if($p->foto_url)
+                                                    <img src="{{ $p->foto_url }}" alt="{{ $p->nama }}" class="w-full h-full object-cover object-top" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="w-full h-full bg-gradient-to-tr {{ $avatarGrad }} hidden items-center justify-center font-black text-sm text-white">{{ strtoupper(substr($p->nama, 0, 2)) }}</div>
+                                                @else
+                                                    <div class="w-full h-full bg-gradient-to-tr {{ $avatarGrad }} flex items-center justify-center font-black text-sm text-white">{{ strtoupper(substr($p->nama, 0, 2)) }}</div>
+                                                @endif
                                             </div>
-                                        @else
-                                            <div class="w-28 h-32 rounded-2xl bg-gradient-to-tr {{ $avatarGrad }} flex items-center justify-center font-black text-2xl text-white shadow-md border-2 border-white/30">
-                                                <span class="drop-shadow">{{ strtoupper(substr($p->nama, 0, 2)) }}</span>
+                                            <h4 class="font-black text-xs uppercase tracking-wide truncate {{ $nameCol }}">{{ $p->nama }}</h4>
+                                            <div class="w-full border-t {{ $lineCol }} mt-2"></div>
+                                        </div>
+
+                                        <!-- Detail Info -->
+                                        <div class="space-y-2.5 px-2 flex-1 flex flex-col justify-center">
+                                            <div class="flex items-start space-x-2.5">
+                                                <span class="material-symbols-outlined text-[16px] {{ $subCol }} mt-px">badge</span>
+                                                <div>
+                                                    <p class="text-[8px] font-bold uppercase tracking-wider {{ $lblCol }}">NIP</p>
+                                                    <p class="text-[11px] font-bold {{ $nameCol }} font-mono">{{ $p->nip ?? '-' }}</p>
+                                                </div>
                                             </div>
-                                        @endif
+                                            <div class="flex items-start space-x-2.5">
+                                                <span class="material-symbols-outlined text-[16px] {{ $subCol }} mt-px">mail</span>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-[8px] font-bold uppercase tracking-wider {{ $lblCol }}">Email</p>
+                                                    <p class="text-[11px] font-bold {{ $nameCol }} truncate">{{ $p->user?->email ?? '-' }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start space-x-2.5">
+                                                <span class="material-symbols-outlined text-[16px] {{ $subCol }} mt-px">call</span>
+                                                <div>
+                                                    <p class="text-[8px] font-bold uppercase tracking-wider {{ $lblCol }}">No. HP</p>
+                                                    <p class="text-[11px] font-bold {{ $nameCol }}">{{ $p->no_hp ?? '-' }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start space-x-2.5">
+                                                <span class="material-symbols-outlined text-[16px] {{ $subCol }} mt-px">apartment</span>
+                                                <div>
+                                                    <p class="text-[8px] font-bold uppercase tracking-wider {{ $lblCol }}">Unit Kerja</p>
+                                                    <p class="text-[11px] font-bold {{ $nameCol }}">{{ $p->unitKerja?->nama ?? 'Bapekom Wil. VIII' }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start space-x-2.5">
+                                                <span class="material-symbols-outlined text-[16px] {{ $subCol }} mt-px">military_tech</span>
+                                                <div>
+                                                    <p class="text-[8px] font-bold uppercase tracking-wider {{ $lblCol }}">Pangkat / Gol</p>
+                                                    <p class="text-[11px] font-bold {{ $nameCol }}">{{ $p->pangkat_gol ?? '-' }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Back Action Buttons -->
+                                        <div class="flex items-center justify-center space-x-2 pb-5 pt-1">
+                                            <a href="{{ route('admin.pegawai.edit', $p) }}" class="px-4 py-1.5 bg-white/90 hover:bg-white text-slate-700 text-xs font-bold rounded-lg border border-white/40 shadow-xs transition">Edit</a>
+                                            <form action="{{ route('admin.pegawai.destroy', $p) }}" method="POST" class="inline" onsubmit="return confirm('Hapus pegawai ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="px-4 py-1.5 bg-rose-500/90 hover:bg-rose-600 text-white text-xs font-bold rounded-lg border border-rose-400/40 shadow-xs transition cursor-pointer">Hapus</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <!-- Mid Section: Name, Role, Pill Badge -->
-                                <div class="text-center px-2">
-                                    <div class="w-full border-t {{ $lineCol }} mb-1.5"></div>
-                                    <h4 class="font-black text-xs uppercase tracking-wide truncate {{ $nameCol }}" title="{{ $p->nama }}">
-                                        {{ $p->nama }}
-                                    </h4>
-                                    <p class="text-[8px] font-bold uppercase tracking-wider {{ $roleCol }} line-clamp-1 mt-0.5">
-                                        {{ $p->jabatan ?? 'OPERATOR LAYANAN OPERASIONAL' }}
-                                    </p>
-                                    
-                                    <div class="inline-block mt-1">
-                                        <span class="{{ $badgeStyle }} text-[8px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                                            {{ $p->status_kepegawaian }}
-                                        </span>
-                                    </div>
-                                    <div class="w-full border-t {{ $lineCol }} mt-1.5"></div>
-                                </div>
-
-                                <!-- Bottom Section: 6 Metrik FIFA -->
-                                <div class="grid grid-cols-2 gap-x-6 gap-y-0.5 px-5 pb-5 text-center font-bold">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-xs font-black {{ $numCol }}">{{ $disVal }}</span>
-                                        <span class="text-[9px] uppercase font-bold {{ $lblCol }}">DIS</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-xs font-black {{ $numCol }}">{{ $kepVal }}</span>
-                                        <span class="text-[9px] uppercase font-bold {{ $lblCol }}">KEP</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-xs font-black {{ $numCol }}">{{ $kinVal }}</span>
-                                        <span class="text-[9px] uppercase font-bold {{ $lblCol }}">KIN</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-xs font-black {{ $numCol }}">{{ $loyVal }}</span>
-                                        <span class="text-[9px] uppercase font-bold {{ $lblCol }}">LOY</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-xs font-black {{ $numCol }}">{{ $sikVal }}</span>
-                                        <span class="text-[9px] uppercase font-bold {{ $lblCol }}">SIK</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-xs font-black {{ $numCol }}">{{ $itVal }}</span>
-                                        <span class="text-[9px] uppercase font-bold {{ $lblCol }}">IT</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Card Action Buttons -->
-                            <div class="mt-3 flex items-center space-x-2.5">
-                                <a href="{{ route('admin.pegawai.edit', $p) }}" class="px-4 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-lg border border-slate-200 shadow-xs transition">Edit</a>
-                                <form action="{{ route('admin.pegawai.destroy', $p) }}" method="POST" class="inline" onsubmit="return confirm('Hapus pegawai ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-4 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-lg border border-rose-200 shadow-xs transition cursor-pointer">Hapus</button>
-                                </form>
                             </div>
                         </div>
                     @empty

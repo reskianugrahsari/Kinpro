@@ -97,6 +97,7 @@ class PengaduanController extends Controller
 
         Pengaduan::create([
             'pegawai_id' => $pegawaiId,
+            'nip' => $pegawai->nip,
             'jenis_laporan' => $validated['jenis_laporan'],
             'tanggal_kejadian' => $validated['tanggal_kejadian'],
             'keterangan' => $validated['keterangan'],
