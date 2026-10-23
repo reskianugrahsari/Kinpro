@@ -19,26 +19,49 @@
     <!-- Style for Print -->
     <style>
         @media print {
-            body {
+            @page {
+                size: A4 portrait;
+                margin: 2cm 2.5cm 2cm 2.5cm; /* Margin surat standar: Atas 2cm, Kanan 2.5cm, Bawah 2cm, Kiri 2.5cm */
+            }
+            html, body {
                 background: white !important;
                 color: black !important;
                 font-family: Arial, Tahoma, sans-serif !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
-            aside, header, footer, .no-print {
+            aside, header, nav, footer, .no-print, [role="navigation"] {
                 display: none !important;
             }
             main {
                 padding: 0 !important;
+                margin: 0 !important;
                 background: white !important;
             }
             .print-area {
                 display: block !important;
-                width: 210mm;
-                min-height: 297mm;
-                padding: 10mm 15mm 15mm 15mm;
-                margin: 0 auto;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
                 border: none !important;
                 box-shadow: none !important;
+            }
+            .print-header {
+                display: block !important;
+                width: 100% !important;
+                margin-bottom: 20px !important;
+                border-bottom: none !important; /* Dihapus karena sudah ada garis di kop */
+                padding-bottom: 0 !important;
+            }
+            .print-header-img {
+                width: 100% !important;
+                height: auto !important;
+                display: block !important;
+                max-height: 120px !important;
+                object-fit: contain !important;
             }
         }
     </style>
@@ -221,8 +244,9 @@
 
         <!-- Print-Only Page (Muncul Otomatis saat Cetak Browser A4) -->
         <div class="hidden print:block print-area mx-auto bg-white text-black text-sm">
-            <div class="mb-4 -mt-2">
-                <img src="{{ asset('images/kop_surat.jpg') }}" alt="Kop Surat" class="w-full h-auto">
+            <!-- Header Kop Surat Resmi Cetak -->
+            <div class="print-header">
+                <img src="{{ asset('images/kop_surat.jpg') }}" alt="Kop Surat Resmi Kementerian PU - BPSDM Balai Wilayah VIII" class="print-header-img">
             </div>
 
             <div class="text-center font-bold text-lg mb-8 uppercase underline decoration-2">
