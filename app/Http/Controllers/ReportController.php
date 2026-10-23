@@ -43,6 +43,23 @@ class ReportController extends Controller
             });
         }
 
+        // Summary counts for KPI Bento Cards
+        $countsQuery = clone $query;
+        $totalCount = (clone $countsQuery)->count();
+        $pendingCount = (clone $countsQuery)->whereIn('status', ['submitted', 'pending'])->count();
+        $approvedCount = (clone $countsQuery)->where('status', 'approved')->count();
+        $revisionCount = (clone $countsQuery)->whereIn('status', ['revision', 'revision_required', 'rejected'])->count();
+
+        // Distinct Kota Tujuan list
+        $tujuanList = Report::query()
+            ->selectRaw('COALESCE(NULLIF(kota_tujuan, ""), tujuan) as tujuan_nama')
+            ->whereNotNull('tujuan')
+            ->orWhereNotNull('kota_tujuan')
+            ->distinct()
+            ->pluck('tujuan_nama')
+            ->filter()
+            ->values();
+
         if ($request->filled('search')) {
             $term = $request->search;
             $query->where(function ($q) use ($term) {
@@ -53,17 +70,42 @@ class ReportController extends Controller
                   ->orWhere('maksud_perjalanan', 'like', "%{$term}%")
                   ->orWhereHas('user', function ($uq) use ($term) {
                       $uq->where('name', 'like', "%{$term}%");
+                  })
+                  ->orWhereHas('pegawai', function ($pq) use ($term) {
+                      $pq->where('nama', 'like', "%{$term}%")
+                        ->orWhere('nip', 'like', "%{$term}%");
                   });
             });
         }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        if ($request->filled('status') && $request->status !== 'all') {
+            if ($request->status === 'pending') {
+                $query->whereIn('status', ['submitted', 'pending']);
+            } elseif ($request->status === 'revision') {
+                $query->whereIn('status', ['revision', 'revision_required', 'rejected']);
+            } else {
+                $query->where('status', $request->status);
+            }
+        }
+
+        if ($request->filled('tujuan') && $request->tujuan !== '') {
+            $tujuan = $request->tujuan;
+            $query->where(function($q) use ($tujuan) {
+                $q->where('kota_tujuan', 'like', "%{$tujuan}%")
+                  ->orWhere('tujuan', 'like', "%{$tujuan}%");
+            });
         }
 
         $reports = $query->latest()->paginate(10)->withQueryString();
 
-        return view('pajokka.index', compact('reports'));
+        return view('pajokka.index', compact(
+            'reports',
+            'totalCount',
+            'pendingCount',
+            'approvedCount',
+            'revisionCount',
+            'tujuanList'
+        ));
     }
 
     public function create()
@@ -109,9 +151,7 @@ class ReportController extends Controller
                 'user_id' => auth()->id(),
                 'pegawai_id' => $pegawaiId,
                 'ppk_id' => $request->ppk_id ?? $request->master_ppk_id,
-                'master_ppk_id' => $request->master_ppk_id ?? $request->ppk_id,
                 'nomor_surat_tugas' => $nomorSurat,
-                'nomor_surat' => $nomorSurat,
                 'tanggal_surat_tugas' => $request->tanggal_surat_tugas,
                 'tgl_mulai_dinas' => $tglMulai,
                 'tgl_selesai_dinas' => $tglSelesai,
@@ -148,17 +188,23 @@ class ReportController extends Controller
             $totalCost = 0;
             if ($request->has('expenses')) {
                 foreach ($request->expenses as $exp) {
-                    $amount = (float) ($exp['amount'] ?? ($exp['nominal'] ?? 0));
+                    $amount = (float) ($exp['amount'] ?? ($exp['nominal'] ?? ($exp['jumlah'] ?? 0)));
                     $totalCost += $amount;
+                    $expenseType = $exp['expense_type'] ?? ($exp['kategori'] ?? ($exp['uraian'] ?? 'Biaya'));
+                    $desc = $exp['description'] ?? ($exp['keterangan'] ?? $expenseType);
+                    $method = strtolower($exp['payment_method'] ?? ($exp['metode_pembayaran'] ?? 'kkp'));
+
                     ReportExpense::create([
                         'report_id' => $report->id,
-                        'expense_type' => $exp['expense_type'] ?? ($exp['uraian'] ?? 'Biaya'),
-                        'uraian' => $exp['uraian'] ?? ($exp['expense_type'] ?? 'Biaya'),
+                        'kategori' => $expenseType,
+                        'keterangan' => $desc,
+                        'jumlah' => $amount,
+                        'metode_pembayaran' => $method,
+                        'expense_type' => $expenseType,
                         'amount' => $amount,
-                        'nominal' => $amount,
-                        'payment_method' => strtolower($exp['payment_method'] ?? 'kkp'),
-                        'metode_pembayaran' => $exp['metode_pembayaran'] ?? (strtoupper($exp['payment_method'] ?? 'kkp')),
-                        'description' => $exp['description'] ?? null,
+                        'payment_method' => $method,
+                        'description' => $desc,
+                        'transaction_date' => $exp['transaction_date'] ?? ($exp['tanggal'] ?? null),
                     ]);
                 }
             }

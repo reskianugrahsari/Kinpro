@@ -59,7 +59,9 @@ class RatingController extends Controller
             ->orderByDesc('ratings_count')
             ->first();
 
-        $unitKerjas = \App\Models\UnitKerja::all();
+        $unitKerjas = \App\Models\UnitKerja::where('id', '!=', 1)
+            ->where('nama_unit', 'not like', '%Balai%')
+            ->get();
 
         return view('rating.index', compact(
             'pegawais',

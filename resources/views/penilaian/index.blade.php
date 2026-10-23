@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="space-y-5">
+    <div class="space-y-5 pb-48">
         @if(session('success'))
             <div class="p-3.5 bg-emerald-50 dark:bg-emerald-950/60 border-l-4 border-emerald-500 rounded-lg text-emerald-800 dark:text-emerald-300 text-xs font-semibold shadow-xs flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -41,8 +41,8 @@
                 </a>
                 @if(auth()->user()->role === 'admin')
                     <a href="{{ route('penilaian.create') }}" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-primary-container text-on-primary hover:bg-primary text-xs font-semibold transition-colors shadow-xs cursor-pointer">
-                        <span class="material-symbols-outlined text-sm">add_circle</span>
-                        <span>+ Tambah Penilaian</span>
+                        <span class="material-symbols-outlined text-sm">add</span>
+                        <span>Tambah Penilaian</span>
                     </a>
                 @endif
             </div>
@@ -147,7 +147,7 @@
                 <!-- Filter Tahun -->
                 <div class="flex items-center gap-1.5">
                     <span class="text-[10px] text-secondary dark:text-slate-400 uppercase font-bold">Tahun:</span>
-                    <select name="tahun" onchange="this.form.submit()" class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 text-xs rounded px-2.5 py-1.5 focus:border-primary focus:outline-none font-mono cursor-pointer">
+                    <select name="tahun" onchange="this.form.submit()" class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 text-xs rounded pl-2.5 pr-6 py-1.5 focus:border-primary focus:outline-none font-mono cursor-pointer shadow-2xs">
                         <option value="Semua" {{ request('tahun') === 'Semua' ? 'selected' : '' }}>Semua</option>
                         @foreach($years as $yr)
                             <option value="{{ $yr }}" {{ request('tahun', 2026) == $yr ? 'selected' : '' }}>{{ $yr }}</option>
@@ -155,21 +155,40 @@
                     </select>
                 </div>
 
-                <!-- Filter Bulan (Dropdown) -->
-                <div class="flex items-center gap-1.5">
+                <!-- Filter Bulan (Custom Dropdown Mengarah ke Bawah) -->
+                <div class="flex items-center gap-1.5" x-data="{ openBulan: false }" @click.outside="openBulan = false">
                     <span class="text-[10px] text-secondary dark:text-slate-400 uppercase font-bold">Bulan:</span>
-                    <select name="bulan" onchange="this.form.submit()" class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 text-xs rounded px-2.5 py-1.5 focus:border-primary focus:outline-none cursor-pointer">
-                        <option value="Semua" {{ request('bulan') === 'Semua' ? 'selected' : '' }}>Semua Bulan</option>
-                        @foreach(['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] as $m)
-                            <option value="{{ $m }}" {{ request('bulan', 'Januari') === $m ? 'selected' : '' }}>{{ $m }}</option>
-                        @endforeach
-                    </select>
+                    <input type="hidden" name="bulan" id="filterBulanInput" value="{{ request('bulan', 'Januari') }}">
+                    <div class="relative">
+                        <button type="button" @click="openBulan = !openBulan" class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 text-xs rounded pl-2.5 pr-7 py-1.5 focus:border-primary focus:outline-none cursor-pointer flex items-center justify-between gap-2 shadow-2xs">
+                            <span>{{ request('bulan') === 'Semua' ? 'Semua Bulan' : request('bulan', 'Januari') }}</span>
+                            <span class="material-symbols-outlined text-[14px] text-secondary dark:text-slate-400">expand_more</span>
+                        </button>
+                        <div x-show="openBulan"
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="opacity-100 scale-100"
+                             x-transition:leave-end="opacity-0 scale-95"
+                             class="absolute left-0 top-full mt-1 w-40 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-700 rounded-lg shadow-xl z-50 py-1 max-h-60 overflow-y-auto text-xs"
+                             style="display: none;">
+                            <button type="button" @click="document.getElementById('filterBulanInput').value = 'Semua'; document.getElementById('filterForm').submit();" class="w-full text-left px-3 py-1.5 hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface dark:text-slate-200 {{ request('bulan') === 'Semua' ? 'font-bold bg-primary/10 text-primary dark:text-blue-400' : '' }}">
+                                Semua Bulan
+                            </button>
+                            @foreach(['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] as $m)
+                                <button type="button" @click="document.getElementById('filterBulanInput').value = '{{ $m }}'; document.getElementById('filterForm').submit();" class="w-full text-left px-3 py-1.5 hover:bg-surface-container-low dark:hover:bg-slate-800 text-on-surface dark:text-slate-200 {{ request('bulan', 'Januari') === $m ? 'font-bold bg-primary/10 text-primary dark:text-blue-400' : '' }}">
+                                    {{ $m }}
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Filter Predikat -->
                 <div class="flex items-center gap-1.5">
                     <span class="text-[10px] text-secondary dark:text-slate-400 uppercase font-bold">Predikat:</span>
-                    <select name="predikat" onchange="this.form.submit()" class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 text-xs rounded px-2.5 py-1.5 focus:border-primary focus:outline-none cursor-pointer">
+                    <select name="predikat" onchange="this.form.submit()" class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 text-xs rounded pl-2.5 pr-6 py-1.5 focus:border-primary focus:outline-none cursor-pointer shadow-2xs">
                         <option value="Semua" {{ request('predikat') === 'Semua' || !request('predikat') ? 'selected' : '' }}>Semua Predikat</option>
                         <option value="Sangat Baik" {{ request('predikat') === 'Sangat Baik' ? 'selected' : '' }}>Sangat Baik</option>
                         <option value="Baik" {{ request('predikat') === 'Baik' ? 'selected' : '' }}>Baik</option>
@@ -181,7 +200,7 @@
                 <!-- Filter Unit Kerja (Tepat di samping Predikat) -->
                 <div class="flex items-center gap-1.5">
                     <span class="text-[10px] text-secondary dark:text-slate-400 uppercase font-bold">Unit:</span>
-                    <select name="unit_kerja_id" onchange="this.form.submit()" class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 text-xs rounded px-2.5 py-1.5 focus:border-primary focus:outline-none max-w-[200px] cursor-pointer">
+                    <select name="unit_kerja_id" onchange="this.form.submit()" class="bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 text-xs rounded pl-2.5 pr-6 py-1.5 focus:border-primary focus:outline-none max-w-[200px] cursor-pointer shadow-2xs">
                         <option value="Semua" {{ request('unit_kerja_id') === 'Semua' || !request('unit_kerja_id') ? 'selected' : '' }}>Semua Unit</option>
                         @foreach($unitKerjas as $uk)
                             <option value="{{ $uk->id }}" {{ request('unit_kerja_id') == $uk->id ? 'selected' : '' }}>{{ $uk->nama_unit }}</option>
@@ -320,7 +339,7 @@
                                 <td colspan="{{ auth()->user()->role === 'admin' ? 7 : 6 }}" class="py-10 px-4 text-center text-secondary dark:text-slate-400">
                                     <span class="material-symbols-outlined text-3xl text-outline-variant mb-1">assignment_late</span>
                                     <p class="text-xs font-semibold text-on-surface dark:text-slate-200">Belum ada data penilaian kinerja.</p>
-                                    <p class="text-[11px] text-secondary dark:text-slate-400 mt-0.5">Gunakan tombol "+ Tambah Penilaian" untuk menginput evaluasi pegawai.</p>
+                                    <p class="text-[11px] text-secondary dark:text-slate-400 mt-0.5">Gunakan tombol "Tambah Penilaian" untuk menginput evaluasi pegawai.</p>
                                 </td>
                             </tr>
                         @endforelse

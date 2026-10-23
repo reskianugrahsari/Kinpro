@@ -1,23 +1,23 @@
 <x-app-layout>
     <div class="space-y-6">
-        <!-- 1. HERO WELCOME BANNER (Dark Blue-Gray) -->
-        <div class="bg-[#1e293b] rounded-2xl p-6 lg:p-7 text-white shadow-md relative overflow-hidden flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border border-slate-700/60">
+        <!-- 1. HERO WELCOME BANNER (Primary Navy #2F4156) -->
+        <div class="bg-brand-navy rounded-2xl p-6 lg:p-7 text-white shadow-md relative overflow-hidden flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border border-[#202C3B]">
             <!-- Left Info -->
             <div class="max-w-3xl">
-                <div class="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-semibold mb-3">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <div class="inline-flex items-center gap-1.5 bg-brand-teal/40 text-brand-sky border border-brand-teal/60 px-2.5 py-0.5 rounded-full text-[11px] font-semibold mb-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand-sky"></span>
                     <span>Selamat Datang!</span>
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mb-2">
+                <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white mb-1.5">
                     Halo Administrator KinPro, berikut ringkasan aktivitas Anda
                 </h1>
-                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                    Platform monitoring & penilaian kinerja pegawai terintegrasi Balai Pengembangan Kompetensi PUPR Wilayah VIII Makassar. Status operasional sinkronisasi SIASN: <span class="text-emerald-400 font-semibold">Aktif</span>.
+                <p class="text-slate-200 text-xs leading-relaxed">
+                    Platform monitoring & penilaian kinerja pegawai terintegrasi Balai Pengembangan Kompetensi PUPR Wilayah VIII Makassar. Status operasional sinkronisasi SIASN: <span class="text-brand-sky font-semibold">Aktif</span>.
                 </p>
             </div>
 
             <!-- Right Date & Digital Clock Card -->
-            <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-4 min-w-[240px] text-center shrink-0 shadow-inner"
+            <div class="bg-[#202C3B] border border-brand-teal/40 rounded-xl p-3.5 min-w-[220px] text-center shrink-0 shadow-inner"
                  x-data="{
                      timeStr: '',
                      dateStr: '',
@@ -31,176 +31,176 @@
                      }
                  }"
                  x-init="update(); setInterval(() => update(), 1000);">
-                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" x-text="dateStr">
+                <div class="text-[9px] font-bold text-brand-sky uppercase tracking-widest" x-text="dateStr">
                     {{ strtoupper(now()->timezone('Asia/Makassar')->translatedFormat('l, d F Y')) }}
                 </div>
-                <div class="text-3xl font-black font-mono tracking-wider text-white my-1" x-text="timeStr">
+                <div class="text-2xl font-bold font-mono tracking-wider text-white my-0.5" x-text="timeStr">
                     {{ now()->timezone('Asia/Makassar')->format('H:i:s') }}
                 </div>
-                <div class="inline-block bg-slate-800 text-slate-300 border border-slate-700 text-[10px] font-bold px-2.5 py-0.5 rounded-md">
+                <div class="inline-block bg-[#19222E] text-brand-sky border border-brand-teal/40 text-[9px] font-bold px-2 py-0.5 rounded-md">
                     WITA (UTC+8)
                 </div>
             </div>
         </div>
 
         <!-- 2. FILTER & PERIOD TOOLBAR (Exact 2-Row Match to Code.html / Attached Image) -->
-        <div class="bg-white dark:bg-slate-800/90 p-4 rounded-xl border border-slate-200/90 dark:border-slate-700 shadow-xs space-y-3.5">
+        <div class="bg-brand-white dark:bg-slate-800/90 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs space-y-3.5">
             <!-- Row 1: Periode & Segmented Buttons -->
             <div class="flex flex-wrap items-center gap-3">
-                <div class="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider shrink-0">
-                    <span class="material-symbols-outlined text-[18px] text-slate-500 dark:text-slate-400">tune</span>
+                <div class="flex items-center gap-1.5 text-xs font-bold text-brand-navy dark:text-slate-200 uppercase tracking-wider shrink-0">
+                    <span class="material-symbols-outlined text-[18px] text-brand-teal dark:text-slate-400">tune</span>
                     <span>PERIODE:</span>
                 </div>
-                <!-- Segmented Control Bar (Lavender-blue container #EEF2FF) -->
-                <div class="inline-flex rounded-lg border border-indigo-100 dark:border-slate-700 p-1 bg-[#EEF2FF] dark:bg-slate-900 overflow-x-auto max-w-full">
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-bold bg-blue-600 text-white shadow-xs shrink-0">Semua</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition shrink-0">TW I</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition shrink-0">TW II</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition shrink-0">TW III</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition shrink-0">TW IV</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition shrink-0">Smt I</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition shrink-0">Smt II</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition shrink-0">Tahunan 2026</button>
+                <!-- Segmented Control Bar (Neutral Light Beige container #F5EFEB) -->
+                <div class="inline-flex rounded-lg border border-brand-sky dark:border-slate-700 p-1 bg-brand-beige dark:bg-slate-900 overflow-x-auto max-w-full">
+                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-bold bg-brand-navy text-white shadow-xs shrink-0">Semua</button>
+                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">TW I</button>
+                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">TW II</button>
+                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">TW III</button>
+                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">TW IV</button>
+                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">Smt I</button>
+                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">Smt II</button>
+                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">Tahunan 2026</button>
                 </div>
             </div>
 
             <!-- Row 2: Dropdowns & Action Button -->
-            <div class="flex flex-wrap items-center gap-3 pt-1 border-t border-slate-100 dark:border-slate-700/60">
+            <div class="flex flex-wrap items-center gap-3 pt-1 border-t border-brand-sky/60 dark:border-slate-700/60">
                 <!-- Dropdown 1: Tahun: 2026 -->
                 <div class="relative inline-flex items-center">
-                    <span class="material-symbols-outlined text-[16px] text-slate-400 dark:text-slate-400 absolute left-3 pointer-events-none">calendar_today</span>
-                    <select class="pl-8 pr-8 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs appearance-none cursor-pointer">
+                    <span class="material-symbols-outlined text-[16px] text-brand-teal dark:text-slate-400 absolute left-3 pointer-events-none">calendar_today</span>
+                    <select class="pl-8 pr-9 py-1.5 bg-brand-white dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-lg text-xs font-semibold text-brand-navy dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-teal shadow-2xs appearance-none cursor-pointer">
                         <option>Tahun: 2026</option>
                         <option>Tahun: 2025</option>
                     </select>
-                    <span class="material-symbols-outlined text-[16px] text-slate-400 dark:text-slate-400 absolute right-2.5 pointer-events-none">arrow_drop_down</span>
+                    <span class="material-symbols-outlined text-[16px] text-slate-400 dark:text-slate-400 absolute right-2 pointer-events-none">expand_more</span>
                 </div>
 
                 <!-- Dropdown 2: Semua Bulan -->
                 <div class="relative inline-flex items-center">
-                    <select class="pl-3.5 pr-8 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs appearance-none cursor-pointer">
+                    <select class="pl-3.5 pr-9 py-1.5 bg-brand-white dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-lg text-xs font-semibold text-brand-navy dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-teal shadow-2xs appearance-none cursor-pointer">
                         <option>Semua Bulan</option>
                         <option>Januari</option>
                         <option>Februari</option>
                         <option>Oktober</option>
                     </select>
-                    <span class="material-symbols-outlined text-[16px] text-slate-400 dark:text-slate-400 absolute right-2.5 pointer-events-none">arrow_drop_down</span>
+                    <span class="material-symbols-outlined text-[16px] text-slate-400 dark:text-slate-400 absolute right-2 pointer-events-none">expand_more</span>
                 </div>
 
                 <!-- Button: Ekspor Laporan -->
-                <a href="{{ route('rekap.export', 'excel') }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition shadow-2xs">
-                    <span class="material-symbols-outlined text-[16px] text-slate-500 dark:text-slate-400">file_download</span>
+                <a href="{{ route('rekap.export', 'excel') }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-white dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-lg text-xs font-semibold text-brand-navy dark:text-slate-200 hover:bg-brand-beige dark:hover:bg-slate-800 transition shadow-2xs">
+                    <span class="material-symbols-outlined text-[16px] text-brand-teal dark:text-slate-400">file_download</span>
                     <span>Ekspor Laporan</span>
                 </a>
             </div>
         </div>
 
         <!-- 3. METRIC CARDS (4 Columns) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- 1. Total Pegawai -->
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-xs border-l-4 border-l-emerald-500 flex flex-col justify-between">
+            <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs border-l-4 border-l-emerald-500 flex flex-col justify-between">
                 <div>
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">TOTAL PEGAWAI</span>
-                        <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">TOTAL PEGAWAI</span>
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                             <!-- Badge ID Icon -->
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2H9.17A3.001 3.001 0 0112 14z"/></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2H9.17A3.001 3.001 0 0112 14z"/></svg>
                         </div>
                     </div>
-                    <div class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">
+                    <div class="text-2xl font-bold text-brand-navy dark:text-white tracking-tight">
                         {{ $totalPegawai ?? 33 }}
                     </div>
                 </div>
-                <div class="pt-4 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
-                    <span class="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md text-[10px]">Terdaftar Aktif</span>
-                    <span class="text-slate-400 font-medium">100% Terverifikasi</span>
+                <div class="pt-3 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
+                    <span class="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded text-[10px]">Terdaftar Aktif</span>
+                    <span class="text-slate-400 font-medium text-[11px]">100% Terverifikasi</span>
                 </div>
             </div>
 
             <!-- 2. Penilaian Selesai -->
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-xs border-l-4 border-l-purple-500 flex flex-col justify-between">
+            <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs border-l-4 border-l-purple-500 flex flex-col justify-between">
                 <div>
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">PENILAIAN SELESAI</span>
-                        <div class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">PENILAIAN SELESAI</span>
+                        <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                             <!-- Checklist Icon -->
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                     </div>
-                    <div class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">
+                    <div class="text-2xl font-bold text-brand-navy dark:text-white tracking-tight">
                         {{ $penilaianSelesaiCount ?? 28 }}
                     </div>
                 </div>
-                <div class="pt-4 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
-                    <span class="text-purple-600 dark:text-purple-400 font-bold bg-purple-50 dark:bg-purple-950/60 px-2 py-0.5 rounded-md text-[10px]">84.8% Target SKP</span>
-                    <span class="text-slate-400 font-medium">5 Belum Mengisi</span>
+                <div class="pt-3 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
+                    <span class="text-purple-600 dark:text-purple-400 font-bold bg-purple-50 dark:bg-purple-950/60 px-1.5 py-0.5 rounded text-[10px]">84.8% Target SKP</span>
+                    <span class="text-slate-400 font-medium text-[11px]">5 Belum Mengisi</span>
                 </div>
             </div>
 
             <!-- 3. Izin & Cuti Pending -->
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-xs border-l-4 border-l-amber-500 flex flex-col justify-between">
+            <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs border-l-4 border-l-amber-500 flex flex-col justify-between">
                 <div>
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">IZIN & CUTI PENDING</span>
-                        <div class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">IZIN & CUTI PENDING</span>
+                        <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                             <!-- Calendar Icon -->
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         </div>
                     </div>
-                    <div class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">
+                    <div class="text-2xl font-bold text-brand-navy dark:text-white tracking-tight">
                         {{ $pendingIzinCount ?? 0 }}
                     </div>
                 </div>
-                <div class="pt-4 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
-                    <span class="text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-md text-[10px]">Perlu Diproses</span>
-                    <span class="text-slate-400 font-medium">Izin & Cuti Masuk</span>
+                <div class="pt-3 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
+                    <span class="text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[10px]">Perlu Diproses</span>
+                    <span class="text-slate-400 font-medium text-[11px]">Izin & Cuti Masuk</span>
                 </div>
             </div>
 
             <!-- 4. Pengaduan Terbuka -->
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-xs border-l-4 border-l-rose-500 flex flex-col justify-between">
+            <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs border-l-4 border-l-rose-500 flex flex-col justify-between">
                 <div>
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">PENGADUAN TERBUKA</span>
-                        <div class="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">PENGADUAN TERBUKA</span>
+                        <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
                             <!-- Megaphone Icon -->
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
                         </div>
                     </div>
-                    <div class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">
+                    <div class="text-2xl font-bold text-brand-navy dark:text-white tracking-tight">
                         {{ $pendingPengaduanCount ?? 0 }}
                     </div>
                 </div>
-                <div class="pt-4 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
-                    <span class="text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded-md text-[10px]">Perlu Ditangani</span>
-                    <span class="text-slate-400 font-medium">Aspirasi Belum Selesai</span>
+                <div class="pt-3 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
+                    <span class="text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/60 px-1.5 py-0.5 rounded text-[10px]">Perlu Ditangani</span>
+                    <span class="text-slate-400 font-medium text-[11px]">Aspirasi Belum Selesai</span>
                 </div>
             </div>
         </div>
 
         <!-- 4. MIDDLE SECTION (2 CHARTS / QUICK ACTIONS - EXACT CODE.HTML / ATTACHED IMAGE) -->
-        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-5">
             <!-- Left Card: Distribusi Capaian Kinerja ASN (SKP 2026) (7 cols) -->
-            <div class="lg:col-span-7 bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-6 flex flex-col justify-between shadow-xs">
+            <div class="lg:col-span-7 bg-brand-white dark:bg-slate-800 border border-brand-sky dark:border-slate-700 rounded-xl p-5 flex flex-col justify-between shadow-xs">
                 <div>
                     <!-- Header -->
-                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-700">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
                         <div>
-                            <h2 class="text-base font-extrabold text-slate-800 dark:text-white">
+                            <h2 class="text-sm font-bold text-brand-navy dark:text-white">
                                 Distribusi Capaian Kinerja ASN (SKP 2026)
                             </h2>
-                            <p class="text-xs text-slate-400 mt-0.5">Klasifikasi matriks hasil evaluasi kinerja Triwulan III Balai Wilayah VIII</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Klasifikasi matriks hasil evaluasi kinerja Triwulan III Balai Wilayah VIII</p>
                         </div>
-                        <div class="flex items-center gap-1 bg-slate-50 dark:bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 pl-3 pr-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300">
                             <span>Filter: Semua Unit</span>
-                            <span class="material-symbols-outlined text-[14px]">expand_more</span>
+                            <span class="material-symbols-outlined text-[14px] text-slate-400">expand_more</span>
                         </div>
                     </div>
 
                     <!-- Donut Visual + Detail Breakdown Row -->
-                    <div class="py-6 flex flex-col sm:flex-row items-center justify-around gap-6">
+                    <div class="py-5 flex flex-col sm:flex-row items-center justify-around gap-5">
                         <!-- Modern SVG Donut Chart (Exact Arc Segments) -->
-                        <div class="relative w-52 h-52 shrink-0 flex items-center justify-center">
+                        <div class="relative w-44 h-44 shrink-0 flex items-center justify-center">
                             <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
                                 <!-- Background Ring Track -->
                                 <circle cx="50" cy="50" fill="none" r="38" stroke="#F1F5F9" stroke-width="14" class="dark:stroke-slate-700"></circle>
@@ -215,9 +215,9 @@
                             </svg>
                             <!-- Center Cutout Metric Legend -->
                             <div class="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">TOTAL ASN</span>
-                                <span class="text-3xl font-extrabold text-slate-800 dark:text-white tabular-nums">{{ $totalPegawai ?? 33 }}</span>
-                                <span class="text-[10px] font-semibold text-[#10B981] bg-[#ECFDF5] px-2 py-0.5 rounded-full mt-0.5">Pegawai</span>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">TOTAL ASN</span>
+                                <span class="text-2xl font-bold text-brand-navy dark:text-white tabular-nums">{{ $totalPegawai ?? 33 }}</span>
+                                <span class="text-[9px] font-semibold text-[#10B981] bg-[#ECFDF5] px-1.5 py-0.5 rounded-full mt-0.5">Pegawai</span>
                             </div>
                         </div>
 
@@ -285,23 +285,23 @@
             </div>
 
             <!-- Right Card: Presensi & Disiplin Hari Ini (5 cols) -->
-            <div class="lg:col-span-5 bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-6 flex flex-col justify-between shadow-xs">
+            <div class="lg:col-span-5 bg-brand-white dark:bg-slate-800 border border-brand-sky dark:border-slate-700 rounded-xl p-5 flex flex-col justify-between shadow-xs">
                 <div>
                     <!-- Header -->
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
                         <div>
-                            <h2 class="text-base font-extrabold text-slate-800 dark:text-white">Presensi &amp; Disiplin Hari Ini</h2>
-                            <p class="text-xs text-slate-400 mt-0.5">Status log harian presensi elektronik</p>
+                            <h2 class="text-sm font-bold text-brand-navy dark:text-white">Presensi &amp; Disiplin Hari Ini</h2>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Status log harian presensi elektronik</p>
                         </div>
-                        <span class="px-2.5 py-0.5 bg-[#ECFDF5] dark:bg-emerald-950/60 text-[#065F46] dark:text-emerald-300 font-bold text-[11px] rounded-full border border-[#A7F3D0] dark:border-emerald-800/40">
+                        <span class="px-2 py-0.5 bg-[#ECFDF5] dark:bg-emerald-950/60 text-[#065F46] dark:text-emerald-300 font-bold text-[10px] rounded-full border border-[#A7F3D0] dark:border-emerald-800/40">
                             93.9% Hadir
                         </span>
                     </div>
 
                     <!-- Secondary Donut Chart & Presence Stats -->
-                    <div class="py-5 flex items-center gap-6">
+                    <div class="py-4 flex items-center gap-5">
                         <!-- Compact Solid Donut -->
-                        <div class="relative w-40 h-40 shrink-0 flex items-center justify-center">
+                        <div class="relative w-36 h-36 shrink-0 flex items-center justify-center">
                             <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
                                 <!-- Track -->
                                 <circle cx="50" cy="50" fill="none" r="36" stroke="#F1F5F9" stroke-width="12" class="dark:stroke-slate-700"></circle>
@@ -314,7 +314,7 @@
                                 <circle cx="50" cy="50" fill="none" r="36" stroke="#F59E0B" stroke-dasharray="13.8 226.19" stroke-dashoffset="-212.38" stroke-width="12"></circle>
                             </svg>
                             <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                                <span class="text-2xl font-black text-slate-800 dark:text-white tabular-nums">28</span>
+                                <span class="text-xl font-bold text-brand-navy dark:text-white tabular-nums">28</span>
                                 <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">Di Kantor</span>
                             </div>
                         </div>
@@ -357,11 +357,11 @@
                 <div class="pt-3 border-t border-slate-100 dark:border-slate-700 space-y-2">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Tindakan Cepat Administrator:</span>
                     <div class="grid grid-cols-2 gap-2.5">
-                        <a href="{{ route('izin.index') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-xs">
+                        <a href="{{ route('izin.index') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-brand-navy hover:bg-[#202C3B] text-white rounded-xl text-xs font-bold transition shadow-xs">
                             <span class="material-symbols-outlined text-[16px]">check_circle</span>
                             <span>Validasi Izin ({{ $pendingIzinCount ?? 0 }})</span>
                         </a>
-                        <a href="{{ route('penilaian.create') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-600 transition">
+                        <a href="{{ route('penilaian.create') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-brand-white dark:bg-slate-700 border border-brand-sky dark:border-slate-600 text-brand-navy dark:text-slate-200 rounded-xl text-xs font-bold hover:bg-brand-beige dark:hover:bg-slate-600 transition">
                             <span class="material-symbols-outlined text-[16px]">edit_note</span>
                             <span>Input Nilai SKP</span>
                         </a>
@@ -371,11 +371,11 @@
         </section>
 
         <!-- 5. BOTTOM TABLE (MONITORING AKTIVITAS & PENILAIAN PEGAWAI TERBARU) -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/90 dark:border-slate-700 shadow-xs overflow-hidden">
+        <div class="bg-brand-white dark:bg-slate-800 rounded-2xl border border-brand-sky dark:border-slate-700 shadow-xs overflow-hidden">
             <!-- Table Header Toolbar -->
-            <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="p-6 border-b border-brand-sky/60 dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h2 class="font-extrabold text-base text-slate-800 dark:text-white">
+                    <h2 class="font-extrabold text-base text-brand-navy dark:text-white">
                         Monitoring Aktivitas & Penilaian Pegawai Terbaru
                     </h2>
                     <p class="text-xs text-slate-400 mt-0.5">Status verifikasi dokumen target capaian kinerja Triwulan III Balai Diklat</p>
@@ -386,9 +386,9 @@
                         <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         </span>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama pegawai..." class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama pegawai..." class="w-full pl-9 pr-4 py-2 bg-brand-beige dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-xl text-xs text-brand-navy dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-teal">
                     </form>
-                    <button type="button" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition shrink-0">
+                    <button type="button" class="px-3.5 py-2 bg-brand-beige dark:bg-slate-700 hover:bg-brand-sky/40 text-brand-navy dark:text-slate-200 text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition shrink-0 border border-brand-sky/70 dark:border-transparent">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
                         <span>Filter Unit</span>
                     </button>
@@ -397,8 +397,8 @@
 
             <!-- Table Container -->
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-600 dark:text-slate-300">
-                    <thead class="bg-slate-50/80 dark:bg-slate-900/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200/80 dark:border-slate-700">
+                <table class="w-full text-left text-xs text-brand-navy dark:text-slate-300">
+                    <thead class="bg-brand-beige dark:bg-slate-900/80 text-[11px] font-bold text-brand-navy uppercase tracking-wider border-b border-brand-sky dark:border-slate-700">
                         <tr>
                             <th class="px-6 py-3.5">NAMA PEGAWAI & NIP</th>
                             <th class="px-6 py-3.5">JABATAN / UNIT KERJA</th>

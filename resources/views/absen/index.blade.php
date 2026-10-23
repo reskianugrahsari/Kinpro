@@ -37,8 +37,6 @@
                 <div class="flex items-center gap-2 text-xs font-medium text-slate-400 mb-1">
                     <a class="hover:text-primary dark:hover:text-blue-400 transition-colors" href="{{ route('dashboard') }}">Beranda</a>
                     <span>/</span>
-                    <span>Verifikasi Presensi</span>
-                    <span>/</span>
                     <span class="text-primary dark:text-blue-400 font-semibold">Kelola Lupa Absen</span>
                 </div>
                 <div class="flex items-center gap-3">
@@ -134,7 +132,7 @@
                 <!-- Status Dropdown -->
                 <div class="w-full lg:w-44">
                     <label class="block text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Status Verifikasi</label>
-                    <select name="status" class="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-on-surface dark:text-slate-100 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none cursor-pointer">
+                    <select name="status" class="w-full pl-2.5 pr-8 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-on-surface dark:text-slate-100 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none cursor-pointer">
                         <option value="">Semua Status</option>
                         <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
@@ -145,7 +143,7 @@
                 <!-- Type Dropdown -->
                 <div class="w-full lg:w-48">
                     <label class="block text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Jenis Lupa Absen</label>
-                    <select name="jenis" class="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-on-surface dark:text-slate-100 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none cursor-pointer">
+                    <select name="jenis" class="w-full pl-2.5 pr-8 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-on-surface dark:text-slate-100 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none cursor-pointer">
                         <option value="">Semua Jenis</option>
                         <option value="masuk" {{ request('jenis') === 'masuk' ? 'selected' : '' }}>Lupa Absen Masuk</option>
                         <option value="pulang" {{ request('jenis') === 'pulang' ? 'selected' : '' }}>Lupa Absen Pulang</option>

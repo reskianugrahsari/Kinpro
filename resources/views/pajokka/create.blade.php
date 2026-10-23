@@ -334,10 +334,13 @@
                                 </div>
                                 <div>
                                     <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Metode Pembayaran <span class="text-red-500">*</span></label>
-                                    <select :name="`expenses[${idx}][payment_method]`" x-model="exp.payment_method" required class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs font-bold">
-                                        <option value="kkp">KKP (Kartu Kredit Pemerintah)</option>
-                                        <option value="cash">Cash / Reimburse (Tunai)</option>
+                                <div class="relative">
+                                    <select :name="`expenses[${idx}][payment_method]`" x-model="exp.payment_method" required class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs font-bold pl-3 pr-8 py-2 appearance-none">
+                                        <option value="KKP">Kartu Kredit Pemerintah (KKP)</option>
+                                        <option value="Cash">Uang Tunai / Cash</option>
                                     </select>
+                                    <span class="material-symbols-outlined text-[16px] text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">expand_more</span>
+                                </div>
                                 </div>
                                 <div class="md:col-span-4">
                                     <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Keterangan / Catatan Biaya (Opsional)</label>

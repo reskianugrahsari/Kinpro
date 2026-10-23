@@ -36,13 +36,13 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
-                    <select name="status" class="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl pl-4 pr-10 py-2.5 focus:ring-[#1769AA] focus:border-[#1769AA] cursor-pointer">
+                    <select name="status" class="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl pl-3.5 pr-9 py-2.5 focus:ring-[#1769AA] focus:border-[#1769AA] cursor-pointer">
                         <option value="">Semua Status</option>
                         <option value="PNS" {{ request('status') === 'PNS' ? 'selected' : '' }}>PNS</option>
                         <option value="PPPK" {{ request('status') === 'PPPK' ? 'selected' : '' }}>PPPK</option>
                     </select>
 
-                    <select name="jabatan" class="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl pl-4 pr-10 py-2.5 focus:ring-[#1769AA] focus:border-[#1769AA] max-w-xs cursor-pointer">
+                    <select name="jabatan" class="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl pl-3.5 pr-9 py-2.5 focus:ring-[#1769AA] focus:border-[#1769AA] max-w-xs cursor-pointer">
                         <option value="">Semua Jabatan</option>
                         @foreach($jabatanList as $jbt)
                             <option value="{{ $jbt }}" {{ request('jabatan') === $jbt ? 'selected' : '' }}>{{ $jbt }}</option>

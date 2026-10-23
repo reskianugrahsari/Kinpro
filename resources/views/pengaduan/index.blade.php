@@ -119,7 +119,7 @@
                             <span class="material-symbols-outlined absolute left-2 top-1.5 text-slate-400 text-sm pointer-events-none">search</span>
                             <input name="search" value="{{ request('search') }}" class="w-full pl-7 pr-2 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-xs text-on-surface dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-primary-container focus:bg-white dark:focus:bg-slate-900" placeholder="Filter tiket / nama..." type="text">
                         </div>
-                        <select name="jenis" onchange="this.form.submit()" class="px-2 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-xs text-slate-600 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[130px]">
+                        <select name="jenis" onchange="this.form.submit()" class="pl-2 pr-7 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-xs text-slate-600 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[140px]">
                             <option value="">Semua Kategori</option>
                             @foreach($categories as $cat)
                                 <option value="{{ $cat }}" {{ request('jenis') === $cat ? 'selected' : '' }}>{{ $cat }}</option>

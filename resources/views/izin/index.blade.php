@@ -44,8 +44,6 @@
                 <nav class="flex items-center gap-2 text-body-sm font-body-sm text-on-surface-variant dark:text-slate-400 mb-1">
                     <a class="hover:text-primary dark:hover:text-blue-400 transition-colors" href="{{ route('dashboard') }}">Beranda</a>
                     <span class="text-outline-variant dark:text-slate-600">/</span>
-                    <span class="hover:text-primary dark:hover:text-blue-400 transition-colors">Manajemen &amp; Verifikasi</span>
-                    <span class="text-outline-variant dark:text-slate-600">/</span>
                     <span class="text-on-surface dark:text-slate-200 font-semibold">Kelola Izin &amp; Cuti</span>
                 </nav>
                 <h1 class="text-headline-lg font-headline-lg font-bold text-on-surface dark:text-slate-100 tracking-tight">Kelola Izin &amp; Cuti Pegawai</h1>
@@ -54,20 +52,20 @@
                 </p>
             </div>
 
-            <!-- Quick Action Buttons -->
-            <div class="flex items-center gap-2.5 self-start md:self-center flex-wrap">
-                <button type="button" @click="calendarModalOpen = true" class="inline-flex items-center gap-2 px-3.5 py-2 text-body-sm font-body-sm font-semibold rounded bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container dark:hover:bg-slate-700 hover:border-outline transition-colors cursor-pointer shadow-xs">
-                    <span class="material-symbols-outlined text-[18px] text-secondary dark:text-slate-400">calendar_month</span>
-                    <span>Kalender Cuti Balai</span>
+            <!-- Quick Action Buttons (Sejajar dan Proporsional) -->
+            <div class="flex items-center gap-2 self-start md:self-center shrink-0">
+                <button type="button" @click="calendarModalOpen = true" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container dark:hover:bg-slate-700 hover:border-outline transition-colors cursor-pointer shadow-xs whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[16px] text-secondary dark:text-slate-400">calendar_month</span>
+                    <span>Kalender Cuti</span>
                 </button>
-                <a href="{{ route('rekap.export', 'excel') }}" class="inline-flex items-center gap-2 px-3.5 py-2 text-body-sm font-body-sm font-semibold rounded bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container dark:hover:bg-slate-700 hover:border-outline transition-colors cursor-pointer shadow-xs">
-                    <span class="material-symbols-outlined text-[18px] text-secondary dark:text-slate-400">file_download</span>
+                <a href="{{ route('rekap.export', 'excel') }}" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container dark:hover:bg-slate-700 hover:border-outline transition-colors cursor-pointer shadow-xs whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[16px] text-secondary dark:text-slate-400">file_download</span>
                     <span>Ekspor Rekap</span>
                 </a>
                 @if(auth()->user()->role === 'pegawai')
-                    <a href="{{ route('izin.create') }}" class="inline-flex items-center gap-2 px-4 py-2 text-body-sm font-body-sm font-semibold rounded bg-primary-container text-on-primary hover:bg-primary transition-colors cursor-pointer shadow-xs">
-                        <span class="material-symbols-outlined text-[18px]">add_circle</span>
-                        <span>Ajukan Izin Pegawai</span>
+                    <a href="{{ route('izin.create') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-colors cursor-pointer shadow-xs whitespace-nowrap active:scale-95">
+                        <span class="material-symbols-outlined text-[16px]">add</span>
+                        <span>Ajukan Izin</span>
                     </a>
                 @endif
             </div>
@@ -199,7 +197,7 @@
 
                 <!-- Filter Jenis Izin -->
                 <div class="md:col-span-3">
-                    <select name="jenis_izin" onchange="this.form.submit()" class="w-full py-2 px-3 text-body-sm font-body-sm bg-surface dark:bg-slate-800 rounded border border-outline-variant/60 dark:border-slate-700 focus:outline-none focus:border-primary text-on-surface dark:text-slate-200 cursor-pointer">
+                    <select name="jenis_izin" onchange="this.form.submit()" class="w-full py-2 pl-3 pr-8 text-body-sm font-body-sm bg-surface dark:bg-slate-800 rounded border border-outline-variant/60 dark:border-slate-700 focus:outline-none focus:border-primary text-on-surface dark:text-slate-200 cursor-pointer">
                         <option value="">Semua Jenis Izin / Cuti</option>
                         <option value="cuti_tahunan" {{ request('jenis_izin') === 'cuti_tahunan' ? 'selected' : '' }}>Cuti Tahunan</option>
                         <option value="izin_khusus" {{ request('jenis_izin') === 'izin_khusus' ? 'selected' : '' }}>Izin Khusus</option>
@@ -212,7 +210,7 @@
 
                 <!-- Filter Periode Bulan -->
                 <div class="md:col-span-2">
-                    <select name="bulan" onchange="this.form.submit()" class="w-full py-2 px-3 text-body-sm font-body-sm bg-surface dark:bg-slate-800 rounded border border-outline-variant/60 dark:border-slate-700 focus:outline-none focus:border-primary text-on-surface dark:text-slate-200 cursor-pointer">
+                    <select name="bulan" onchange="this.form.submit()" class="w-full py-2 pl-3 pr-8 text-body-sm font-body-sm bg-surface dark:bg-slate-800 rounded border border-outline-variant/60 dark:border-slate-700 focus:outline-none focus:border-primary text-on-surface dark:text-slate-200 cursor-pointer">
                         <option value="">Semua Bulan</option>
                         @for($m = 1; $m <= 12; $m++)
                             @php

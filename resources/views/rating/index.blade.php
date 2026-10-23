@@ -40,12 +40,12 @@
 
         <!-- Quick Primary Action Area -->
         <div class="flex items-center justify-end gap-2.5 pb-2 flex-wrap">
-            <a href="{{ route('rekap.export', 'excel') }}" class="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-2xs">
-                <span class="material-symbols-outlined text-[18px]">download</span>
+            <a href="{{ route('rekap.export', 'excel') }}" class="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-brand-white dark:bg-slate-800 border border-brand-sky dark:border-slate-700 text-brand-navy dark:text-slate-200 hover:bg-brand-beige dark:hover:bg-slate-700 transition-colors shadow-2xs">
+                <span class="material-symbols-outlined text-[18px] text-brand-teal">download</span>
                 <span>Unduh Rekap (Excel)</span>
             </a>
             @if($pegawais->isNotEmpty())
-                <button type="button" @click="openGiveReview({{ json_encode($pegawais->first()) }})" class="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded bg-primary-container text-white hover:bg-blue-700 transition-colors shadow-2xs cursor-pointer">
+                <button type="button" @click="openGiveReview({{ json_encode($pegawais->first()) }})" class="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-brand-navy text-white hover:bg-[#202C3B] transition-colors shadow-2xs cursor-pointer">
                     <span class="material-symbols-outlined text-[18px]">add_comment</span>
                     <span>Beri Rating Rekan</span>
                 </button>
@@ -125,40 +125,45 @@
         </div>
 
         <!-- FILTER & PERIOD TOOLBAR -->
-        <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-3 shadow-2xs transition-colors">
+        <div class="bg-brand-white dark:bg-slate-900 p-3 rounded-xl border border-brand-sky dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-3 shadow-2xs transition-colors">
             <!-- Left Filter Track -->
-            <form method="GET" action="{{ route('rating.index') }}" id="ratingFilterForm" class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 flex-wrap">
+            <form method="GET" action="{{ route('rating.index') }}" id="ratingFilterForm" class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 flex-nowrap shrink-0">
                 <input type="hidden" name="sort" id="sortInput" value="{{ request('sort', 'highest') }}">
-                <span class="text-xs font-semibold text-slate-600 dark:text-slate-400 shrink-0 mr-1 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[16px]">filter_alt</span> Unit:
+                <span class="text-xs font-semibold text-brand-navy dark:text-slate-400 shrink-0 mr-1 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[16px] text-brand-teal">filter_alt</span> Unit:
                 </span>
                 @php
                     $curUnit = request('unit_id', 'all');
                 @endphp
-                <button type="submit" name="unit_id" value="all" class="px-2.5 py-1 text-xs rounded transition cursor-pointer {{ $curUnit === 'all' || !$curUnit ? 'bg-primary-container text-white font-bold shadow-2xs' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700' }}">
+                <button type="submit" name="unit_id" value="all" class="px-3 py-1.5 text-xs rounded-lg transition cursor-pointer shrink-0 whitespace-nowrap {{ $curUnit === 'all' || !$curUnit ? 'bg-brand-navy text-white font-bold shadow-2xs' : 'text-brand-navy dark:text-slate-300 hover:bg-brand-beige dark:hover:bg-slate-800 border border-brand-sky dark:border-slate-700 font-medium' }}">
                     Semua Unit ({{ $totalPegawai }})
                 </button>
                 @foreach($unitKerjas as $uk)
-                    <button type="submit" name="unit_id" value="{{ $uk->id }}" class="px-2.5 py-1 text-xs rounded transition cursor-pointer whitespace-nowrap {{ $curUnit == $uk->id ? 'bg-primary-container text-white font-bold shadow-2xs' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700' }}">
-                        {{ $uk->nama_unit }}
-                    </button>
+                    @if(!str_contains(strtolower($uk->nama_unit), 'balai'))
+                        <button type="submit" name="unit_id" value="{{ $uk->id }}" class="px-3 py-1.5 text-xs rounded-lg transition cursor-pointer whitespace-nowrap shrink-0 {{ $curUnit == $uk->id ? 'bg-brand-navy text-white font-bold shadow-2xs' : 'text-brand-navy dark:text-slate-300 hover:bg-brand-beige dark:hover:bg-slate-800 border border-brand-sky dark:border-slate-700 font-medium' }}">
+                            {{ $uk->nama_unit }}
+                        </button>
+                    @endif
                 @endforeach
             </form>
 
             <!-- Right Sorting & Search Filter -->
             <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                <label class="text-xs text-slate-500 dark:text-slate-400 font-medium">Urutkan:</label>
-                <select onchange="document.getElementById('sortInput').value = this.value; document.getElementById('ratingFilterForm').submit();" class="text-xs py-1 px-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 font-medium focus:outline-none cursor-pointer">
-                    <option value="highest" {{ request('sort', 'highest') === 'highest' ? 'selected' : '' }}>Peringkat Tertinggi</option>
-                    <option value="reviews" {{ request('sort') === 'reviews' ? 'selected' : '' }}>Ulasan Terbanyak</option>
-                    <option value="name" {{ request('sort') === 'name' ? 'selected' : '' }}>Urutan Abjad Nama</option>
-                    <option value="lowest" {{ request('sort') === 'lowest' ? 'selected' : '' }}>Rating Terendah</option>
-                </select>
-                <div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg p-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                    <button type="button" @click="viewMode = 'grid'" class="p-1 rounded transition cursor-pointer" :class="viewMode === 'grid' ? 'bg-white dark:bg-slate-700 shadow-2xs text-primary dark:text-blue-400' : 'hover:text-slate-900 dark:hover:text-white'" title="Tampilan Grid">
+                <label class="text-xs text-brand-navy dark:text-slate-400 font-medium shrink-0">Urutkan:</label>
+                <div class="relative inline-flex items-center">
+                    <select onchange="document.getElementById('sortInput').value = this.value; document.getElementById('ratingFilterForm').submit();" class="text-xs py-1.5 pl-3.5 pr-10 bg-brand-white dark:bg-slate-800 border border-brand-sky dark:border-slate-700 rounded-lg text-brand-navy dark:text-slate-200 font-semibold focus:outline-none focus:ring-1 focus:ring-brand-teal appearance-none cursor-pointer">
+                        <option value="highest" {{ request('sort', 'highest') === 'highest' ? 'selected' : '' }}>Peringkat Tertinggi</option>
+                        <option value="reviews" {{ request('sort') === 'reviews' ? 'selected' : '' }}>Ulasan Terbanyak</option>
+                        <option value="name" {{ request('sort') === 'name' ? 'selected' : '' }}>Urutan Abjad Nama</option>
+                        <option value="lowest" {{ request('sort') === 'lowest' ? 'selected' : '' }}>Rating Terendah</option>
+                    </select>
+                    <span class="material-symbols-outlined text-[16px] text-brand-teal dark:text-slate-400 absolute right-2.5 pointer-events-none">expand_more</span>
+                </div>
+                <div class="flex items-center border border-brand-sky dark:border-slate-700 rounded-lg p-0.5 bg-brand-beige dark:bg-slate-800 text-brand-navy dark:text-slate-300">
+                    <button type="button" @click="viewMode = 'grid'" class="p-1 rounded transition cursor-pointer" :class="viewMode === 'grid' ? 'bg-brand-white dark:bg-slate-700 shadow-2xs text-brand-navy dark:text-brand-sky font-bold' : 'hover:text-brand-teal dark:hover:text-white'" title="Tampilan Grid">
                         <span class="material-symbols-outlined text-[16px]">grid_view</span>
                     </button>
-                    <button type="button" @click="viewMode = 'table'" class="p-1 rounded transition cursor-pointer" :class="viewMode === 'table' ? 'bg-white dark:bg-slate-700 shadow-2xs text-primary dark:text-blue-400' : 'hover:text-slate-900 dark:hover:text-white'" title="Tampilan Tabel">
+                    <button type="button" @click="viewMode = 'table'" class="p-1 rounded transition cursor-pointer" :class="viewMode === 'table' ? 'bg-brand-white dark:bg-slate-700 shadow-2xs text-brand-navy dark:text-brand-sky font-bold' : 'hover:text-brand-teal dark:hover:text-white'" title="Tampilan Tabel">
                         <span class="material-symbols-outlined text-[16px]">table_rows</span>
                     </button>
                 </div>
