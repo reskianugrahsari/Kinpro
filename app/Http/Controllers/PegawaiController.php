@@ -57,12 +57,14 @@ class PegawaiController extends Controller
 
     public function create()
     {
+        abort_if(!auth()->user()->isAdmin(), 403, 'Hanya Administrator yang dapat menambah data pegawai.');
         $unitKerjas = UnitKerja::all();
         return view('admin.pegawai.create', compact('unitKerjas'));
     }
 
     public function store(Request $request)
     {
+        abort_if(!auth()->user()->isAdmin(), 403, 'Hanya Administrator yang dapat menambah data pegawai.');
         $request->validate([
             'nama' => 'required|string|max:255',
             'nip' => 'required|string|max:50|unique:pegawai,nip',
@@ -105,12 +107,14 @@ class PegawaiController extends Controller
 
     public function edit(Pegawai $pegawai)
     {
+        abort_if(!auth()->user()->isAdmin(), 403, 'Hanya Administrator yang dapat mengedit data pegawai.');
         $unitKerjas = UnitKerja::all();
         return view('admin.pegawai.edit', compact('pegawai', 'unitKerjas'));
     }
 
     public function update(Request $request, Pegawai $pegawai)
     {
+        abort_if(!auth()->user()->isAdmin(), 403, 'Hanya Administrator yang dapat mengedit data pegawai.');
         $request->validate([
             'nama' => 'required|string|max:255',
             'nip' => 'required|string|max:50|unique:pegawai,nip,' . $pegawai->id,
@@ -143,6 +147,7 @@ class PegawaiController extends Controller
 
     public function destroy(Pegawai $pegawai)
     {
+        abort_if(!auth()->user()->isAdmin(), 403, 'Hanya Administrator yang dapat menghapus data pegawai.');
         if ($pegawai->user_id) {
             User::where('id', $pegawai->user_id)->delete();
         }

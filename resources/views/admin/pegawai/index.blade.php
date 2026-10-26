@@ -7,12 +7,14 @@
                 </h2>
                 <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Kelola seluruh data pegawai, profil kompetensi, dan status kepegawaian</p>
             </div>
+            @if(auth()->user()->isAdmin())
             <div>
                 <a href="{{ route('admin.pegawai.create') }}" class="inline-flex items-center space-x-1.5 px-4 py-2 bg-[#1769AA] hover:bg-[#0F2747] text-white text-xs font-bold rounded-xl shadow-xs transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     <span>Tambah Pegawai</span>
                 </a>
             </div>
+            @endif
         </div>
     </x-slot>
 
@@ -29,10 +31,10 @@
                 <input type="hidden" name="view" value="{{ request('view', 'grid') }}">
 
                 <div class="w-full lg:flex-1 relative">
-                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </span>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, NIP, jabatan..." class="block w-full pl-12 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 dark:text-slate-100 rounded-xl text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" />
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, NIP, jabatan..." class="block w-full pl-12 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 rounded-xl text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" />
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
@@ -93,7 +95,9 @@
                                     <th class="py-3.5 px-4">Jabatan</th>
                                     <th class="py-3.5 px-4">Unit Kerja</th>
                                     <th class="py-3.5 px-4 text-center">Skor Kinerja</th>
-                                    <th class="py-3.5 px-4 text-right">Aksi</th>
+                                    @if(auth()->user()->isAdmin())
+                                        <th class="py-3.5 px-4 text-right">Aksi</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
@@ -104,7 +108,7 @@
                                     <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/50 transition">
                                         <td class="py-3 px-4 flex items-center space-x-3">
                                             @if($p->foto_url)
-                                                <img src="{{ $p->foto_url }}" alt="{{ $p->nama }}" class="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-slate-700" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                <img src="{{ $p->foto_url }}" alt="{{ $p->nama }}" class="w-9 h-9 rounded-full object-cover object-center border border-slate-200 dark:border-slate-700" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                                 <div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 hidden items-center justify-center font-bold text-slate-700 dark:text-slate-200 text-xs">
                                                     {{ strtoupper(substr($p->nama, 0, 2)) }}
                                                 </div>
@@ -124,7 +128,7 @@
                                                 {{ $p->status_kepegawaian }}
                                             </span>
                                         </td>
-                                        <td class="py-3 px-4 max-w-xs truncate text-slate-700 dark:text-slate-300" title="{{ $p->jabatan }}">{{ $p->jabatan ?? '-' }}</td>
+                                        <td class="py-3 px-4 text-slate-700 dark:text-slate-300">{{ $p->jabatan ?? '-' }}</td>
                                         <td class="py-3 px-4 text-slate-500 dark:text-slate-400">{{ $p->unitKerja?->nama ?? 'Bapekom Wil. VIII' }}</td>
                                         <td class="py-3 px-4 text-center">
                                             @if($skor !== '-')
@@ -135,18 +139,20 @@
                                                 <span class="text-slate-400 dark:text-slate-500">-</span>
                                             @endif
                                         </td>
-                                        <td class="py-3 px-4 text-right space-x-2">
-                                            <a href="{{ route('admin.pegawai.edit', $p) }}" class="px-3 py-1 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-lg border border-slate-200 dark:border-slate-700 transition inline-block">Edit</a>
-                                            <form action="{{ route('admin.pegawai.destroy', $p) }}" method="POST" class="inline" onsubmit="return confirm('Hapus pegawai ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="px-3 py-1 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold rounded-lg border border-rose-200 dark:border-rose-800 transition">Hapus</button>
-                                            </form>
-                                        </td>
+                                        @if(auth()->user()->isAdmin())
+                                            <td class="py-3 px-4 text-right space-x-2">
+                                                <a href="{{ route('admin.pegawai.edit', $p) }}" class="px-3 py-1 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-lg border border-slate-200 dark:border-slate-700 transition inline-block">Edit</a>
+                                                <form action="{{ route('admin.pegawai.destroy', $p) }}" method="POST" class="inline" onsubmit="return confirm('Hapus pegawai ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="px-3 py-1 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 text-xs font-bold rounded-lg border border-rose-200 dark:border-rose-800 transition">Hapus</button>
+                                                </form>
+                                            </td>
+                                        @endif
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="py-8 text-center text-slate-400 dark:text-slate-500 font-medium">Tidak ada data pegawai yang sesuai filter.</td>
+                                        <td colspan="{{ auth()->user()->isAdmin() ? 7 : 6 }}" class="py-8 text-center text-slate-400 dark:text-slate-500 font-medium">Tidak ada data pegawai yang sesuai filter.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -157,183 +163,55 @@
                 <!-- Grid Cards View Mode (FUT FIFA Style) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center">
                     @forelse($pegawais as $p)
-                        @php
-                            $penilaian = $p->latestPenilaian;
-                            $score = $penilaian ? (string) round($penilaian->rata_rata) : '-';
-                            $numScore = $penilaian ? round($penilaian->rata_rata) : 0;
-
-                            // Silver — single color for all cards
-                            $cardWrap = 'bg-gradient-to-b from-[#F8FAFC] via-[#CBD5E1] to-[#64748B] text-[#1E293B] border-2 border-slate-300 shadow-xl shadow-slate-900/15';
-                            $ratingCol = 'text-[#0F172A]';
-                            $subCol = 'text-slate-600';
-                            $nameCol = 'text-[#0F172A]';
-                            $roleCol = 'text-slate-700';
-                            $lineCol = 'border-slate-400/40';
-                            $numCol = 'text-[#0F172A]';
-                            $lblCol = 'text-slate-600';
-                            $badgeStyle = 'bg-slate-700 text-slate-100 border border-slate-600';
-                            $avatarGrad = 'from-slate-400 to-slate-600';
-
-                            $disVal = $penilaian ? round($penilaian->nilai_kedisiplinan) : '-';
-                            $kepVal = $penilaian ? round($penilaian->kepemimpinan) : '-';
-                            $kinVal = $penilaian ? round($penilaian->kinerja) : '-';
-                            $loyVal = $penilaian ? round($penilaian->loyalitas) : '-';
-                            $sikVal = $penilaian ? round($penilaian->sikap) : '-';
-                            $itVal = $penilaian ? round($penilaian->it) : '-';
-                        @endphp
-
                         <!-- Flip Card Container -->
-                        <div class="w-full max-w-[290px] flex flex-col items-center group" style="perspective: 1000px;">
-                            <div class="relative w-full transition-transform duration-700 group-hover:[transform:rotateY(180deg)]" style="transform-style: preserve-3d; height: 395px;">
+                        <div class="w-full max-w-[280px] flex flex-col items-center group" style="perspective: 1000px;">
+                            <div class="relative w-full transition-transform duration-700 group-hover:[transform:rotateY(180deg)] shadow-xl hover:shadow-2xl rounded-2xl" style="transform-style: preserve-3d; aspect-ratio: 1240 / 1986; width: 100%;">
 
-                                <!-- ===== FRONT FACE ===== -->
-                                <div class="absolute inset-0 [backface-visibility:hidden]">
-                                    <div class="{{ $cardWrap }} w-full h-full p-4 rounded-[2.5rem] relative overflow-hidden flex flex-col justify-between"
-                                         style="clip-path: polygon(0% 0%, 100% 0%, 100% 92%, 50% 100%, 0% 92%);">
-
-                                        <!-- Header / Upper Region -->
-                                        <div class="flex justify-between items-start pt-0.5 px-1">
-                                            <div class="flex flex-col items-center pl-1">
-                                                <span class="text-3xl font-black font-sans leading-none {{ $ratingCol }} tracking-tight">{{ $score }}</span>
-                                                <span class="text-[8px] font-black uppercase tracking-widest mt-1 {{ $subCol }}">BAPEKOM8MKS</span>
-                                                <div class="flex flex-col items-center space-y-1 mt-2">
-                                                    <div class="w-5 h-3.5 bg-red-600 border border-white/60 rounded-xs overflow-hidden shadow-xs">
-                                                        <div class="h-1/2 bg-red-600"></div>
-                                                        <div class="h-1/2 bg-white"></div>
-                                                    </div>
-                                                    <div class="w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center border border-amber-600/40 shadow-xs">
-                                                        <span class="text-[7px] font-black text-blue-900 leading-none">PU</span>
-                                                    </div>
-                                                    <div class="w-5 h-5 rounded-full bg-blue-900 flex items-center justify-center border border-amber-400/60 shadow-xs">
-                                                        <span class="text-[6px] font-black text-amber-300 leading-none">VIII</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="w-32 h-32 rounded-2xl flex items-center justify-center relative overflow-hidden -mr-1">
-                                                @if($p->foto_url)
-                                                    <img src="{{ $p->foto_url }}" alt="{{ $p->nama }}" class="w-28 h-32 object-cover object-top rounded-2xl shadow-md border-2 border-white/40" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                    <div class="w-28 h-32 rounded-2xl bg-gradient-to-tr {{ $avatarGrad }} hidden items-center justify-center font-black text-2xl text-white shadow-md border-2 border-white/30">
-                                                        <span class="drop-shadow">{{ strtoupper(substr($p->nama, 0, 2)) }}</span>
-                                                    </div>
-                                                @else
-                                                    <div class="w-28 h-32 rounded-2xl bg-gradient-to-tr {{ $avatarGrad }} flex items-center justify-center font-black text-2xl text-white shadow-md border-2 border-white/30">
-                                                        <span class="drop-shadow">{{ strtoupper(substr($p->nama, 0, 2)) }}</span>
-                                                    </div>
-                                                @endif
-                                            </div>
+                                <!-- ===== FRONT FACE (ID Card Depan) ===== -->
+                                <div class="absolute inset-0 [backface-visibility:hidden] rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-700/80 bg-slate-100 dark:bg-slate-800">
+                                    @if($p->foto_depan_url)
+                                        <img src="{{ $p->foto_depan_url }}" alt="ID Card Depan {{ $p->nama }}" class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full flex flex-col items-center justify-center p-4 text-center">
+                                            <span class="material-symbols-outlined text-4xl text-slate-400 mb-2">badge</span>
+                                            <h4 class="font-black text-sm text-slate-700 dark:text-slate-200">{{ $p->nama }}</h4>
+                                            <p class="text-xs text-slate-500 font-mono mt-1">{{ $p->nip }}</p>
                                         </div>
-
-                                        <!-- Mid Section -->
-                                        <div class="text-center px-2">
-                                            <div class="w-full border-t {{ $lineCol }} mb-1.5"></div>
-                                            <h4 class="font-black text-xs uppercase tracking-wide truncate {{ $nameCol }}" title="{{ $p->nama }}">{{ $p->nama }}</h4>
-                                            <p class="text-[8px] font-bold uppercase tracking-wider {{ $roleCol }} line-clamp-1 mt-0.5">{{ $p->jabatan ?? 'OPERATOR LAYANAN OPERASIONAL' }}</p>
-                                            <div class="inline-block mt-1">
-                                                <span class="{{ $badgeStyle }} text-[8px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">{{ $p->status_kepegawaian }}</span>
-                                            </div>
-                                            <div class="w-full border-t {{ $lineCol }} mt-1.5"></div>
-                                        </div>
-
-                                        <!-- Bottom: 6 Metrik -->
-                                        <div class="grid grid-cols-2 gap-x-6 gap-y-0.5 px-5 pb-5 text-center font-bold">
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-xs font-black {{ $numCol }}">{{ $disVal }}</span>
-                                                <span class="text-[9px] uppercase font-bold {{ $lblCol }}">DIS</span>
-                                            </div>
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-xs font-black {{ $numCol }}">{{ $kepVal }}</span>
-                                                <span class="text-[9px] uppercase font-bold {{ $lblCol }}">KEP</span>
-                                            </div>
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-xs font-black {{ $numCol }}">{{ $kinVal }}</span>
-                                                <span class="text-[9px] uppercase font-bold {{ $lblCol }}">KIN</span>
-                                            </div>
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-xs font-black {{ $numCol }}">{{ $loyVal }}</span>
-                                                <span class="text-[9px] uppercase font-bold {{ $lblCol }}">LOY</span>
-                                            </div>
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-xs font-black {{ $numCol }}">{{ $sikVal }}</span>
-                                                <span class="text-[9px] uppercase font-bold {{ $lblCol }}">SIK</span>
-                                            </div>
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-xs font-black {{ $numCol }}">{{ $itVal }}</span>
-                                                <span class="text-[9px] uppercase font-bold {{ $lblCol }}">IT</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    @endif
                                 </div>
 
-                                <!-- ===== BACK FACE ===== -->
-                                <div class="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                                    <div class="{{ $cardWrap }} w-full h-full p-5 rounded-[2.5rem] relative overflow-hidden flex flex-col justify-between"
-                                         style="clip-path: polygon(0% 0%, 100% 0%, 100% 92%, 50% 100%, 0% 92%);">
-
-                                        <!-- Back Header -->
-                                        <div class="text-center pt-1">
-                                            <div class="w-16 h-16 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white/40 shadow-md">
-                                                @if($p->foto_url)
-                                                    <img src="{{ $p->foto_url }}" alt="{{ $p->nama }}" class="w-full h-full object-cover object-top" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                    <div class="w-full h-full bg-gradient-to-tr {{ $avatarGrad }} hidden items-center justify-center font-black text-sm text-white">{{ strtoupper(substr($p->nama, 0, 2)) }}</div>
-                                                @else
-                                                    <div class="w-full h-full bg-gradient-to-tr {{ $avatarGrad }} flex items-center justify-center font-black text-sm text-white">{{ strtoupper(substr($p->nama, 0, 2)) }}</div>
-                                                @endif
-                                            </div>
-                                            <h4 class="font-black text-xs uppercase tracking-wide truncate {{ $nameCol }}">{{ $p->nama }}</h4>
-                                            <div class="w-full border-t {{ $lineCol }} mt-2"></div>
-                                        </div>
-
-                                        <!-- Detail Info -->
-                                        <div class="space-y-2.5 px-2 flex-1 flex flex-col justify-center">
-                                            <div class="flex items-start space-x-2.5">
-                                                <span class="material-symbols-outlined text-[16px] {{ $subCol }} mt-px">badge</span>
-                                                <div>
-                                                    <p class="text-[8px] font-bold uppercase tracking-wider {{ $lblCol }}">NIP</p>
-                                                    <p class="text-[11px] font-bold {{ $nameCol }} font-mono">{{ $p->nip ?? '-' }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-start space-x-2.5">
-                                                <span class="material-symbols-outlined text-[16px] {{ $subCol }} mt-px">mail</span>
-                                                <div class="min-w-0 flex-1">
-                                                    <p class="text-[8px] font-bold uppercase tracking-wider {{ $lblCol }}">Email</p>
-                                                    <p class="text-[11px] font-bold {{ $nameCol }} truncate">{{ $p->user?->email ?? '-' }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-start space-x-2.5">
-                                                <span class="material-symbols-outlined text-[16px] {{ $subCol }} mt-px">call</span>
-                                                <div>
-                                                    <p class="text-[8px] font-bold uppercase tracking-wider {{ $lblCol }}">No. HP</p>
-                                                    <p class="text-[11px] font-bold {{ $nameCol }}">{{ $p->no_hp ?? '-' }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-start space-x-2.5">
-                                                <span class="material-symbols-outlined text-[16px] {{ $subCol }} mt-px">apartment</span>
-                                                <div>
-                                                    <p class="text-[8px] font-bold uppercase tracking-wider {{ $lblCol }}">Unit Kerja</p>
-                                                    <p class="text-[11px] font-bold {{ $nameCol }}">{{ $p->unitKerja?->nama ?? 'Bapekom Wil. VIII' }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="flex items-start space-x-2.5">
-                                                <span class="material-symbols-outlined text-[16px] {{ $subCol }} mt-px">military_tech</span>
-                                                <div>
-                                                    <p class="text-[8px] font-bold uppercase tracking-wider {{ $lblCol }}">Pangkat / Gol</p>
-                                                    <p class="text-[11px] font-bold {{ $nameCol }}">{{ $p->pangkat_gol ?? '-' }}</p>
-                                                </div>
+                                <!-- ===== BACK FACE (Biodata Diri / ID Card Belakang) ===== -->
+                                <div class="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-700/80 bg-slate-100 dark:bg-slate-800 flex flex-col">
+                                    @if($p->foto_belakang_url)
+                                        <img src="{{ $p->foto_belakang_url }}" alt="Biodata Diri {{ $p->nama }}" class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full flex flex-col justify-between p-5 bg-white dark:bg-slate-900">
+                                            <div>
+                                                <h4 class="font-black text-sm uppercase text-slate-800 dark:text-white">{{ $p->nama }}</h4>
+                                                <p class="text-xs font-mono text-slate-500 mt-0.5">{{ $p->nip }}</p>
+                                                <p class="text-xs text-slate-600 dark:text-slate-300 mt-2">{{ $p->jabatan }}</p>
                                             </div>
                                         </div>
+                                    @endif
 
-                                        <!-- Back Action Buttons -->
-                                        <div class="flex items-center justify-center space-x-2 pb-5 pt-1">
-                                            <a href="{{ route('admin.pegawai.edit', $p) }}" class="px-4 py-1.5 bg-white/90 hover:bg-white text-slate-700 text-xs font-bold rounded-lg border border-white/40 shadow-xs transition">Edit</a>
+                                    @if(auth()->user()->isAdmin())
+                                        <!-- Quick Action Overlay on hover/bottom (Khusus Admin) -->
+                                        <div class="absolute bottom-3 inset-x-3 flex items-center justify-center space-x-2 z-10">
+                                            <a href="{{ route('admin.pegawai.edit', $p) }}" class="px-3 py-1 bg-white/95 hover:bg-white text-slate-800 text-[11px] font-bold rounded-lg border border-slate-300 shadow-sm transition">Edit</a>
                                             <form action="{{ route('admin.pegawai.destroy', $p) }}" method="POST" class="inline" onsubmit="return confirm('Hapus pegawai ini?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="px-4 py-1.5 bg-rose-500/90 hover:bg-rose-600 text-white text-xs font-bold rounded-lg border border-rose-400/40 shadow-xs transition cursor-pointer">Hapus</button>
+                                                <button type="submit" class="px-3 py-1 bg-rose-600/95 hover:bg-rose-600 text-white text-[11px] font-bold rounded-lg shadow-sm transition cursor-pointer">Hapus</button>
                                             </form>
                                         </div>
-                                    </div>
+                                    @endif
                                 </div>
+                            </div>
+
+                            <!-- Label Bawah Card -->
+                            <div class="mt-2.5 text-center px-1 w-full">
+                                <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100 truncate" title="{{ $p->nama }}">{{ $p->nama }}</h4>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{{ $p->nip }}</p>
                             </div>
                         </div>
                     @empty

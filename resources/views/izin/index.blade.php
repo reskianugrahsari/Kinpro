@@ -432,7 +432,7 @@
                     <span class="text-outline dark:text-slate-600">|</span>
                     <div class="flex items-center gap-1">
                         <span>Baris:</span>
-                        <select onchange="window.location.href = '{{ request()->fullUrlWithQuery(['per_page' => 'PLACEHOLDER']) }}'.replace('PLACEHOLDER', this.value)" class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-700 rounded px-1.5 py-0.5 text-on-surface dark:text-slate-200 text-xs cursor-pointer">
+                        <select onchange="window.location.href = '{{ request()->fullUrlWithQuery(['per_page' => 'PLACEHOLDER']) }}'.replace('PLACEHOLDER', this.value)" class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-700 rounded pl-2 pr-6 py-0.5 text-on-surface dark:text-slate-200 text-xs cursor-pointer">
                             <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
                             <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
                             <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>

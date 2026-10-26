@@ -12,16 +12,42 @@
                     <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-brand-teal/40 text-brand-sky border border-brand-teal/60 font-mono">
                         {{ $pegawai->status_kepegawaian ?? 'PNS / PPPK' }}
                     </span>
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#202C3B] text-brand-sky border border-brand-teal/40">
-                        <span class="w-1.5 h-1.5 rounded-full bg-brand-sky"></span>
-                        <span>Aktif Bekerja</span>
-                    </span>
+                    @php
+                        $isAktif = $pegawai ? ($pegawai->is_aktif ?? true) : true;
+                    @endphp
+                    @if($isAktif)
+                        <span class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-emerald-950/60 text-emerald-300 border border-emerald-500/50">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span>Aktif Bekerja</span>
+                        </span>
+                    @else
+                        <span class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-rose-950/60 text-rose-300 border border-rose-500/50">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                            </span>
+                            <span>Tidak Aktif</span>
+                        </span>
+                    @endif
                 </div>
 
                 <div class="flex items-center space-x-3.5">
-                    <div class="w-12 h-12 rounded-xl bg-brand-teal border border-brand-sky/30 text-white flex items-center justify-center font-bold text-lg shrink-0">
-                        {{ strtoupper(substr($pegawai->nama_lengkap ?? ($pegawai->nama ?? Auth::user()->name), 0, 2)) }}
-                    </div>
+                    @php
+                        $pegawaiFotoUrl = $pegawai->foto_url ?? Auth::user()->pegawai?->foto_url;
+                    @endphp
+                    @if($pegawaiFotoUrl)
+                        <img src="{{ $pegawaiFotoUrl }}" alt="{{ $pegawai->nama_lengkap ?? Auth::user()->name }}" class="w-12 h-12 rounded-xl object-cover object-center border border-brand-sky/40 shadow-sm shrink-0" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="w-12 h-12 rounded-xl bg-brand-teal border border-brand-sky/30 text-white hidden items-center justify-center font-bold text-lg shrink-0">
+                            {{ strtoupper(substr($pegawai->nama_lengkap ?? ($pegawai->nama ?? Auth::user()->name), 0, 2)) }}
+                        </div>
+                    @else
+                        <div class="w-12 h-12 rounded-xl bg-brand-teal border border-brand-sky/30 text-white flex items-center justify-center font-bold text-lg shrink-0">
+                            {{ strtoupper(substr($pegawai->nama_lengkap ?? ($pegawai->nama ?? Auth::user()->name), 0, 2)) }}
+                        </div>
+                    @endif
                     <div>
                         <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">
                             Halo, {{ $pegawai->nama_lengkap ?? ($pegawai->nama ?? Auth::user()->name) }}
@@ -30,24 +56,6 @@
                             Selamat datang di Sistem Manajemen Kinerja & Layanan Mandiri Terpadu Bapekom PUPR Wilayah VIII Makassar.
                         </p>
                     </div>
-                </div>
-
-                <!-- Identity Meta Badges -->
-                <div class="flex flex-wrap items-center gap-y-1.5 gap-x-3.5 pt-0.5 text-[11px] text-slate-200">
-                    <span class="inline-flex items-center gap-1.5">
-                        <span class="text-brand-sky font-medium">NIP:</span>
-                        <span class="font-mono font-bold text-white">{{ $pegawai->nip ?? '198402122008121001' }}</span>
-                    </span>
-                    <span class="text-slate-400">&bull;</span>
-                    <span class="inline-flex items-center gap-1.5">
-                        <span class="text-brand-sky font-medium">Jabatan:</span>
-                        <span class="font-semibold text-white">{{ $pegawai->jabatan ?? 'Pranata Komputer Ahli Muda' }}</span>
-                    </span>
-                    <span class="text-slate-400">&bull;</span>
-                    <span class="inline-flex items-center gap-1.5">
-                        <span class="text-brand-sky font-medium">Unit:</span>
-                        <span class="font-semibold text-slate-100">{{ $pegawai->unitKerja?->nama_unit ?? ($pegawai->unitKerja?->nama ?? 'Seksi Penyelenggaraan Pelatihan') }}</span>
-                    </span>
                 </div>
             </div>
 
@@ -80,56 +88,76 @@
 
         <!-- 2. QUICK ACTION SHORTCUTS (4 Action Tiles) -->
         <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <a href="{{ route('pajokka.create') }}" class="group bg-brand-white dark:bg-slate-800/90 border border-brand-sky dark:border-slate-700/80 rounded-xl p-4 flex items-center justify-between hover:border-brand-teal hover:shadow-xs transition duration-150">
+            <!-- 1. Laporan Pajokka (Teal/Cyan theme) -->
+            <a href="{{ route('pajokka.create') }}" class="group bg-brand-white dark:bg-slate-800 border border-teal-200 dark:border-teal-900/60 rounded-xl p-4 flex items-center justify-between hover:bg-teal-50/70 dark:hover:bg-teal-950/40 hover:border-teal-400 dark:hover:border-teal-600 hover:shadow-md transition duration-150 border-l-4 border-l-teal-600 dark:border-l-teal-400">
                 <div class="flex items-center gap-3.5">
-                    <div class="w-11 h-11 rounded-lg bg-brand-beige dark:bg-slate-700 border border-brand-sky text-brand-navy dark:text-brand-sky flex items-center justify-center shrink-0 group-hover:bg-brand-navy group-hover:text-white transition">
-                        <span class="material-symbols-outlined text-[22px]">flight_takeoff</span>
+                    <div class="w-11 h-11 rounded-xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-teal-600 group-hover:text-white dark:group-hover:bg-teal-500 transition-all shadow-xs">
+                        <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M2.5 19h19v2h-19v-2zm19.57-9.36c-.21-.8-1.04-1.28-1.84-1.06L14.92 10 8.91 3.84c-.4-.41-1.07-.46-1.54-.11l-.83.62c-.44.33-.55.93-.25 1.39l3.87 5.92-4.04 1.08-2.22-1.74c-.33-.26-.79-.31-1.17-.13l-.68.32c-.44.21-.63.73-.42 1.18l1.45 3.09c.27.58.85.95 1.49.95h.19l15.11-4.04c.8-.21 1.28-1.04 1.06-1.84z"/>
+                        </svg>
                     </div>
                     <div>
-                        <div class="text-xs font-bold text-brand-navy dark:text-white">Laporan Pajokka</div>
-                        <div class="text-[11px] text-slate-400 mt-0.5">Buat SPPD & Kuitansi</div>
+                        <div class="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors">Laporan Pajokka</div>
+                        <div class="text-[11px] text-teal-700 dark:text-teal-300 mt-0.5 font-semibold">Buat SPPD & Kuitansi</div>
                     </div>
                 </div>
-                <span class="material-symbols-outlined text-brand-teal group-hover:text-brand-navy group-hover:translate-x-0.5 transition-all text-[18px]">arrow_forward</span>
+                <div class="w-7 h-7 rounded-full bg-teal-100 dark:bg-teal-900/50 flex items-center justify-center text-teal-700 dark:text-teal-300 group-hover:bg-teal-600 dark:group-hover:bg-teal-500 group-hover:text-white transition-all shadow-2xs">
+                    <span class="material-symbols-outlined group-hover:translate-x-0.5 transition-transform text-[16px]">arrow_forward</span>
+                </div>
             </a>
 
-            <a href="{{ route('izin.create') }}" class="group bg-brand-white dark:bg-slate-800/90 border border-brand-sky dark:border-slate-700/80 rounded-xl p-4 flex items-center justify-between hover:border-brand-teal hover:shadow-xs transition duration-150">
+            <!-- 2. Pengajuan Izin (Blue/Sky theme) -->
+            <a href="{{ route('izin.create') }}" class="group bg-brand-white dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 rounded-xl p-4 flex items-center justify-between hover:bg-blue-50/70 dark:hover:bg-blue-950/40 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md transition duration-150 border-l-4 border-l-blue-600 dark:border-l-blue-400">
                 <div class="flex items-center gap-3.5">
-                    <div class="w-11 h-11 rounded-lg bg-brand-beige dark:bg-slate-700 border border-brand-sky text-brand-navy dark:text-brand-sky flex items-center justify-center shrink-0 group-hover:bg-brand-navy group-hover:text-white transition">
-                        <span class="material-symbols-outlined text-[22px]">event_note</span>
+                    <div class="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white dark:group-hover:bg-blue-500 transition-all shadow-xs">
+                        <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7v-5z"/>
+                        </svg>
                     </div>
                     <div>
-                        <div class="text-xs font-bold text-brand-navy dark:text-white">Pengajuan Izin</div>
-                        <div class="text-[11px] text-slate-400 mt-0.5">Izin, Sakit, & Cuti</div>
+                        <div class="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">Pengajuan Izin</div>
+                        <div class="text-[11px] text-blue-700 dark:text-blue-300 mt-0.5 font-semibold">Izin, Sakit, & Cuti</div>
                     </div>
                 </div>
-                <span class="material-symbols-outlined text-brand-teal group-hover:text-brand-navy group-hover:translate-x-0.5 transition-all text-[18px]">arrow_forward</span>
+                <div class="w-7 h-7 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-700 dark:text-blue-300 group-hover:bg-blue-600 dark:group-hover:bg-blue-500 group-hover:text-white transition-all shadow-2xs">
+                    <span class="material-symbols-outlined group-hover:translate-x-0.5 transition-transform text-[16px]">arrow_forward</span>
+                </div>
             </a>
 
-            <a href="{{ route('absen.create') }}" class="group bg-white dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 rounded-xl p-4 flex items-center justify-between hover:border-emerald-600 hover:shadow-xs transition duration-150">
+            <!-- 3. Lupa Presensi (Amber/Orange theme) -->
+            <a href="{{ route('absen.create') }}" class="group bg-brand-white dark:bg-slate-800 border border-amber-200 dark:border-amber-900/60 rounded-xl p-4 flex items-center justify-between hover:bg-amber-50/70 dark:hover:bg-amber-950/40 hover:border-amber-400 dark:hover:border-amber-600 hover:shadow-md transition duration-150 border-l-4 border-l-amber-500 dark:border-l-amber-400">
                 <div class="flex items-center gap-3.5">
-                    <div class="w-11 h-11 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition">
-                        <span class="material-symbols-outlined text-[22px]">alarm_off</span>
+                    <div class="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-amber-600 group-hover:text-white dark:group-hover:bg-amber-500 transition-all shadow-xs">
+                        <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/>
+                        </svg>
                     </div>
                     <div>
-                        <div class="text-xs font-bold text-slate-800 dark:text-white">Lupa Presensi</div>
-                        <div class="text-[11px] text-slate-400 mt-0.5">Klaim Absensi Kerja</div>
+                        <div class="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-amber-800 dark:group-hover:text-amber-300 transition-colors">Lupa Presensi</div>
+                        <div class="text-[11px] text-amber-800 dark:text-amber-300 mt-0.5 font-semibold">Klaim Absensi Kerja</div>
                     </div>
                 </div>
-                <span class="material-symbols-outlined text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all text-[18px]">arrow_forward</span>
+                <div class="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center text-amber-800 dark:text-amber-300 group-hover:bg-amber-600 dark:group-hover:bg-amber-500 group-hover:text-white transition-all shadow-2xs">
+                    <span class="material-symbols-outlined group-hover:translate-x-0.5 transition-transform text-[16px]">arrow_forward</span>
+                </div>
             </a>
 
-            <a href="{{ route('pengaduan.create') }}" class="group bg-white dark:bg-slate-800/90 border border-slate-200/90 dark:border-slate-700/80 rounded-xl p-4 flex items-center justify-between hover:border-purple-600 hover:shadow-xs transition duration-150">
+            <!-- 4. Aspirasi & Lapor (Rose/Red theme) -->
+            <a href="{{ route('pengaduan.create') }}" class="group bg-brand-white dark:bg-slate-800 border border-rose-200 dark:border-rose-900/60 rounded-xl p-4 flex items-center justify-between hover:bg-rose-50/70 dark:hover:bg-rose-950/40 hover:border-rose-400 dark:hover:border-rose-600 hover:shadow-md transition duration-150 border-l-4 border-l-rose-500 dark:border-l-rose-400">
                 <div class="flex items-center gap-3.5">
-                    <div class="w-11 h-11 rounded-lg bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 group-hover:bg-purple-600 group-hover:text-white transition">
-                        <span class="material-symbols-outlined text-[22px]">report_problem</span>
+                    <div class="w-11 h-11 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-rose-600 group-hover:text-white dark:group-hover:bg-rose-500 transition-all shadow-xs">
+                        <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 4.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+                        </svg>
                     </div>
                     <div>
-                        <div class="text-xs font-bold text-slate-800 dark:text-white">Aspirasi & Lapor</div>
-                        <div class="text-[11px] text-slate-400 mt-0.5">Pengaduan Pegawai</div>
+                        <div class="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-rose-800 dark:group-hover:text-rose-300 transition-colors">Aspirasi & Lapor</div>
+                        <div class="text-[11px] text-rose-800 dark:text-rose-300 mt-0.5 font-semibold">Pengaduan Pegawai</div>
                     </div>
                 </div>
-                <span class="material-symbols-outlined text-slate-400 group-hover:text-purple-600 group-hover:translate-x-0.5 transition-all text-[18px]">arrow_forward</span>
+                <div class="w-7 h-7 rounded-full bg-rose-100 dark:bg-rose-900/50 flex items-center justify-center text-rose-800 dark:text-rose-300 group-hover:bg-rose-600 dark:group-hover:bg-rose-500 group-hover:text-white transition-all shadow-2xs">
+                    <span class="material-symbols-outlined group-hover:translate-x-0.5 transition-transform text-[16px]">arrow_forward</span>
+                </div>
             </a>
         </section>
 
@@ -139,7 +167,7 @@
             <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-5 border-l-4 border-l-[#10B981] flex flex-col justify-between shadow-xs">
                 <div class="flex items-start justify-between">
                     <div>
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 block">SKOR KINERJA PEGAWAI</span>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">SKOR KINERJA PEGAWAI</span>
                         <div class="text-3xl font-extrabold text-slate-800 dark:text-white mt-1 tabular-nums">
                             {{ number_format((float)($skorKinerja ?? 91.2), 1) }}
                         </div>
@@ -153,7 +181,7 @@
                         <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
                         {{ $predikatKinerja ?? 'Sangat Baik' }}
                     </span>
-                    <span class="text-xs text-slate-400 font-medium">Evaluasi SKP 2026</span>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Evaluasi SKP 2026</span>
                 </div>
             </div>
 
@@ -161,7 +189,7 @@
             <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-5 border-l-4 border-l-[#7C3AED] flex flex-col justify-between shadow-xs">
                 <div class="flex items-start justify-between">
                     <div>
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 block">TUGAS DINAS (PAJOKKA)</span>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">TUGAS DINAS (PAJOKKA)</span>
                         <div class="text-3xl font-extrabold text-slate-800 dark:text-white mt-1 tabular-nums">
                             {{ $totalDinas ?? 0 }}
                         </div>
@@ -174,7 +202,7 @@
                     <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded bg-[#F5F3FF] text-[#6D28D9]">
                         Laporan Selesai
                     </span>
-                    <span class="text-xs text-slate-400 font-medium">Riwayat SPPD Aktif</span>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Riwayat SPPD Aktif</span>
                 </div>
             </div>
 
@@ -182,7 +210,7 @@
             <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-5 border-l-4 border-l-[#F59E0B] flex flex-col justify-between shadow-xs">
                 <div class="flex items-start justify-between">
                     <div>
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 block">PENGAJUAN IZIN / CUTI</span>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">PENGAJUAN IZIN / CUTI</span>
                         <div class="text-3xl font-extrabold text-slate-800 dark:text-white mt-1 tabular-nums">
                             {{ $totalIzin ?? 0 }}
                         </div>
@@ -203,7 +231,7 @@
             <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-5 border-l-4 border-l-[#3B82F6] flex flex-col justify-between shadow-xs">
                 <div class="flex items-start justify-between">
                     <div>
-                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 block">LUPA PRESENSI</span>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">LUPA PRESENSI</span>
                         <div class="text-3xl font-extrabold text-slate-800 dark:text-white mt-1 tabular-nums">
                             {{ $totalAbsen ?? 0 }}
                         </div>
@@ -216,7 +244,7 @@
                     <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700">
                         Total Diajukan
                     </span>
-                    <span class="text-xs text-slate-400 font-medium">Bulan Berjalan</span>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Bulan Berjalan</span>
                 </div>
             </div>
         </section>
@@ -232,11 +260,11 @@
                             <h2 class="text-base font-extrabold text-slate-800 dark:text-white">
                                 Capaian &amp; Distribusi Evaluasi Kinerja (SKP 2026)
                             </h2>
-                            <p class="text-xs text-slate-400 mt-0.5">Klasifikasi matriks hasil evaluasi kinerja Triwulan III Balai Wilayah VIII</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Klasifikasi matriks hasil evaluasi kinerja Triwulan III Balai Wilayah VIII</p>
                         </div>
                         <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 pl-3 pr-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300">
                             <span>Filter: Semua Unit</span>
-                            <span class="material-symbols-outlined text-[14px] text-slate-400">expand_more</span>
+                            <span class="material-symbols-outlined text-[14px] text-slate-500 dark:text-slate-400">expand_more</span>
                         </div>
                     </div>
 
@@ -253,7 +281,7 @@
                             </svg>
                             <!-- Center Cutout Metric Legend -->
                             <div class="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none">
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">TOTAL ASN</span>
+                                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">TOTAL ASN</span>
                                 <span class="text-3xl font-extrabold text-slate-800 dark:text-white tabular-nums">33</span>
                                 <span class="text-[10px] font-semibold text-[#10B981] bg-[#ECFDF5] px-2 py-0.5 rounded-full mt-0.5">Pegawai</span>
                             </div>
@@ -325,7 +353,7 @@
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
                         <div>
                             <h2 class="text-base font-extrabold text-slate-800 dark:text-white">Presensi &amp; Disiplin Hari Ini</h2>
-                            <p class="text-xs text-slate-400 mt-0.5">Status log harian presensi elektronik</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Status log harian presensi elektronik</p>
                         </div>
                         <span class="px-2.5 py-0.5 bg-[#ECFDF5] text-[#065F46] font-bold text-[11px] rounded-full border border-[#A7F3D0]">
                             93.9% Hadir
@@ -344,7 +372,7 @@
                             </svg>
                             <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
                                 <span class="text-2xl font-black text-slate-800 dark:text-white tabular-nums">28</span>
-                                <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">Di Kantor</span>
+                                <span class="text-[9px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Di Kantor</span>
                             </div>
                         </div>
 
@@ -384,7 +412,7 @@
 
                 <!-- Direct Operational Shortcuts -->
                 <div class="pt-3 border-t border-slate-100 dark:border-slate-700 space-y-2">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Tindakan Mandiri Pegawai:</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Tindakan Mandiri Pegawai:</span>
                     <div class="grid grid-cols-2 gap-2.5">
                         <a href="{{ route('absen.create') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-brand-navy hover:bg-[#202C3B] text-white rounded-xl text-xs font-bold transition shadow-xs">
                             <span class="material-symbols-outlined text-[16px]">alarm_off</span>
@@ -407,7 +435,7 @@
                     <h2 class="font-bold text-sm text-brand-navy dark:text-white">
                         Riwayat & Status Pengajuan Saya
                     </h2>
-                    <p class="text-[11px] text-slate-400 mt-0.5">Monitoring permohonan dinas, izin cuti, dan presensi terkini</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Monitoring permohonan dinas, izin cuti, dan presensi terkini</p>
                 </div>
                 <div class="flex items-center space-x-2">
                     <a href="{{ route('pajokka.create') }}" class="px-3.5 py-1.5 bg-brand-navy hover:bg-[#202C3B] text-white text-xs font-bold rounded-lg transition shadow-xs flex items-center gap-1.5">
@@ -528,11 +556,11 @@
                                         <span class="w-2 h-2 rounded-full {{ $item['dot'] }}"></span>
                                         <span class="font-bold text-slate-800 dark:text-white">{{ $item['label'] }}</span>
                                     </div>
-                                    <div class="text-[10px] text-slate-400 mt-0.5">{{ $item['badge'] }}</div>
+                                    <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{{ $item['badge'] }}</div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-slate-700 dark:text-slate-200 font-semibold">{{ $item['date'] }}</div>
-                                    <div class="text-[11px] text-slate-400 mt-0.5 truncate max-w-xs">{{ $item['desc'] }}</div>
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-xs">{{ $item['desc'] }}</div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold border {{ $statusClass }}">
@@ -553,8 +581,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-8 text-center text-slate-400">
-                                    Belum ada pengajuan aktif. Gunakan tombol di atas untuk mengajukan layanan mandiri.
+                                <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                                    Belum ada log aktivitas tugas / presensi tercatat.
                                 </td>
                             </tr>
                         @endforelse
@@ -563,7 +591,7 @@
             </div>
 
             <!-- Table Footer -->
-            <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-400">
+            <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
                 <div>
                     Menampilkan 3 pengajuan layanan mandiri aktif terakhir
                 </div>

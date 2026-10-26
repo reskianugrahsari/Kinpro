@@ -57,10 +57,10 @@
             <!-- Card 1: Rata-Rata Rating Balai -->
             <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 border-l-4 border-l-amber-500 p-4 flex items-center justify-between shadow-2xs transition-colors">
                 <div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rata-rata Rating Balai</span>
+                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Rata-rata Rating Balai</span>
                     <div class="flex items-baseline gap-1.5 mt-1">
                         <span class="text-2xl font-extrabold text-slate-900 dark:text-slate-100 font-mono">{{ number_format($avgBalai, 1) }}</span>
-                        <span class="text-xs text-slate-400">/ 5.0</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">/ 5.0</span>
                     </div>
                     <div class="flex items-center gap-1 mt-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
                         <span class="material-symbols-outlined text-[14px]">thumb_up</span>
@@ -75,10 +75,10 @@
             <!-- Card 2: Total Ulasan Terverifikasi -->
             <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 border-l-4 border-l-blue-600 p-4 flex items-center justify-between shadow-2xs transition-colors">
                 <div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ulasan Terverifikasi</span>
+                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Ulasan Terverifikasi</span>
                     <div class="flex items-baseline gap-1.5 mt-1">
                         <span class="text-2xl font-extrabold text-slate-900 dark:text-slate-100 font-mono">{{ $totalReviews }}</span>
-                        <span class="text-xs text-slate-400">Komentar</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">Komentar</span>
                     </div>
                     <div class="flex items-center gap-1 mt-1.5 text-[11px] text-blue-600 dark:text-blue-400 font-medium">
                         <span class="material-symbols-outlined text-[14px]">check_circle</span>
@@ -93,7 +93,7 @@
             <!-- Card 3: Pegawai Terbaik Bulan Ini -->
             <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 border-l-4 border-l-purple-600 p-4 flex items-center justify-between shadow-2xs transition-colors">
                 <div class="min-w-0 pr-2">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Peringkat 1 Balai</span>
+                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Peringkat 1 Balai</span>
                     <div class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate mt-1">
                         {{ $topRatedPegawai ? ($topRatedPegawai->nama_lengkap ?? $topRatedPegawai->nama) : 'Sarnaeni B, SP, M.T' }}
                     </div>
@@ -109,7 +109,7 @@
             <!-- Card 4: Partisipasi ASN -->
             <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 border-l-4 border-l-emerald-600 p-4 flex items-center justify-between shadow-2xs transition-colors">
                 <div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Partisipasi Penilai</span>
+                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Partisipasi Penilai</span>
                     <div class="flex items-baseline gap-1.5 mt-1">
                         <span class="text-2xl font-extrabold text-slate-900 dark:text-slate-100 font-mono">{{ $totalPegawai }} / {{ $totalPegawai }}</span>
                     </div>
@@ -209,7 +209,7 @@
                             <div class="flex items-center gap-1.5 bg-amber-50/80 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200/60 dark:border-amber-800/40">
                                 <span class="material-symbols-outlined text-[15px] text-amber-500">star</span>
                                 <span class="text-xs font-extrabold text-slate-900 dark:text-slate-100 font-mono">{{ number_format($ratingAvg, 2) }}</span>
-                                <span class="text-[10px] text-slate-400">({{ $reviewCount }} ulasan)</span>
+                                <span class="text-[10px] text-slate-500 dark:text-slate-400">({{ $reviewCount }} ulasan)</span>
                             </div>
                         </div>
 
@@ -225,7 +225,7 @@
                                 <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100 leading-snug truncate">
                                     {{ $pegawai->nama_lengkap ?? $pegawai->nama }}
                                 </h3>
-                                <div class="text-[11px] font-mono text-slate-400 mt-0.5">NIP. {{ $pegawai->nip }}</div>
+                                <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5">NIP. {{ $pegawai->nip }}</div>
                                 <div class="inline-block mt-1 text-[10px] font-semibold text-blue-800 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded truncate max-w-full">
                                     {{ $pegawai->jabatan ?? 'Pegawai Balai Wilayah VIII' }}
                                 </div>
@@ -291,11 +291,11 @@
                                 </td>
                                 <td class="py-2.5 px-3">
                                     <div class="font-bold text-slate-900 dark:text-slate-100">{{ $pegawai->nama_lengkap ?? $pegawai->nama }}</div>
-                                    <div class="text-[10px] font-mono text-slate-400">NIP. {{ $pegawai->nip }}</div>
+                                    <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400">NIP. {{ $pegawai->nip }}</div>
                                 </td>
                                 <td class="py-2.5 px-3">
                                     <div class="text-slate-700 dark:text-slate-300 font-medium">{{ $pegawai->jabatan ?? '-' }}</div>
-                                    <div class="text-[10px] text-slate-400">{{ $pegawai->unitKerja->nama_unit ?? 'Balai Wil. VIII' }}</div>
+                                    <div class="text-[10px] text-slate-600 dark:text-slate-400">{{ $pegawai->unitKerja->nama_unit ?? 'Balai Wil. VIII' }}</div>
                                 </td>
                                 <td class="py-2.5 px-3 text-center">
                                     <div class="inline-flex items-center gap-1 font-mono font-bold text-amber-600 dark:text-amber-400">
@@ -344,8 +344,8 @@
                         @csrf
                         <input type="hidden" name="pegawai_id" :value="activePegawai.id">
 
-                        <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs">
-                            <span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Pegawai yang Dinilai:</span>
+                        <div class="bg-slate-50 dark:bg-slate-850 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                            <span class="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block mb-0.5">Pegawai yang Dinilai:</span>
                             <div class="font-bold text-slate-900 dark:text-slate-100 text-sm" x-text="activePegawai.nama_lengkap || activePegawai.nama"></div>
                             <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400" x-text="'NIP. ' + activePegawai.nip"></div>
                         </div>
@@ -406,7 +406,7 @@
                                         <div class="p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 text-xs mb-2">
                                             <div class="flex justify-between items-center text-amber-500 font-bold mb-1">
                                                 <span x-text="'★'.repeat(r.rating)"></span>
-                                                <span class="text-[10px] text-slate-400 font-normal" x-text="new Date(r.created_at).toLocaleDateString('id-ID')"></span>
+                                                <span class="text-[10px] text-slate-500 dark:text-slate-400 font-normal" x-text="new Date(r.created_at).toLocaleDateString('id-ID')"></span>
                                             </div>
                                             <p class="text-slate-700 dark:text-slate-300 italic" x-text="'“' + (r.komentar || 'Tanpa komentar tertulis') + '”'"></p>
                                         </div>

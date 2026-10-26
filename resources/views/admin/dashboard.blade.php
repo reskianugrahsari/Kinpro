@@ -43,57 +43,89 @@
             </div>
         </div>
 
-        <!-- 2. FILTER & PERIOD TOOLBAR (Exact 2-Row Match to Code.html / Attached Image) -->
-        <div class="bg-brand-white dark:bg-slate-800/90 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs space-y-3.5">
+        <!-- 2. FILTER & PERIOD TOOLBAR -->
+        <form method="GET" action="{{ route('dashboard') }}" id="filterPeriodForm" class="bg-brand-white dark:bg-slate-800/90 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs space-y-3.5">
+            <input type="hidden" name="periode" id="inputPeriode" value="{{ request('periode', 'all') }}">
+            @if(request('search'))
+                <input type="hidden" name="search" value="{{ request('search') }}">
+            @endif
+            @if(request('unit_kerja_id'))
+                <input type="hidden" name="unit_kerja_id" value="{{ request('unit_kerja_id') }}">
+            @endif
+
             <!-- Row 1: Periode & Segmented Buttons -->
             <div class="flex flex-wrap items-center gap-3">
                 <div class="flex items-center gap-1.5 text-xs font-bold text-brand-navy dark:text-slate-200 uppercase tracking-wider shrink-0">
                     <span class="material-symbols-outlined text-[18px] text-brand-teal dark:text-slate-400">tune</span>
                     <span>PERIODE:</span>
                 </div>
-                <!-- Segmented Control Bar (Neutral Light Beige container #F5EFEB) -->
-                <div class="inline-flex rounded-lg border border-brand-sky dark:border-slate-700 p-1 bg-brand-beige dark:bg-slate-900 overflow-x-auto max-w-full">
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-bold bg-brand-navy text-white shadow-xs shrink-0">Semua</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">TW I</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">TW II</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">TW III</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">TW IV</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">Smt I</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">Smt II</button>
-                    <button type="button" class="px-3.5 py-1.5 rounded-md text-xs font-medium text-brand-navy dark:text-slate-300 hover:text-white hover:bg-brand-teal transition shrink-0">Tahunan 2026</button>
+                <!-- Segmented Control Bar -->
+                @php
+                    $curP = request('periode', 'all');
+                    $periods = [
+                        'all' => 'Semua',
+                        'tw1' => 'TW I',
+                        'tw2' => 'TW II',
+                        'tw3' => 'TW III',
+                        'tw4' => 'TW IV',
+                        'smt1' => 'Smt I',
+                        'smt2' => 'Smt II',
+                        'tahunan' => 'Tahunan ' . (request('tahun', date('Y'))),
+                    ];
+                @endphp
+                <div class="inline-flex rounded-xl border border-brand-sky dark:border-slate-700 p-1 bg-brand-beige/80 dark:bg-slate-900 overflow-x-auto max-w-full shadow-inner">
+                    @foreach($periods as $key => $label)
+                        <button type="button" 
+                                onclick="document.getElementById('inputPeriode').value='{{ $key }}'; document.getElementById('filterPeriodForm').submit();"
+                                class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition shrink-0 cursor-pointer {{ $curP === $key ? 'bg-brand-navy text-white shadow-sm ring-1 ring-white/10' : 'text-slate-700 dark:text-slate-300 hover:text-white hover:bg-brand-teal' }}">
+                            {{ $label }}
+                        </button>
+                    @endforeach
                 </div>
             </div>
 
             <!-- Row 2: Dropdowns & Action Button -->
-            <div class="flex flex-wrap items-center gap-3 pt-1 border-t border-brand-sky/60 dark:border-slate-700/60">
-                <!-- Dropdown 1: Tahun: 2026 -->
+            <div class="flex flex-wrap items-center gap-3 pt-2.5 border-t border-brand-sky/60 dark:border-slate-700/60">
+                <!-- Dropdown 1: Tahun -->
+                @php
+                    $curTahun = (int) request('tahun', date('Y'));
+                    $curBulan = request('bulan', 'all');
+                @endphp
                 <div class="relative inline-flex items-center">
                     <span class="material-symbols-outlined text-[16px] text-brand-teal dark:text-slate-400 absolute left-3 pointer-events-none">calendar_today</span>
-                    <select class="pl-8 pr-9 py-1.5 bg-brand-white dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-lg text-xs font-semibold text-brand-navy dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-teal shadow-2xs appearance-none cursor-pointer">
-                        <option>Tahun: 2026</option>
-                        <option>Tahun: 2025</option>
+                    <select name="tahun" onchange="document.getElementById('filterPeriodForm').submit();" class="pl-8 pr-9 py-1.5 bg-brand-white dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-lg text-xs font-semibold text-brand-navy dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-teal shadow-2xs appearance-none cursor-pointer">
+                        @foreach([date('Y'), date('Y') - 1, date('Y') - 2] as $yr)
+                            <option value="{{ $yr }}" {{ $curTahun === $yr ? 'selected' : '' }}>Tahun: {{ $yr }}</option>
+                        @endforeach
                     </select>
-                    <span class="material-symbols-outlined text-[16px] text-slate-400 dark:text-slate-400 absolute right-2 pointer-events-none">expand_more</span>
+                    <span class="material-symbols-outlined text-[16px] text-slate-500 dark:text-slate-400 absolute right-2 pointer-events-none">expand_more</span>
                 </div>
 
                 <!-- Dropdown 2: Semua Bulan -->
                 <div class="relative inline-flex items-center">
-                    <select class="pl-3.5 pr-9 py-1.5 bg-brand-white dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-lg text-xs font-semibold text-brand-navy dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-teal shadow-2xs appearance-none cursor-pointer">
-                        <option>Semua Bulan</option>
-                        <option>Januari</option>
-                        <option>Februari</option>
-                        <option>Oktober</option>
+                    <select name="bulan" onchange="document.getElementById('inputPeriode').value='all'; document.getElementById('filterPeriodForm').submit();" class="pl-3.5 pr-9 py-1.5 bg-brand-white dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-lg text-xs font-semibold text-brand-navy dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-teal shadow-2xs appearance-none cursor-pointer">
+                        <option value="all" {{ $curBulan === 'all' ? 'selected' : '' }}>Semua Bulan</option>
+                        @foreach(['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] as $mName)
+                            <option value="{{ $mName }}" {{ $curBulan === $mName ? 'selected' : '' }}>{{ $mName }}</option>
+                        @endforeach
                     </select>
-                    <span class="material-symbols-outlined text-[16px] text-slate-400 dark:text-slate-400 absolute right-2 pointer-events-none">expand_more</span>
+                    <span class="material-symbols-outlined text-[16px] text-slate-500 dark:text-slate-400 absolute right-2 pointer-events-none">expand_more</span>
                 </div>
 
-                <!-- Button: Ekspor Laporan -->
-                <a href="{{ route('rekap.export', 'excel') }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-white dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-lg text-xs font-semibold text-brand-navy dark:text-slate-200 hover:bg-brand-beige dark:hover:bg-slate-800 transition shadow-2xs">
-                    <span class="material-symbols-outlined text-[16px] text-brand-teal dark:text-slate-400">file_download</span>
-                    <span>Ekspor Laporan</span>
+                <!-- Button: Ekspor Laporan (Styled Accent) -->
+                <a href="{{ route('rekap.export', ['type' => 'excel', 'periode' => request('periode', 'all'), 'tahun' => request('tahun', date('Y')), 'bulan' => request('bulan', 'all')]) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition shadow-xs">
+                    <span class="material-symbols-outlined text-[16px] text-white">file_download</span>
+                    <span>Ekspor Excel</span>
                 </a>
+
+                @if(request('periode') && request('periode') !== 'all' || request('bulan') && request('bulan') !== 'all')
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1 text-xs font-bold text-rose-500 hover:text-rose-600 dark:text-rose-400 px-2 py-1 rounded-md hover:bg-rose-50 dark:hover:bg-rose-950/40 transition">
+                        <span class="material-symbols-outlined text-[14px]">close</span>
+                        <span>Reset Filter</span>
+                    </a>
+                @endif
             </div>
-        </div>
+        </form>
 
         <!-- 3. METRIC CARDS (4 Columns) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -101,7 +133,7 @@
             <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs border-l-4 border-l-emerald-500 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">TOTAL PEGAWAI</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">TOTAL PEGAWAI</span>
                         <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                             <!-- Badge ID Icon -->
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2H9.17A3.001 3.001 0 0112 14z"/></svg>
@@ -113,7 +145,7 @@
                 </div>
                 <div class="pt-3 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
                     <span class="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded text-[10px]">Terdaftar Aktif</span>
-                    <span class="text-slate-400 font-medium text-[11px]">100% Terverifikasi</span>
+                    <span class="text-slate-500 dark:text-slate-400 font-medium text-[11px]">100% Terverifikasi</span>
                 </div>
             </div>
 
@@ -121,7 +153,7 @@
             <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs border-l-4 border-l-purple-500 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">PENILAIAN SELESAI</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">PENILAIAN SELESAI</span>
                         <div class="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                             <!-- Checklist Icon -->
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -133,7 +165,7 @@
                 </div>
                 <div class="pt-3 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
                     <span class="text-purple-600 dark:text-purple-400 font-bold bg-purple-50 dark:bg-purple-950/60 px-1.5 py-0.5 rounded text-[10px]">84.8% Target SKP</span>
-                    <span class="text-slate-400 font-medium text-[11px]">5 Belum Mengisi</span>
+                    <span class="text-slate-500 dark:text-slate-400 font-medium text-[11px]">5 Belum Mengisi</span>
                 </div>
             </div>
 
@@ -141,7 +173,7 @@
             <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs border-l-4 border-l-amber-500 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">IZIN & CUTI PENDING</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">IZIN & CUTI PENDING</span>
                         <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                             <!-- Calendar Icon -->
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -153,7 +185,7 @@
                 </div>
                 <div class="pt-3 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
                     <span class="text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[10px]">Perlu Diproses</span>
-                    <span class="text-slate-400 font-medium text-[11px]">Izin & Cuti Masuk</span>
+                    <span class="text-slate-500 dark:text-slate-400 font-medium text-[11px]">Izin & Cuti Masuk</span>
                 </div>
             </div>
 
@@ -161,7 +193,7 @@
             <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs border-l-4 border-l-rose-500 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">PENGADUAN TERBUKA</span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">PENGADUAN TERBUKA</span>
                         <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
                             <!-- Megaphone Icon -->
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
@@ -173,7 +205,7 @@
                 </div>
                 <div class="pt-3 mt-2 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between text-xs">
                     <span class="text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/60 px-1.5 py-0.5 rounded text-[10px]">Perlu Ditangani</span>
-                    <span class="text-slate-400 font-medium text-[11px]">Aspirasi Belum Selesai</span>
+                    <span class="text-slate-500 dark:text-slate-400 font-medium text-[11px]">Aspirasi Belum Selesai</span>
                 </div>
             </div>
         </div>
@@ -189,11 +221,11 @@
                             <h2 class="text-sm font-bold text-brand-navy dark:text-white">
                                 Distribusi Capaian Kinerja ASN (SKP 2026)
                             </h2>
-                            <p class="text-[11px] text-slate-400 mt-0.5">Klasifikasi matriks hasil evaluasi kinerja Triwulan III Balai Wilayah VIII</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Klasifikasi matriks hasil evaluasi kinerja Triwulan III Balai Wilayah VIII</p>
                         </div>
                         <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 pl-3 pr-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300">
                             <span>Filter: Semua Unit</span>
-                            <span class="material-symbols-outlined text-[14px] text-slate-400">expand_more</span>
+                            <span class="material-symbols-outlined text-[14px] text-slate-500 dark:text-slate-400">expand_more</span>
                         </div>
                     </div>
 
@@ -215,7 +247,7 @@
                             </svg>
                             <!-- Center Cutout Metric Legend -->
                             <div class="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none">
-                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">TOTAL ASN</span>
+                                <span class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">TOTAL ASN</span>
                                 <span class="text-2xl font-bold text-brand-navy dark:text-white tabular-nums">{{ $totalPegawai ?? 33 }}</span>
                                 <span class="text-[9px] font-semibold text-[#10B981] bg-[#ECFDF5] px-1.5 py-0.5 rounded-full mt-0.5">Pegawai</span>
                             </div>
@@ -291,7 +323,7 @@
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700">
                         <div>
                             <h2 class="text-sm font-bold text-brand-navy dark:text-white">Presensi &amp; Disiplin Hari Ini</h2>
-                            <p class="text-[11px] text-slate-400 mt-0.5">Status log harian presensi elektronik</p>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Status log harian presensi elektronik</p>
                         </div>
                         <span class="px-2 py-0.5 bg-[#ECFDF5] dark:bg-emerald-950/60 text-[#065F46] dark:text-emerald-300 font-bold text-[10px] rounded-full border border-[#A7F3D0] dark:border-emerald-800/40">
                             93.9% Hadir
@@ -315,7 +347,7 @@
                             </svg>
                             <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
                                 <span class="text-xl font-bold text-brand-navy dark:text-white tabular-nums">28</span>
-                                <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400">Di Kantor</span>
+                                <span class="text-[9px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Di Kantor</span>
                             </div>
                         </div>
 
@@ -355,7 +387,7 @@
 
                 <!-- Direct Operational Shortcuts -->
                 <div class="pt-3 border-t border-slate-100 dark:border-slate-700 space-y-2">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Tindakan Cepat Administrator:</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Tindakan Cepat Administrator:</span>
                     <div class="grid grid-cols-2 gap-2.5">
                         <a href="{{ route('izin.index') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-brand-navy hover:bg-[#202C3B] text-white rounded-xl text-xs font-bold transition shadow-xs">
                             <span class="material-symbols-outlined text-[16px]">check_circle</span>
@@ -378,20 +410,34 @@
                     <h2 class="font-extrabold text-base text-brand-navy dark:text-white">
                         Monitoring Aktivitas & Penilaian Pegawai Terbaru
                     </h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Status verifikasi dokumen target capaian kinerja Triwulan III Balai Diklat</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Status verifikasi dokumen target capaian kinerja Triwulan III Balai Diklat</p>
                 </div>
                 <div class="flex items-center space-x-3 w-full md:w-auto">
                     <!-- Search Input -->
                     <form method="GET" action="{{ route('dashboard') }}" class="relative w-full md:w-64">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        @if(request('periode'))
+                            <input type="hidden" name="periode" value="{{ request('periode') }}">
+                        @endif
+                        @if(request('tahun'))
+                            <input type="hidden" name="tahun" value="{{ request('tahun') }}">
+                        @endif
+                        @if(request('bulan'))
+                            <input type="hidden" name="bulan" value="{{ request('bulan') }}">
+                        @endif
+                        @if(request('unit_kerja_id'))
+                            <input type="hidden" name="unit_kerja_id" value="{{ request('unit_kerja_id') }}">
+                        @endif
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         </span>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama pegawai..." class="w-full pl-9 pr-4 py-2 bg-brand-beige dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-xl text-xs text-brand-navy dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-teal">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama pegawai..." class="w-full pl-9 pr-4 py-2 bg-brand-beige dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-xl text-xs text-brand-navy dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-teal">
                     </form>
-                    <button type="button" class="px-3.5 py-2 bg-brand-beige dark:bg-slate-700 hover:bg-brand-sky/40 text-brand-navy dark:text-slate-200 text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition shrink-0 border border-brand-sky/70 dark:border-transparent">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
-                        <span>Filter Unit</span>
-                    </button>
+                    <select onchange="window.location.href = '{{ request()->fullUrlWithQuery(['unit_kerja_id' => 'PLACEHOLDER']) }}'.replace('PLACEHOLDER', this.value)" class="px-3 py-2 bg-brand-beige dark:bg-slate-700 hover:bg-brand-sky/40 text-brand-navy dark:text-slate-200 text-xs font-semibold rounded-xl transition shrink-0 border border-brand-sky/70 dark:border-transparent cursor-pointer">
+                        <option value="">Semua Unit Kerja</option>
+                        @foreach($unitKerjaList as $uk)
+                            <option value="{{ $uk->id }}" {{ request('unit_kerja_id') == $uk->id ? 'selected' : '' }}>{{ $uk->nama }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
@@ -402,7 +448,7 @@
                         <tr>
                             <th class="px-6 py-3.5">NAMA PEGAWAI & NIP</th>
                             <th class="px-6 py-3.5">JABATAN / UNIT KERJA</th>
-                            <th class="px-6 py-3.5">STATUS SKP TW III</th>
+                            <th class="px-6 py-3.5">STATUS SKP ({{ strtoupper(request('periode', 'Semua')) }})</th>
                             <th class="px-6 py-3.5">NILAI CAPAIAN</th>
                             <th class="px-6 py-3.5">STATUS KEHADIRAN</th>
                             <th class="px-6 py-3.5 text-center">AKSI</th>
@@ -448,7 +494,7 @@
                                     <div class="font-bold text-slate-800 dark:text-white text-xs">
                                         {{ $peg->nama_lengkap ?? $peg->nama }}
                                     </div>
-                                    <div class="text-[11px] text-slate-400 font-mono mt-0.5">
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
                                         NIP. {{ $peg->nip ?? '-' }}
                                     </div>
                                 </td>
@@ -458,7 +504,7 @@
                                     <div class="font-semibold text-slate-700 dark:text-slate-200 text-xs">
                                         {{ $peg->jabatan ?? 'Staf Pelaksana' }}
                                     </div>
-                                    <div class="text-[11px] text-slate-400 mt-0.5">
+                                    <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                                         {{ $peg->unitKerja?->nama_unit ?? 'Balai Pengembangan Kompetensi' }}
                                     </div>
                                 </td>
@@ -509,7 +555,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-8 text-center text-slate-400">
+                                <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                                     Tidak ada data pegawai yang ditemukan.
                                 </td>
                             </tr>
@@ -528,7 +574,7 @@
                         <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center space-x-1">
                             {{-- Previous Page Link --}}
                             @if ($pegawaiList->onFirstPage())
-                                <span class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 cursor-not-allowed bg-slate-50 dark:bg-slate-800">Sebelumnya</span>
+                                <span class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed bg-slate-50 dark:bg-slate-800">Sebelumnya</span>
                             @else
                                 <a href="{{ $pegawaiList->previousPageUrl() }}" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Sebelumnya</a>
                             @endif
@@ -540,7 +586,7 @@
                                 @elseif ($page <= 3 || $page == $pegawaiList->lastPage() || abs($page - $pegawaiList->currentPage()) <= 1)
                                     <a href="{{ $url }}" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">{{ $page }}</a>
                                 @elseif ($page == 4 && $pegawaiList->lastPage() > 5)
-                                    <span class="px-2 py-1.5 text-slate-400">...</span>
+                                    <span class="px-2 py-1.5 text-slate-500 dark:text-slate-400">...</span>
                                 @endif
                             @endforeach
 
@@ -548,7 +594,7 @@
                             @if ($pegawaiList->hasMorePages())
                                 <a href="{{ $pegawaiList->nextPageUrl() }}" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">Berikutnya</a>
                             @else
-                                <span class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 cursor-not-allowed bg-slate-50 dark:bg-slate-800">Berikutnya</span>
+                                <span class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed bg-slate-50 dark:bg-slate-800">Berikutnya</span>
                             @endif
                         </nav>
                     @endif

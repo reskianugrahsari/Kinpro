@@ -63,3 +63,6 @@ public/hot
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# PDF Master Data
+*.pdf

@@ -1,4 +1,33 @@
 <x-guest-layout>
+    <style>
+        @keyframes subtleFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.2;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 0.95;
+                transform: scale(1.3);
+            }
+        }
+        .anim-float-1 {
+            animation: subtleFloat 3.8s ease-in-out infinite;
+        }
+        .anim-float-2 {
+            animation: subtleFloat 3.8s ease-in-out infinite 1.2s;
+        }
+        .anim-float-3 {
+            animation: subtleFloat 3.8s ease-in-out infinite 2.4s;
+        }
+    </style>
     <div class="min-h-screen w-full grid grid-cols-1 lg:grid-cols-12 bg-brand-beige antialiased font-sans" x-data="{ showPassword: false }">
         <!-- LEFT HERO SECTION (Primary Navy #2F4156 with grid) -->
         <div class="lg:col-span-6 xl:col-span-6 bg-brand-navy text-white p-8 sm:p-12 lg:p-14 flex flex-col justify-between relative overflow-hidden">
@@ -7,72 +36,63 @@
 
             <!-- Soft ambient glows -->
             <div class="absolute -top-24 -left-24 w-96 h-96 bg-brand-teal/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute bottom-10 -right-20 w-96 h-96 bg-brand-sky/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-brand-sky/15 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-10 -right-20 w-96 h-96 bg-brand-teal/20 rounded-full blur-3xl pointer-events-none"></div>
 
-            <!-- Content Area -->
-            <div class="relative z-10">
-                <!-- Top Brand Header -->
-                <div class="flex items-center space-x-3.5 mb-8">
-                    <!-- Clean Logo without wrapper -->
-                    <div class="w-12 h-12 flex items-center justify-center shrink-0">
-                        <img src="{{ asset('images/logo-kinpro.png') }}?v={{ filemtime(public_path('images/logo-kinpro.png')) }}" alt="KinPro Logo" class="w-full h-full object-contain filter drop-shadow-[0_4px_12px_rgba(86,124,141,0.25)]">
-                    </div>
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-2xl font-extrabold tracking-tight text-white">KinPro</span>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider text-brand-sky border border-brand-teal/60 bg-[#202C3B]/60">ENTERPRISE</span>
-                        </div>
-                        <p class="text-xs text-brand-sky/80 font-normal">Balai Pengembangan Kompetensi PUPR Wilayah VIII Makassar</p>
-                    </div>
+            <!-- Center Stage Hero: Logo Center Horizontal & Vertikal, Title, Description -->
+            <div class="relative z-10 my-auto py-6 flex flex-col items-center text-center">
+                <!-- Main Centered Enlarged Logo (Clean Transparent without Wrapper Box) -->
+                <div class="relative mb-6 group flex items-center justify-center">
+                    <div class="absolute -inset-6 bg-gradient-to-r from-teal-500/25 via-sky-400/30 to-cyan-500/25 rounded-full blur-3xl pointer-events-none group-hover:blur-3xl transition duration-500"></div>
+                    <img src="{{ asset('images/logo-kinpro-auth.png') }}?v={{ file_exists(public_path('images/logo-kinpro-auth.png')) ? filemtime(public_path('images/logo-kinpro-auth.png')) : time() }}" alt="KinPro Logo" class="relative z-10 w-40 sm:w-48 md:w-52 max-h-48 sm:max-h-52 object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.45)] transition-transform duration-300 group-hover:scale-105">
                 </div>
 
-                <!-- Tagline Pill Badge -->
-                <div class="inline-flex items-center gap-2 bg-[#202C3B] border border-brand-teal/40 text-brand-sky text-xs font-semibold px-3.5 py-1.5 rounded-full mb-7 shadow-sm">
-                    <span class="w-1.5 h-1.5 rounded-full bg-brand-sky animate-pulse"></span>
-                    <span>Sistem Kinerja Pegawai v2.0 Terintegrasi</span>
-                </div>
-
-                <!-- Large Headline -->
-                <h1 class="text-3xl sm:text-4xl lg:text-[40px] font-extrabold leading-tight tracking-tight mb-4 text-white">
-                    Kelola Kinerja Lebih <br>
-                    <span class="text-brand-sky">Efisien & Terukur.</span>
+                <!-- Dynamic & Vivid Main Title with Gradient -->
+                <h1 class="text-3xl sm:text-4xl lg:text-[42px] font-extrabold leading-tight tracking-tight mb-4 max-w-lg">
+                    <span class="text-white">Kelola Kinerja Lebih </span>
+                    <span class="bg-gradient-to-r from-teal-300 via-sky-300 to-cyan-200 bg-clip-text text-transparent drop-shadow-sm block sm:inline">
+                        Efisien & Terukur.
+                    </span>
                 </h1>
 
                 <!-- Body description -->
-                <p class="text-slate-200/90 text-sm sm:text-base leading-relaxed mb-10 max-w-xl font-normal">
-                    Platform cerdas pemantauan, evaluasi berkala, dan penilaian kinerja ASN Bapekom Wilayah VIII Makassar yang transparan, akurat, dan berbasis data realtime.
+                <p class="text-slate-200 text-xs sm:text-sm leading-relaxed max-w-lg font-normal mb-8">
+                    Platform cerdas pemantauan, evaluasi berkala, dan penilaian kinerja ASN Balai Pengembangan Kompetensi PUPR Wilayah VIII Makassar yang transparan, akurat, dan berbasis data realtime.
                 </p>
 
-                <!-- Stats 3 Cards -->
-                <div class="grid grid-cols-3 gap-3 sm:gap-4 mb-10 max-w-lg">
-                    <div class="bg-[#202C3B]/90 border border-brand-teal/40 rounded-2xl p-4 text-center backdrop-blur-sm shadow-md">
-                        <div class="text-2xl sm:text-3xl font-black text-brand-sky">32+</div>
-                        <div class="text-[10px] sm:text-[11px] uppercase font-bold text-slate-300 tracking-wider mt-1">PEGAWAI AKTIF</div>
+                <!-- Stats 3 Cards Centered with Animated Float & Glow Hover -->
+                <div class="grid grid-cols-3 gap-3 sm:gap-4 w-full max-w-md">
+                    <!-- Card 1 -->
+                    <div class="anim-float-1 group/stat relative bg-[#202C3B]/90 border border-brand-teal/40 rounded-2xl p-3.5 text-center backdrop-blur-sm shadow-md transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-[0_12px_24px_rgba(20,184,166,0.25)] hover:border-cyan-300 cursor-default">
+                        <div class="text-xl sm:text-2xl font-black bg-gradient-to-r from-teal-300 to-sky-300 bg-clip-text text-transparent group-hover/stat:scale-110 transition-transform duration-300 inline-block">32+</div>
+                        <div class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-300 tracking-wider mt-1 group-hover/stat:text-cyan-200 transition-colors">PEGAWAI AKTIF</div>
                     </div>
-                    <div class="bg-[#202C3B]/90 border border-brand-teal/40 rounded-2xl p-4 text-center backdrop-blur-sm shadow-md">
-                        <div class="text-2xl sm:text-3xl font-black text-white">96.8%</div>
-                        <div class="text-[10px] sm:text-[11px] uppercase font-bold text-slate-300 tracking-wider mt-1">AKURASI SKP</div>
+                    <!-- Card 2 -->
+                    <div class="anim-float-2 group/stat relative bg-[#202C3B]/90 border border-brand-teal/40 rounded-2xl p-3.5 text-center backdrop-blur-sm shadow-md transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-[0_12px_24px_rgba(56,189,248,0.25)] hover:border-sky-300 cursor-default">
+                        <div class="text-xl sm:text-2xl font-black bg-gradient-to-r from-white via-sky-100 to-teal-200 bg-clip-text text-transparent group-hover/stat:scale-110 transition-transform duration-300 inline-block">96.8%</div>
+                        <div class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-300 tracking-wider mt-1 group-hover/stat:text-sky-200 transition-colors">AKURASI SKP</div>
                     </div>
-                    <div class="bg-[#202C3B]/90 border border-brand-teal/40 rounded-2xl p-4 text-center backdrop-blur-sm shadow-md">
-                        <div class="text-2xl sm:text-3xl font-black text-brand-sky">24/7</div>
-                        <div class="text-[10px] sm:text-[11px] uppercase font-bold text-slate-300 tracking-wider mt-1">LAYANAN REALTIME</div>
+                    <!-- Card 3 -->
+                    <div class="anim-float-3 group/stat relative bg-[#202C3B]/90 border border-brand-teal/40 rounded-2xl p-3.5 text-center backdrop-blur-sm shadow-md transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-[0_12px_24px_rgba(45,212,191,0.25)] hover:border-teal-300 cursor-default">
+                        <div class="text-xl sm:text-2xl font-black bg-gradient-to-r from-sky-300 to-teal-300 bg-clip-text text-transparent group-hover/stat:scale-110 transition-transform duration-300 inline-block">24/7</div>
+                        <div class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-300 tracking-wider mt-1 group-hover/stat:text-teal-200 transition-colors">REALTIME SYNC</div>
                     </div>
                 </div>
             </div>
 
             <!-- Bottom Badges Row (4) -->
-            <div class="relative z-10 flex flex-nowrap items-center gap-2 pt-6 border-t border-brand-teal/40 text-[11px] text-slate-200 font-medium overflow-x-auto">
-                <span class="inline-flex items-center gap-1.5 bg-[#202C3B]/80 px-2.5 py-1.5 rounded-full border border-brand-teal/40 shrink-0">
-                    <span class="w-1.5 h-1.5 rounded-full bg-brand-teal"></span> Real-time Sync
+            <div class="relative z-10 flex flex-wrap sm:flex-nowrap justify-center items-center gap-2 pt-6 border-t border-brand-teal/30 text-[11px] text-slate-200 font-medium">
+                <span class="inline-flex items-center gap-1.5 bg-[#202C3B]/80 px-2.5 py-1.5 rounded-full border border-teal-500/30 shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span> Real-time Sync
                 </span>
-                <span class="inline-flex items-center gap-1.5 bg-[#202C3B]/80 px-2.5 py-1.5 rounded-full border border-brand-teal/40 shrink-0">
-                    <span class="w-1.5 h-1.5 rounded-full bg-brand-sky"></span> Terstruktur
+                <span class="inline-flex items-center gap-1.5 bg-[#202C3B]/80 px-2.5 py-1.5 rounded-full border border-sky-500/30 shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span> Terstruktur
                 </span>
-                <span class="inline-flex items-center gap-1.5 bg-[#202C3B]/80 px-2.5 py-1.5 rounded-full border border-brand-teal/40 shrink-0">
-                    <span class="w-1.5 h-1.5 rounded-full bg-brand-teal"></span> Otomatisasi SKP
+                <span class="inline-flex items-center gap-1.5 bg-[#202C3B]/80 px-2.5 py-1.5 rounded-full border border-cyan-500/30 shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Otomatisasi SKP
                 </span>
-                <span class="inline-flex items-center gap-1.5 bg-[#202C3B]/80 px-2.5 py-1.5 rounded-full border border-brand-teal/40 shrink-0">
-                    <span class="w-1.5 h-1.5 rounded-full bg-brand-sky"></span> Keamanan Berlapis
+                <span class="inline-flex items-center gap-1.5 bg-[#202C3B]/80 px-2.5 py-1.5 rounded-full border border-teal-500/30 shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span> Keamanan Berlapis
                 </span>
             </div>
         </div>
@@ -109,11 +129,11 @@
                                 id="email"
                                 type="text"
                                 name="email"
-                                value="{{ old('email', 'amiruddin01@pu.go.id') }}"
+                                value="{{ old('email') }}"
                                 required
                                 autofocus
                                 autocomplete="username"
-                                placeholder="amiruddin01@pu.go.id"
+                                placeholder="Masukkan NIP atau Email Resmi"
                                 class="w-full pl-11 pr-4 py-3 bg-brand-white border border-brand-sky rounded-xl text-xs sm:text-sm text-brand-navy font-medium placeholder-slate-400 focus:outline-none focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 transition shadow-xs"
                             />
                         </div>

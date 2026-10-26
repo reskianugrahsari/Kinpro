@@ -104,20 +104,20 @@
                         <button type="button" onclick="document.getElementById('statusInput').value='approved'; document.getElementById('feedFilterForm').submit();"
                             class="px-2 py-1 rounded-md transition-colors cursor-pointer flex items-center gap-1 {{ $curSt === 'approved' ? 'bg-primary-container text-white font-bold shadow-2xs' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium' }}">
                             <span>Disetujui</span>
-                            <span class="text-slate-400 font-mono text-[9px]">{{ $approvedCount }}</span>
+                            <span class="text-slate-500 dark:text-slate-400 font-mono text-[9px]">{{ $approvedCount }}</span>
                         </button>
                         <button type="button" onclick="document.getElementById('statusInput').value='rejected'; document.getElementById('feedFilterForm').submit();"
                             class="px-2 py-1 rounded-md transition-colors cursor-pointer flex items-center gap-1 {{ $curSt === 'rejected' ? 'bg-primary-container text-white font-bold shadow-2xs' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium' }}">
                             <span>Ditolak</span>
-                            <span class="text-slate-400 font-mono text-[9px]">{{ $rejectedCount }}</span>
+                            <span class="text-slate-500 dark:text-slate-400 font-mono text-[9px]">{{ $rejectedCount }}</span>
                         </button>
                     </div>
 
                     <!-- Search & Fast Category Toggle -->
                     <div class="flex items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
                         <div class="relative flex-1">
-                            <span class="material-symbols-outlined absolute left-2 top-1.5 text-slate-400 text-sm pointer-events-none">search</span>
-                            <input name="search" value="{{ request('search') }}" class="w-full pl-7 pr-2 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-xs text-on-surface dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-primary-container focus:bg-white dark:focus:bg-slate-900" placeholder="Filter tiket / nama..." type="text">
+                            <span class="material-symbols-outlined absolute left-2 top-1.5 text-slate-500 dark:text-slate-400 text-sm pointer-events-none">search</span>
+                            <input name="search" value="{{ request('search') }}" class="w-full pl-7 pr-2 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-xs text-on-surface dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:border-primary-container focus:bg-white dark:focus:bg-slate-900" placeholder="Filter tiket / nama..." type="text">
                         </div>
                         <select name="jenis" onchange="this.form.submit()" class="pl-2 pr-7 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-xs text-slate-600 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[140px]">
                             <option value="">Semua Kategori</option>
@@ -200,13 +200,13 @@
                                     <span>{{ $item->jenis_laporan }}</span>
                                 </span>
                                 <span class="text-[10px] font-mono text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-xs text-slate-400">calendar_today</span>
+                                    <span class="material-symbols-outlined text-xs text-slate-500 dark:text-slate-400">calendar_today</span>
                                     <span>{{ $item->tanggal_kejadian }}</span>
                                 </span>
                             </div>
 
                             <div class="mt-1.5 text-[11px] text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/70 p-1.5 rounded border border-slate-100 dark:border-slate-800 line-clamp-2">
-                                <span class="text-slate-400 font-mono">Alasan:</span> <span class="italic font-medium">“{{ $item->keterangan }}”</span>
+                                <span class="text-slate-500 dark:text-slate-400 font-mono">Alasan:</span> <span class="italic font-medium">“{{ $item->keterangan }}”</span>
                             </div>
 
                             @if($item->alasan_penolakan)
@@ -215,7 +215,7 @@
                                 </div>
                             @endif
 
-                            <div class="mt-2 flex items-center justify-between text-[10px] text-slate-400 pt-1.5 border-t border-slate-100 dark:border-slate-800">
+                            <div class="mt-2 flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-1.5 border-t border-slate-100 dark:border-slate-800">
                                 <span class="flex items-center gap-1 text-slate-500 dark:text-slate-400">
                                     @if($item->bukti)
                                         <span class="material-symbols-outlined text-xs text-primary">attach_file</span>
@@ -232,8 +232,8 @@
                             </div>
                         </div>
                     @empty
-                        <div class="p-6 text-center text-slate-400 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl bg-surface-container-lowest dark:bg-slate-900">
-                            <span class="material-symbols-outlined text-2xl mb-1">inbox</span>
+                        <div class="p-6 text-center text-slate-500 dark:text-slate-400 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl bg-surface-container-lowest dark:bg-slate-900">
+                            <span class="material-symbols-outlined text-2xl mb-1 text-slate-400">inbox</span>
                             <p class="text-xs font-semibold">Tidak ada data tiket pengaduan.</p>
                         </div>
                     @endforelse
@@ -241,7 +241,7 @@
 
                 <!-- Feed Pagination Footer -->
                 <div class="flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-1 pt-1 border-t border-slate-100 dark:border-slate-800 gap-2">
-                    <span class="text-[10px] text-slate-400">Hal. {{ $pengaduans->currentPage() }} dari {{ $pengaduans->lastPage() }} ({{ $pengaduans->total() }} entri)</span>
+                    <span class="text-[10px] text-slate-500 dark:text-slate-400">Hal. {{ $pengaduans->currentPage() }} dari {{ $pengaduans->lastPage() }} ({{ $pengaduans->total() }} entri)</span>
                     <div>
                         {{ $pengaduans->links('vendor.pagination.compact') }}
                     </div>
@@ -281,7 +281,7 @@
                                         </div>
                                     </div>
                                     <div class="text-left sm:text-right shrink-0">
-                                        <div class="text-[9px] font-bold uppercase tracking-wider text-slate-400">Status Pegawai</div>
+                                        <div class="text-[9px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Pegawai</div>
                                         <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.2 rounded border border-emerald-200 dark:border-emerald-800/40 mt-0.5">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
                                             Aktif Bapekom VIII
@@ -383,7 +383,7 @@
                                         <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1.5 overflow-hidden">
                                             <div class="bg-primary h-1.5 rounded-full" style="width: 75%"></div>
                                         </div>
-                                        <div class="flex items-center justify-between text-[10px] text-slate-400 mt-1">
+                                        <div class="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mt-1">
                                             <span>Kategori: Kendala Absensi</span>
                                             <span class="text-emerald-600 font-semibold">Tersinkronisasi</span>
                                         </div>
@@ -400,7 +400,7 @@
                                             <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                                                 Catatan / Instruksi Verifikator (Wajib diisi jika ditolak):
                                             </label>
-                                            <textarea name="alasan_penolakan" x-model="catatanAdmin" class="w-full text-xs p-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-primary-container focus:bg-white dark:focus:bg-slate-900 resize-none" placeholder="Tuliskan catatan tindak lanjut, arahan perbaikan, atau alasan jika ditolak..." rows="2"></textarea>
+                                            <textarea name="alasan_penolakan" x-model="catatanAdmin" class="w-full text-xs p-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:border-primary-container focus:bg-white dark:focus:bg-slate-900 resize-none" placeholder="Tuliskan catatan tindak lanjut, arahan perbaikan, atau alasan jika ditolak..." rows="2"></textarea>
                                         </div>
 
                                         <!-- Quick Action Verification Buttons -->

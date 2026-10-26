@@ -18,7 +18,9 @@ class PengajuanAbsenController extends Controller
         if ($user->role !== 'admin') {
             $pegawai = Pegawai::where('user_id', $user->id)->first();
             $query->where('pegawai_id', $pegawai ? $pegawai->id : 0);
+            $baseCountQuery = PengajuanAbsen::where('pegawai_id', $pegawai ? $pegawai->id : 0);
         } else {
+            $baseCountQuery = PengajuanAbsen::query();
             if ($request->filled('status') && $request->status !== 'all' && $request->status !== '') {
                 $query->where('status', $request->status);
             }
@@ -38,11 +40,10 @@ class PengajuanAbsenController extends Controller
             }
         }
 
-        $allAbsen = PengajuanAbsen::all();
-        $totalAll = $allAbsen->count();
-        $pendingCount = $allAbsen->where('status', 'pending')->count();
-        $approvedCount = $allAbsen->where('status', 'approved')->count();
-        $rejectedCount = $allAbsen->where('status', 'rejected')->count();
+        $totalAll = (clone $baseCountQuery)->count();
+        $pendingCount = (clone $baseCountQuery)->where('status', 'pending')->count();
+        $approvedCount = (clone $baseCountQuery)->where('status', 'approved')->count();
+        $rejectedCount = (clone $baseCountQuery)->where('status', 'rejected')->count();
 
         $perPage = in_array((int)$request->input('per_page', 10), [5, 10, 25, 50]) ? (int)$request->input('per_page', 10) : 10;
         $pengaduans = $query->paginate($perPage)->withQueryString();

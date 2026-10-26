@@ -52,6 +52,42 @@ class Pegawai extends Model
         return null;
     }
 
+    public function getFotoDepanUrlAttribute()
+    {
+        $foto = $this->attributes['foto_depan'] ?? null;
+        if (!empty($foto)) {
+            if (str_starts_with($foto, 'http://') || str_starts_with($foto, 'https://')) {
+                return $foto;
+            }
+            if (file_exists(public_path('uploads/' . $foto))) {
+                return asset('uploads/' . $foto);
+            }
+            if (file_exists(public_path($foto))) {
+                return asset($foto);
+            }
+            return asset('uploads/' . $foto);
+        }
+        return $this->foto_url;
+    }
+
+    public function getFotoBelakangUrlAttribute()
+    {
+        $foto = $this->attributes['foto_belakang'] ?? null;
+        if (!empty($foto)) {
+            if (str_starts_with($foto, 'http://') || str_starts_with($foto, 'https://')) {
+                return $foto;
+            }
+            if (file_exists(public_path('uploads/' . $foto))) {
+                return asset('uploads/' . $foto);
+            }
+            if (file_exists(public_path($foto))) {
+                return asset($foto);
+            }
+            return asset('uploads/' . $foto);
+        }
+        return null;
+    }
+
     public function unitKerja()
     {
         return $this->belongsTo(UnitKerja::class, 'unit_kerja_id');
@@ -86,5 +122,19 @@ class Pegawai extends Model
             return 'PPPK';
         }
         return 'PNS';
+    }
+
+    public function getIsAktifAttribute()
+    {
+        if (isset($this->attributes['status'])) {
+            $val = strtolower($this->attributes['status']);
+            if (in_array($val, ['tidak aktif', 'nonaktif', 'cuti', 'inactive', '0'])) {
+                return false;
+            }
+        }
+        if (isset($this->attributes['is_aktif'])) {
+            return (bool) $this->attributes['is_aktif'];
+        }
+        return true;
     }
 }

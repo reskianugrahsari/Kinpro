@@ -51,84 +51,84 @@
         <!-- 4 KPI Summary Cards with 4px Accent Strips -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
             <!-- Card 1: Total Evaluasi -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-lg p-3.5 flex flex-col justify-between border-l-4 border-l-tertiary shadow-xs transition-colors">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between border-l-4 border-l-emerald-500 shadow-xs hover:border-emerald-500/40 transition-all">
                 <div class="flex items-start justify-between">
                     <div>
-                        <span class="text-[10px] text-secondary dark:text-slate-400 uppercase font-bold tracking-wider">TOTAL EVALUASI PERIODE INI</span>
-                        <div class="text-2xl font-extrabold text-on-surface dark:text-slate-100 mt-0.5 leading-tight">{{ $totalEvaluasi }}</div>
+                        <span class="text-[10px] text-emerald-700 dark:text-emerald-400 uppercase font-bold tracking-wider">TOTAL EVALUASI PERIODE INI</span>
+                        <div class="text-2xl font-extrabold text-on-surface dark:text-slate-100 mt-1 leading-tight font-mono">{{ $totalEvaluasi }}</div>
                     </div>
-                    <div class="w-8 h-8 rounded bg-surface-container-low dark:bg-slate-800 flex items-center justify-center text-tertiary dark:text-emerald-400 border border-outline-variant/60 dark:border-slate-700 shrink-0">
-                        <span class="material-symbols-outlined text-lg">assignment_turned_in</span>
+                    <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 shrink-0 shadow-2xs">
+                        <span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 mt-2.5 pt-2 border-t border-outline-variant/60 dark:border-slate-800">
-                    <span class="px-1.5 py-0.2 rounded text-[10px] bg-tertiary-fixed text-on-tertiary-fixed font-bold">100% Selesai</span>
-                    <span class="text-[11px] text-secondary dark:text-slate-400">Terverifikasi Atasan</span>
+                <div class="flex items-center gap-2 mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800">
+                    <span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-bold border border-emerald-300 dark:border-emerald-700/60">100% Selesai</span>
+                    <span class="text-[11px] text-secondary dark:text-slate-400 font-medium">Terverifikasi Atasan</span>
                 </div>
             </div>
 
             <!-- Card 2: Rata-Rata Skor Balai -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-lg p-3.5 flex flex-col justify-between border-l-4 border-l-primary shadow-xs transition-colors">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between border-l-4 border-l-blue-500 shadow-xs hover:border-blue-500/40 transition-all">
                 <div class="flex items-start justify-between">
                     <div>
-                        <span class="text-[10px] text-secondary dark:text-slate-400 uppercase font-bold tracking-wider">RATA-RATA SKOR BALAI</span>
-                        <div class="text-2xl font-extrabold text-on-surface dark:text-slate-100 mt-0.5 leading-tight font-mono">{{ number_format($rataRataSkor, 2) }}</div>
+                        <span class="text-[10px] text-blue-700 dark:text-blue-400 uppercase font-bold tracking-wider">RATA-RATA SKOR BALAI</span>
+                        <div class="text-2xl font-extrabold text-on-surface dark:text-slate-100 mt-1 leading-tight font-mono text-blue-900 dark:text-blue-300">{{ number_format($rataRataSkor, 2) }}</div>
                     </div>
-                    <div class="w-8 h-8 rounded bg-surface-container-low dark:bg-slate-800 flex items-center justify-center text-primary dark:text-blue-400 border border-outline-variant/60 dark:border-slate-700 shrink-0">
-                        <span class="material-symbols-outlined text-lg">speed</span>
+                    <div class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/60 shrink-0 shadow-2xs">
+                        <span class="material-symbols-outlined text-[20px]">speed</span>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 mt-2.5 pt-2 border-t border-outline-variant/60 dark:border-slate-800">
-                    <span class="px-1.5 py-0.2 rounded text-[10px] bg-primary text-on-primary font-bold">Baik</span>
-                    <span class="text-[11px] text-secondary dark:text-slate-400">Target Balai: ≥ 78.00 Poin</span>
+                <div class="flex items-center gap-2 mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800">
+                    <span class="px-2 py-0.5 rounded-full text-[10px] bg-blue-600 text-white font-bold shadow-2xs">Baik</span>
+                    <span class="text-[11px] text-secondary dark:text-slate-400 font-medium">Target Balai: ≥ 78.00 Poin</span>
                 </div>
             </div>
 
             <!-- Card 3: Distribusi Predikat -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-lg p-3.5 flex flex-col justify-between border-l-4 border-l-secondary shadow-xs transition-colors">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between border-l-4 border-l-purple-500 shadow-xs hover:border-purple-500/40 transition-all">
                 <div class="flex items-start justify-between">
                     <div>
-                        <span class="text-[10px] text-secondary dark:text-slate-400 uppercase font-bold tracking-wider">DISTRIBUSI PREDIKAT</span>
-                        <div class="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                            <span class="px-1.5 py-0.5 rounded bg-surface-container-highest dark:bg-slate-800 text-on-surface dark:text-slate-200 font-semibold text-[11px]">{{ $predikatCounts['SB'] }} SB</span>
-                            <span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary font-semibold text-[11px]">{{ $predikatCounts['B'] }} B</span>
-                            <span class="px-1.5 py-0.5 rounded bg-surface-container dark:bg-slate-800 text-on-surface dark:text-slate-300 font-semibold text-[11px]">{{ $predikatCounts['C'] }} C</span>
-                            <span class="px-1.5 py-0.5 rounded bg-error-container text-on-error-container font-semibold text-[11px]">{{ $predikatCounts['BP'] }} BP</span>
+                        <span class="text-[10px] text-purple-700 dark:text-purple-400 uppercase font-bold tracking-wider">DISTRIBUSI PREDIKAT</span>
+                        <div class="flex items-center gap-1.5 mt-2 flex-wrap">
+                            <span class="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 font-bold text-[11px] shadow-2xs">{{ $predikatCounts['SB'] }} SB</span>
+                            <span class="px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-700 font-bold text-[11px] shadow-2xs">{{ $predikatCounts['B'] }} B</span>
+                            <span class="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700 font-bold text-[11px] shadow-2xs">{{ $predikatCounts['C'] }} C</span>
+                            <span class="px-2 py-0.5 rounded-md bg-rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-700 font-bold text-[11px] shadow-2xs">{{ $predikatCounts['BP'] }} BP</span>
                         </div>
                     </div>
-                    <div class="w-8 h-8 rounded bg-surface-container-low dark:bg-slate-800 flex items-center justify-center text-secondary dark:text-slate-400 border border-outline-variant/60 dark:border-slate-700 shrink-0">
-                        <span class="material-symbols-outlined text-lg">pie_chart</span>
+                    <div class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/60 flex items-center justify-center text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800/60 shrink-0 shadow-2xs">
+                        <span class="material-symbols-outlined text-[20px]">pie_chart</span>
                     </div>
                 </div>
-                <div class="flex items-center justify-between mt-2.5 pt-2 border-t border-outline-variant/60 dark:border-slate-800 text-[11px] text-secondary dark:text-slate-400">
-                    <span>Sangat Baik: {{ $pctSB }}%</span>
-                    <span>Butuh Perbaikan: {{ $pctBP }}%</span>
+                <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 text-[11px] text-secondary dark:text-slate-400">
+                    <span class="font-medium text-emerald-700 dark:text-emerald-400">Sangat Baik: <strong class="font-mono">{{ $pctSB }}%</strong></span>
+                    <span class="font-medium text-rose-600 dark:text-rose-400">Butuh Perbaikan: <strong class="font-mono">{{ $pctBP }}%</strong></span>
                 </div>
             </div>
 
             <!-- Card 4: Indeks Aspek Balai -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-lg p-3.5 flex flex-col justify-between border-l-4 border-l-tertiary-container shadow-xs transition-colors">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between border-l-4 border-l-amber-500 shadow-xs hover:border-amber-500/40 transition-all">
                 <div class="flex items-start justify-between">
                     <div>
-                        <span class="text-[10px] text-secondary dark:text-slate-400 uppercase font-bold tracking-wider">INDEKS ASPEK BALAI</span>
-                        <div class="flex flex-col gap-0.5 mt-1">
+                        <span class="text-[10px] text-amber-700 dark:text-amber-400 uppercase font-bold tracking-wider">INDEKS ASPEK BALAI</span>
+                        <div class="flex flex-col gap-1 mt-1.5">
                             <div class="flex items-center justify-between text-[11px] gap-2">
                                 <span class="text-secondary dark:text-slate-400">Tertinggi ({{ $topAspect['name'] }}):</span>
-                                <span class="font-mono font-bold text-on-surface dark:text-slate-100">{{ number_format($topAspect['score'], 2) }}</span>
+                                <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">{{ number_format($topAspect['score'], 2) }}</span>
                             </div>
                             <div class="flex items-center justify-between text-[11px] gap-2">
                                 <span class="text-secondary dark:text-slate-400">Terendah ({{ $lowAspect['name'] }}):</span>
-                                <span class="font-mono font-bold text-error dark:text-rose-400">{{ number_format($lowAspect['score'], 2) }}</span>
+                                <span class="font-mono font-bold text-rose-600 dark:text-rose-400">{{ number_format($lowAspect['score'], 2) }}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="w-8 h-8 rounded bg-surface-container-low dark:bg-slate-800 flex items-center justify-center text-primary dark:text-blue-400 border border-outline-variant/60 dark:border-slate-700 shrink-0">
-                        <span class="material-symbols-outlined text-lg">insights</span>
+                    <div class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60 shrink-0 shadow-2xs">
+                        <span class="material-symbols-outlined text-[20px]">insights</span>
                     </div>
                 </div>
-                <div class="flex items-center gap-2 mt-2.5 pt-2 border-t border-outline-variant/60 dark:border-slate-800">
-                    <span class="px-1.5 py-0.2 rounded text-[10px] bg-error text-on-error font-bold">Fokus Diklat</span>
-                    <span class="text-[11px] text-secondary dark:text-slate-400">Literasi Digital Pegawai</span>
+                <div class="flex items-center gap-2 mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800">
+                    <span class="px-2 py-0.5 rounded-full text-[10px] bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-700 font-bold">Fokus Diklat</span>
+                    <span class="text-[11px] text-secondary dark:text-slate-400 font-medium">Literasi Digital Pegawai</span>
                 </div>
             </div>
         </div>
@@ -351,7 +351,7 @@
             <div class="flex flex-col sm:flex-row items-center justify-between p-3 sm:p-3.5 bg-surface-container-low dark:bg-slate-800/80 border-t border-outline-variant/60 dark:border-slate-700 gap-2.5 text-xs">
                 <div class="flex items-center gap-2 text-secondary dark:text-slate-400">
                     <span>Tampilkan</span>
-                    <select onchange="window.location.href = '{{ request()->fullUrlWithQuery(['per_page' => 'PLACEHOLDER']) }}'.replace('PLACEHOLDER', this.value)" class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-700 rounded px-2 py-0.5 text-on-surface dark:text-slate-200 text-xs cursor-pointer">
+                    <select onchange="window.location.href = '{{ request()->fullUrlWithQuery(['per_page' => 'PLACEHOLDER']) }}'.replace('PLACEHOLDER', this.value)" class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-700 rounded pl-2 pr-6 py-0.5 text-on-surface dark:text-slate-200 text-xs cursor-pointer">
                         <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
                         <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
                         <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>

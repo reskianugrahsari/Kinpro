@@ -25,6 +25,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Pegawai Directory Route (Accessible by Admin and Pegawai)
+    Route::get('/pegawai', [PegawaiController::class, 'index'])->name('pegawai.index');
+
     // Admin CRUD Routes (F2.3)
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('unit-kerja', UnitKerjaController::class);

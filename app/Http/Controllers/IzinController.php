@@ -12,10 +12,10 @@ class IzinController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
+        $pegawai = Pegawai::where('user_id', $user->id)->first();
         $query = Izin::with(['pegawai.unitKerja']);
 
         if ($user->role === 'pegawai') {
-            $pegawai = Pegawai::where('user_id', $user->id)->first();
             if ($pegawai) {
                 $query->where('pegawai_id', $pegawai->id);
             } else {
@@ -50,23 +50,27 @@ class IzinController extends Controller
         $izins = $query->latest()->paginate($perPage)->withQueryString();
         
         $now = Carbon::now();
-        $pendingCount = Izin::where('status', 'pending')->count();
-        $approvedThisMonth = Izin::where('status', 'approved')
+        $baseCountQuery = Izin::query();
+        if ($user->role === 'pegawai') {
+            $baseCountQuery->where('pegawai_id', $pegawai ? $pegawai->id : 0);
+        }
+
+        $pendingCount = (clone $baseCountQuery)->where('status', 'pending')->count();
+        $approvedThisMonth = (clone $baseCountQuery)->where('status', 'approved')
             ->whereYear('tanggal_mulai', $now->year)
             ->whereMonth('tanggal_mulai', $now->month)
             ->count();
 
-        $todayActiveCount = Izin::where('status', 'approved')
+        $todayActiveCount = (clone $baseCountQuery)->where('status', 'approved')
             ->whereDate('tanggal_mulai', '<=', Carbon::today())
             ->whereDate('tanggal_selesai', '>=', Carbon::today())
             ->count();
 
         $pegawaiCount = Pegawai::count() ?: 1;
-        $totalKuota = $pegawaiCount * 12;
-        $terpakai = Izin::where('status', 'approved')->where('jenis_izin', 'cuti_tahunan')->count();
+        $totalKuota = $user->role === 'pegawai' ? 12 : ($pegawaiCount * 12);
+        $terpakai = (clone $baseCountQuery)->where('status', 'approved')->where('jenis_izin', 'cuti_tahunan')->count();
         $sisaKuotaBalaiPct = max(0, min(100, round((($totalKuota - $terpakai) / max(1, $totalKuota)) * 100)));
 
-        $pegawai = Pegawai::where('user_id', $user->id)->first();
         $jumlahBulanIni = 0;
         $sisaKuota = 4;
 

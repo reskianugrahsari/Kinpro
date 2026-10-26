@@ -152,7 +152,7 @@
                             </label>
                             <!-- Dropdown Select Pegawai -->
                             <div class="relative">
-                                <select id="pegawai_id" name="pegawai_id" x-model="selectedPegawaiId" class="w-full bg-surface-container-lowest dark:bg-slate-800 text-on-surface dark:text-slate-100 border border-outline-variant/60 dark:border-slate-700 rounded-lg p-2.5 pr-10 text-xs font-medium focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container appearance-none transition-colors cursor-pointer" required>
+                                <select id="pegawai_id" name="pegawai_id" x-model="selectedPegawaiId" class="w-full bg-surface-container-lowest dark:bg-slate-800 text-on-surface dark:text-slate-100 border border-outline-variant/60 dark:border-slate-700 rounded-lg p-2.5 pr-10 text-xs font-medium focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container cursor-pointer" required>
                                     <option value="">-- Pilih Pegawai yang Dinilai --</option>
                                     @foreach($pegawais as $p)
                                         <option value="{{ $p->id }}" {{ old('pegawai_id') == $p->id ? 'selected' : '' }}>
@@ -160,9 +160,6 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-secondary dark:text-slate-400">
-                                    <span class="material-symbols-outlined text-[16px]">expand_more</span>
-                                </div>
                             </div>
                             @if(isset($errors) && $errors->has('pegawai_id'))
                                 <p class="mt-1 text-xs text-error dark:text-rose-400">{{ $errors->first('pegawai_id') }}</p>
@@ -199,14 +196,11 @@
                             <div class="space-y-1.5">
                                 <label for="bulan" class="block text-xs font-semibold text-on-surface dark:text-slate-200">Bulan Evaluasi</label>
                                 <div class="relative">
-                                    <select id="bulan" name="bulan" x-model="selectedBulan" class="w-full bg-surface-container-lowest dark:bg-slate-800 text-on-surface dark:text-slate-100 border border-outline-variant/60 dark:border-slate-700 rounded-lg p-2.5 pr-9 text-xs focus:outline-none focus:border-primary-container appearance-none cursor-pointer" required>
+                                    <select id="bulan" name="bulan" x-model="selectedBulan" class="w-full bg-surface-container-lowest dark:bg-slate-800 text-on-surface dark:text-slate-100 border border-outline-variant/60 dark:border-slate-700 rounded-lg p-2.5 pr-9 text-xs focus:outline-none focus:border-primary-container cursor-pointer" required>
                                         @foreach(['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'] as $b)
                                             <option value="{{ $b }}" {{ old('bulan', 'Januari') == $b ? 'selected' : '' }}>{{ $b }}</option>
                                         @endforeach
                                     </select>
-                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-secondary dark:text-slate-400">
-                                        <span class="material-symbols-outlined text-[16px]">expand_more</span>
-                                    </div>
                                 </div>
                                 @if(isset($errors) && $errors->has('bulan'))
                                     <p class="mt-1 text-xs text-error dark:text-rose-400">{{ $errors->first('bulan') }}</p>
