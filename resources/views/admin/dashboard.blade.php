@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="space-y-6">
-        <!-- 1. HERO WELCOME BANNER (Primary Navy #2F4156) -->
-        <div class="bg-brand-navy rounded-2xl p-6 lg:p-7 text-white shadow-md relative overflow-hidden flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border border-[#202C3B]">
+        <!-- 1. HERO WELCOME BANNER (Navy #0A1931) -->
+        <div class="bg-[#0A1931] rounded-2xl p-6 lg:p-7 text-white shadow-md relative overflow-hidden flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border border-slate-800/80">
             <!-- Left Info -->
             <div class="max-w-3xl">
                 <div class="inline-flex items-center gap-1.5 bg-brand-teal/40 text-brand-sky border border-brand-teal/60 px-2.5 py-0.5 rounded-full text-[11px] font-semibold mb-2">
@@ -16,8 +16,8 @@
                 </p>
             </div>
 
-            <!-- Right Date & Digital Clock Card -->
-            <div class="bg-[#202C3B] border border-brand-teal/40 rounded-xl p-3.5 min-w-[220px] text-center shrink-0 shadow-inner"
+            <!-- Right Date & Digital Clock -->
+            <div class="shrink-0 text-left lg:text-right"
                  x-data="{
                      timeStr: '',
                      dateStr: '',
@@ -31,14 +31,16 @@
                      }
                  }"
                  x-init="update(); setInterval(() => update(), 1000);">
-                <div class="text-[9px] font-bold text-brand-sky uppercase tracking-widest" x-text="dateStr">
+                <div class="text-[10px] font-bold text-brand-sky uppercase tracking-widest" x-text="dateStr">
                     {{ strtoupper(now()->timezone('Asia/Makassar')->translatedFormat('l, d F Y')) }}
                 </div>
-                <div class="text-2xl font-bold font-mono tracking-wider text-white my-0.5" x-text="timeStr">
-                    {{ now()->timezone('Asia/Makassar')->format('H:i:s') }}
-                </div>
-                <div class="inline-block bg-[#19222E] text-brand-sky border border-brand-teal/40 text-[9px] font-bold px-2 py-0.5 rounded-md">
-                    WITA (UTC+8)
+                <div class="flex items-baseline lg:justify-end gap-1.5 my-0.5">
+                    <span class="text-3xl font-bold font-mono tracking-wider text-white tabular-nums" x-text="timeStr">
+                        {{ now()->timezone('Asia/Makassar')->format('H:i:s') }}
+                    </span>
+                    <span class="text-xs font-bold text-brand-sky font-mono">
+                        WITA
+                    </span>
                 </div>
             </div>
         </div>

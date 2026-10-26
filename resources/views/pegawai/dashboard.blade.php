@@ -1,66 +1,19 @@
 <x-app-layout>
     <div class="space-y-6">
-        <!-- 1. HERO IDENTITY & WELCOME CARD (Primary Navy #2F4156) -->
-        <section class="bg-brand-navy border border-[#202C3B] rounded-xl p-6 text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-md">
+        <!-- 1. HERO IDENTITY & WELCOME CARD (Navy #0A1931) -->
+        <section class="bg-[#0A1931] border border-slate-800/80 rounded-xl p-6 text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-md">
             <!-- Left Info -->
-            <div class="space-y-3 max-w-3xl">
-                <div class="flex flex-wrap items-center gap-2">
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#202C3B] border border-brand-teal/40 text-white text-xs font-bold">
-                        <span class="material-symbols-outlined text-[16px] text-brand-sky">verified</span>
-                        <span>Portal ASN Bapekom Wil. VIII</span>
-                    </div>
-                    <span class="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-brand-teal/40 text-brand-sky border border-brand-teal/60 font-mono">
-                        {{ $pegawai->status_kepegawaian ?? 'PNS / PPPK' }}
-                    </span>
-                    @php
-                        $isAktif = $pegawai ? ($pegawai->is_aktif ?? true) : true;
-                    @endphp
-                    @if($isAktif)
-                        <span class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-emerald-950/60 text-emerald-300 border border-emerald-500/50">
-                            <span class="relative flex h-2 w-2">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                            </span>
-                            <span>Aktif Bekerja</span>
-                        </span>
-                    @else
-                        <span class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-rose-950/60 text-rose-300 border border-rose-500/50">
-                            <span class="relative flex h-2 w-2">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-                            </span>
-                            <span>Tidak Aktif</span>
-                        </span>
-                    @endif
-                </div>
-
-                <div class="flex items-center space-x-3.5">
-                    @php
-                        $pegawaiFotoUrl = $pegawai->foto_url ?? Auth::user()->pegawai?->foto_url;
-                    @endphp
-                    @if($pegawaiFotoUrl)
-                        <img src="{{ $pegawaiFotoUrl }}" alt="{{ $pegawai->nama_lengkap ?? Auth::user()->name }}" class="w-12 h-12 rounded-xl object-cover object-center border border-brand-sky/40 shadow-sm shrink-0" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="w-12 h-12 rounded-xl bg-brand-teal border border-brand-sky/30 text-white hidden items-center justify-center font-bold text-lg shrink-0">
-                            {{ strtoupper(substr($pegawai->nama_lengkap ?? ($pegawai->nama ?? Auth::user()->name), 0, 2)) }}
-                        </div>
-                    @else
-                        <div class="w-12 h-12 rounded-xl bg-brand-teal border border-brand-sky/30 text-white flex items-center justify-center font-bold text-lg shrink-0">
-                            {{ strtoupper(substr($pegawai->nama_lengkap ?? ($pegawai->nama ?? Auth::user()->name), 0, 2)) }}
-                        </div>
-                    @endif
-                    <div>
-                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                            Halo, {{ $pegawai->nama_lengkap ?? ($pegawai->nama ?? Auth::user()->name) }}
-                        </h1>
-                        <p class="text-xs text-slate-200 mt-0.5">
-                            Selamat datang di Sistem Manajemen Kinerja & Layanan Mandiri Terpadu Bapekom PUPR Wilayah VIII Makassar.
-                        </p>
-                    </div>
-                </div>
+            <div class="max-w-3xl">
+                <h1 class="text-[40px] font-bold tracking-tight text-white leading-tight">
+                    Halo, {{ $pegawai->nama_lengkap ?? ($pegawai->nama ?? Auth::user()->name) }}
+                </h1>
+                <p class="text-xs text-slate-200 mt-0.5">
+                    Selamat datang di Sistem Manajemen Kinerja & Layanan Mandiri Terpadu Bapekom PUPR Wilayah VIII Makassar.
+                </p>
             </div>
 
-            <!-- Right Digital Clock WITA (Solid Flat Container) -->
-            <div class="shrink-0 bg-[#202C3B] border border-brand-teal/40 p-4 rounded-xl text-center w-full md:w-60"
+            <!-- Right Digital Clock WITA -->
+            <div class="shrink-0 text-left md:text-right"
                  x-data="{
                      timeStr: '',
                      dateStr: '',
@@ -74,14 +27,16 @@
                      }
                  }"
                  x-init="update(); setInterval(() => update(), 1000);">
-                <div class="text-[9px] font-bold text-brand-sky uppercase tracking-widest" x-text="dateStr">
+                <div class="text-[10px] font-bold text-brand-sky uppercase tracking-widest" x-text="dateStr">
                     {{ strtoupper(now()->timezone('Asia/Makassar')->translatedFormat('l, d F Y')) }}
                 </div>
-                <div class="text-2xl font-mono font-bold text-white tracking-tight my-0.5 tabular-nums" x-text="timeStr">
-                    {{ now()->timezone('Asia/Makassar')->format('H:i:s') }}
-                </div>
-                <div class="inline-block px-2 py-0.5 bg-[#19222E] border border-brand-teal/40 text-[10px] font-bold text-brand-sky rounded font-mono">
-                    WITA (UTC+8)
+                <div class="flex items-baseline md:justify-end gap-1.5 my-0.5">
+                    <span class="text-3xl font-mono font-bold text-white tracking-tight tabular-nums" x-text="timeStr">
+                        {{ now()->timezone('Asia/Makassar')->format('H:i:s') }}
+                    </span>
+                    <span class="text-xs font-bold text-brand-sky font-mono">
+                        WITA
+                    </span>
                 </div>
             </div>
         </section>

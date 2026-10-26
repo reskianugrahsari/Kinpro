@@ -26,6 +26,8 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
+            'jabatan' => ['nullable', 'string', 'max:255'],
+            'unit_kerja_id' => ['nullable', 'exists:unit_kerja,id'],
         ];
     }
 }

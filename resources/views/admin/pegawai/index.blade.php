@@ -76,10 +76,10 @@
             <!-- Section Info -->
             <div class="flex justify-between items-center px-1">
                 <div class="flex items-center space-x-2">
-                    <svg class="w-5 h-5 text-[#4F46E5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                    <h3 class="font-bold text-lg text-[#0F2747]">Daftar Pegawai</h3>
+                    <svg class="w-5 h-5 text-[#4F46E5] dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    <h3 class="font-bold text-lg text-[#0F2747] dark:text-slate-100">Daftar Pegawai</h3>
                 </div>
-                <span class="text-xs font-bold bg-indigo-50 text-[#4F46E5] px-3.5 py-1 rounded-full border border-indigo-100">{{ $pegawais->total() ?? count($pegawais) }} data ditemukan</span>
+                <span class="text-xs font-bold bg-indigo-50 dark:bg-indigo-950/70 text-[#4F46E5] dark:text-indigo-300 px-3.5 py-1 rounded-full border border-indigo-100 dark:border-indigo-800/60">{{ $pegawais->total() ?? count($pegawais) }} data ditemukan</span>
             </div>
 
             @if(request('view') === 'list')
@@ -215,9 +215,9 @@
                             </div>
                         </div>
                     @empty
-                        <div class="col-span-full bg-white p-12 text-center rounded-3xl border border-slate-200">
-                            <p class="text-slate-500 font-medium">Tidak ada data pegawai yang sesuai filter.</p>
-                            <a href="{{ route('admin.pegawai.index') }}" class="mt-3 inline-block text-xs font-bold text-[#4F46E5] hover:underline">Reset Semua Filter</a>
+                        <div class="col-span-full bg-white dark:bg-slate-900 p-12 text-center rounded-3xl border border-slate-200 dark:border-slate-800">
+                            <p class="text-slate-500 dark:text-slate-400 font-medium">Tidak ada data pegawai yang sesuai filter.</p>
+                            <a href="{{ route('admin.pegawai.index') }}" class="mt-3 inline-block text-xs font-bold text-[#4F46E5] dark:text-indigo-400 hover:underline">Reset Semua Filter</a>
                         </div>
                     @endforelse
                 </div>

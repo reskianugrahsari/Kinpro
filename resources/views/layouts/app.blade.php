@@ -51,11 +51,12 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-['Plus_Jakarta_Sans',sans-serif] antialiased bg-brand-beige dark:bg-slate-950 text-brand-navy dark:text-slate-100 transition-colors duration-200">
+    <x-loading-screen />
     <div class="h-screen flex overflow-hidden">
-            <!-- Sidebar (Primary Navy #2F4156) -->
-            <aside class="w-64 bg-brand-navy text-slate-200 flex flex-col shrink-0 shadow-xl border-r border-[#202C3B] h-full overflow-hidden">
+            <!-- Sidebar (Navy #0A1931) -->
+            <aside class="w-64 bg-[#0A1931] text-slate-200 flex flex-col shrink-0 shadow-xl border-r border-slate-800/80 h-full overflow-hidden">
                 <!-- Brand Header -->
-                <div class="h-16 flex items-center px-5 border-b border-[#202C3B] space-x-3 shrink-0">
+                <div class="h-16 flex items-center px-5 border-b border-slate-800/80 space-x-3 shrink-0">
                     <img src="{{ asset('images/logo-kinpro.png') }}?v={{ file_exists(public_path('images/logo-kinpro.png')) ? filemtime(public_path('images/logo-kinpro.png')) : time() }}" alt="Logo KinPro" class="w-9 h-9 object-contain shrink-0">
                     <div class="min-w-0 flex-1">
                         <span class="text-white font-extrabold tracking-tight text-base block leading-tight">KinPro</span>
@@ -66,9 +67,8 @@
                 <nav class="flex-1 px-3 py-5 space-y-6 text-xs font-semibold overflow-y-auto">
                     <!-- Menu Utama -->
                     <div>
-                        <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
-                            <span>MENU UTAMA</span>
+                        <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
+                            MENU UTAMA
                         </div>
                         <div class="space-y-1">
                             <a href="{{ route('dashboard') }}" class="group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('dashboard') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
@@ -78,9 +78,6 @@
                                     </div>
                                     <span>Dashboard</span>
                                 </span>
-                                @if(request()->routeIs('dashboard'))
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-xs"></span>
-                                @endif
                             </a>
                             @if(auth()->user()->role === 'admin')
                                 <a href="{{ route('admin.pegawai.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('admin.pegawai.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
@@ -102,9 +99,8 @@
                     @if(auth()->user()->role === 'admin')
                         <!-- Manajemen & Verifikasi -->
                         <div>
-                            <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                                <span>MANAJEMEN & VERIFIKASI</span>
+                            <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
+                                MANAJEMEN & VERIFIKASI
                             </div>
                             <div class="space-y-1">
                                 <a href="{{ route('izin.index') }}" class="group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('izin.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
@@ -156,9 +152,8 @@
 
                         <!-- Laporan & Audit -->
                         <div>
-                            <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
-                                <span>LAPORAN & AUDIT</span>
+                            <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
+                                LAPORAN & AUDIT
                             </div>
                             <div class="space-y-1">
                                 <a href="{{ route('rekap.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('rekap.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
@@ -178,9 +173,8 @@
                     @else
                         <!-- Menu Pegawai: Layanan Mandiri Saja -->
                         <div>
-                            <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
-                                <span>INFORMASI & DIREKTORI</span>
+                            <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
+                                INFORMASI & DIREKTORI
                             </div>
                             <div class="space-y-1 mb-4">
                                 <a href="{{ route('pegawai.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('pegawai.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
@@ -191,9 +185,8 @@
                                 </a>
                             </div>
 
-                            <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                                <span>LAYANAN PEGAWAI</span>
+                            <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
+                                LAYANAN PEGAWAI
                             </div>
                             <div class="space-y-1">
                                 <a href="{{ route('penilaian.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('penilaian.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
@@ -241,7 +234,7 @@
             <!-- Main Content Area -->
             <div class="flex-1 flex flex-col min-w-0">
                 <!-- Top Header -->
-                <header class="bg-brand-white dark:bg-[#202C3B] border-b border-brand-sky dark:border-slate-800 h-16 min-h-[4rem] max-h-[4rem] px-6 py-2.5 flex items-center justify-between shadow-xs transition-colors shrink-0">
+                <header class="bg-brand-white dark:bg-[#0A1931] border-b border-brand-sky dark:border-slate-800/80 h-16 min-h-[4rem] max-h-[4rem] px-6 py-2.5 flex items-center justify-between shadow-xs transition-colors shrink-0">
                     <!-- Left: Realtime Date/Time Indicator -->
                     <div class="flex items-center space-x-2 bg-brand-beige dark:bg-slate-800/60 border border-brand-sky dark:border-slate-700/60 px-3.5 py-1.5 rounded-full text-xs text-brand-navy dark:text-slate-300 font-medium shadow-2xs">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>

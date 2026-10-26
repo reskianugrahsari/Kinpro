@@ -46,7 +46,7 @@
                 @if($pegawai)
                     <div class="bg-slate-50 dark:bg-slate-800/80 px-4 py-3 rounded-xl border border-slate-200/80 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 space-y-1 w-full sm:w-auto">
                         <div><span class="text-slate-400 dark:text-slate-500">Jabatan:</span> <span class="font-bold text-slate-800 dark:text-slate-200">{{ $pegawai->jabatan ?? '-' }}</span></div>
-                        <div><span class="text-slate-400 dark:text-slate-500">Unit Kerja:</span> <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $pegawai->unitKerja?->nama ?? 'Balai Diklat Wil. VIII' }}</span></div>
+                        <div><span class="text-slate-400 dark:text-slate-500">Unit Kerja:</span> <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $pegawai->unitKerja?->nama_unit ?? ($pegawai->unitKerja?->nama ?? 'Balai Diklat Wil. VIII') }}</span></div>
                     </div>
                 @endif
             </div>

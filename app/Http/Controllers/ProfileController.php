@@ -18,10 +18,12 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         $pegawai = $user->pegawai()->with('unitKerja')->first();
+        $unitKerjas = \App\Models\UnitKerja::orderBy('nama_unit')->get();
 
         return view('profile.edit', [
             'user' => $user,
             'pegawai' => $pegawai,
+            'unitKerjas' => $unitKerjas,
         ]);
     }
 
@@ -30,13 +32,26 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $user->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
+
+        if ($user->pegawai) {
+            $pegawaiData = [
+                'jabatan' => $request->input('jabatan'),
+                'unit_kerja_id' => $request->input('unit_kerja_id') ?: null,
+            ];
+            if ($request->filled('name')) {
+                $pegawaiData['nama'] = $request->input('name');
+                $pegawaiData['nama_lengkap'] = $request->input('name');
+            }
+            $user->pegawai->update($pegawaiData);
+        }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
