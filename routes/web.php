@@ -36,6 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Penilaian Kinerja (F2.4)
+    Route::get('penilaian/rekap', [PenilaianController::class, 'rekap'])->name('penilaian.rekap');
     Route::resource('penilaian', PenilaianController::class);
 
     // Modul Izin / Cuti (F2.5)

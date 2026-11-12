@@ -31,22 +31,38 @@
 
             <!-- Action Button Group -->
             <div class="flex items-center gap-2 flex-wrap">
-                <button type="button" onclick="alert('Sinkronisasi SIASN-BKN berhasil diinisialisasi. Data penilaian terhubung langsung dengan sistem BKN.')" class="flex items-center gap-1.5 px-3 py-1.5 rounded bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container dark:hover:bg-slate-700 text-xs font-semibold transition-colors cursor-pointer shadow-xs">
-                    <span class="material-symbols-outlined text-sm text-secondary dark:text-slate-400">sync</span>
-                    <span>Sinkronisasi SIASN-BKN</span>
-                </button>
-                <a href="{{ route('rekap.export', 'excel') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container dark:hover:bg-slate-700 text-xs font-semibold transition-colors cursor-pointer shadow-xs">
-                    <span class="material-symbols-outlined text-sm text-secondary dark:text-slate-400">download</span>
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('penilaian.rekap') }}" class="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg bg-[#0B3B60] hover:bg-[#072842] text-white text-[11px] font-semibold transition-colors shadow-2xs cursor-pointer shrink-0" title="Infografis Rekapitulasi Predikat SKP">
+                        <span class="material-symbols-outlined text-[15px] text-[#FFB800]">auto_graph</span>
+                        <span>Infografis Rekap SKP</span>
+                    </a>
+                @endif
+                <a href="{{ route('rekap.export', 'excel') }}" class="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-lg bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container dark:hover:bg-slate-700 text-[11px] font-semibold transition-colors shadow-2xs cursor-pointer shrink-0">
+                    <span class="material-symbols-outlined text-[15px] text-secondary dark:text-slate-400">download</span>
                     <span>Ekspor Rekap (Excel/PDF)</span>
                 </a>
                 @if(auth()->user()->role === 'admin')
-                    <a href="{{ route('penilaian.create') }}" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-primary-container text-on-primary hover:bg-primary text-xs font-semibold transition-colors shadow-xs cursor-pointer">
-                        <span class="material-symbols-outlined text-sm">add</span>
+                    <a href="{{ route('penilaian.create') }}" class="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1769AA] hover:bg-[#0F2747] text-white text-[11px] font-bold transition-colors shadow-2xs cursor-pointer shrink-0">
+                        <span class="material-symbols-outlined text-[16px]">add</span>
                         <span>Tambah Penilaian</span>
                     </a>
                 @endif
             </div>
         </div>
+
+        @if(auth()->user()->role === 'admin')
+            <!-- View Mode Navigation Tabs (Khusus Admin) -->
+            <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+                <a href="{{ route('penilaian.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold shadow-xs">
+                    <span class="material-symbols-outlined text-sm">table_chart</span>
+                    <span>Tabel Evaluasi 6 Aspek</span>
+                </a>
+                <a href="{{ route('penilaian.rekap') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-low dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container dark:hover:bg-slate-700 text-xs font-semibold transition-colors">
+                    <span class="material-symbols-outlined text-sm text-teal-600 dark:text-teal-400">auto_graph</span>
+                    <span>Infografis Rekap SKP (TW3 2026)</span>
+                </a>
+            </div>
+        @endif
 
         <!-- 4 KPI Summary Cards with 4px Accent Strips -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">

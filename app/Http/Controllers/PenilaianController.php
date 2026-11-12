@@ -219,6 +219,159 @@ class PenilaianController extends Controller
         return redirect()->route('penilaian.index')->with('success', 'Penilaian kinerja berhasil dihapus.');
     }
 
+    public function rekap(Request $request)
+    {
+        if ($request->user()->role !== 'admin') {
+            abort(403, 'Akses ditolak. Hanya Administrator yang dapat melihat dan melakukan Rekap SKP.');
+        }
+
+        $tahun = (int) $request->input('tahun', 2026);
+        $periode = $request->input('periode', 'tw3'); // tw1, tw2, tw3, tw4, tahunan
+
+        $periodeMonths = match ($periode) {
+            'tw1' => ['Januari', 'Februari', 'Maret'],
+            'tw2' => ['April', 'Mei', 'Juni'],
+            'tw3' => ['Juli', 'Agustus', 'September'],
+            'tw4' => ['Oktober', 'November', 'Desember'],
+            default => ['Juli', 'Agustus', 'September'],
+        };
+
+        $periodeTitle = match ($periode) {
+            'tw1' => 'TRIWULAN I (TW1)',
+            'tw2' => 'TRIWULAN II (TW2)',
+            'tw3' => 'TRIWULAN III (TW3)',
+            'tw4' => 'TRIWULAN IV (TW4)',
+            'tahunan' => 'TAHUNAN',
+            default => 'TRIWULAN III (TW3)',
+        };
+
+        // Ambil data penilaian aktual sesuai inputan di database
+        $penilaiansQuery = Penilaian::with(['pegawai.unitKerja'])
+            ->where('tahun', $tahun);
+
+        if ($periode !== 'tahunan') {
+            $penilaiansQuery->whereIn('bulan', $periodeMonths);
+        }
+
+        $penilaians = $penilaiansQuery->get();
+
+        $grouped = $penilaians->groupBy('pegawai_id');
+
+        $sangatBaikList = [];
+        $baikList = [];
+        $cukupList = [];
+        $kurangList = [];
+
+        foreach ($grouped as $pegId => $ratings) {
+            $peg = $ratings->first()->pegawai;
+            if (!$peg) continue;
+
+            $avg = round((float) ($ratings->avg('rata_rata') ?: $ratings->first()->rata_rata), 2);
+            $lastPred = trim((string) $ratings->last()->predikat);
+
+            // Tentukan predikat berdasarkan rata-rata skor atau inputan
+            if (str_contains(strtolower($lastPred), 'sangat') || $avg >= 85) {
+                $predikat = 'Sangat Baik';
+            } elseif (str_contains(strtolower($lastPred), 'baik') || $avg >= 75) {
+                $predikat = 'Baik';
+            } elseif (str_contains(strtolower($lastPred), 'cukup') || str_contains(strtolower($lastPred), 'butuh') || $avg >= 60) {
+                $predikat = 'Cukup';
+            } else {
+                $predikat = 'Kurang';
+            }
+
+            $item = [
+                'id' => $peg->id,
+                'nama' => $peg->nama_lengkap ?? $peg->nama,
+                'nip' => $peg->nip,
+                'jabatan' => $peg->jabatan,
+                'avg' => $avg,
+                'predikat' => $predikat,
+                'ratings_count' => $ratings->count(),
+            ];
+
+            if ($predikat === 'Sangat Baik') {
+                $sangatBaikList[] = $item;
+            } elseif ($predikat === 'Baik') {
+                $baikList[] = $item;
+            } elseif ($predikat === 'Cukup') {
+                $cukupList[] = $item;
+            } else {
+                $kurangList[] = $item;
+            }
+        }
+
+        // Susun urutan: Peringkat nilai rata-rata hasil penilaian tertinggi ke terendah, lalu hierarki pimpinan
+        $sortFn = function ($a, $b) {
+            if ($b['avg'] != $a['avg']) {
+                return $b['avg'] <=> $a['avg'];
+            }
+            $rankA = 99;
+            $rankB = 99;
+            $jabA = strtolower($a['jabatan'] ?? '');
+            $jabB = strtolower($b['jabatan'] ?? '');
+
+            if (str_contains($jabA, 'kepala balai')) $rankA = 1;
+            elseif (str_contains($jabA, 'subbag') || str_contains($jabA, 'tu')) $rankA = 2;
+            elseif (str_contains($jabA, 'penyelenggara')) $rankA = 3;
+
+            if (str_contains($jabB, 'kepala balai')) $rankB = 1;
+            elseif (str_contains($jabB, 'subbag') || str_contains($jabB, 'tu')) $rankB = 2;
+            elseif (str_contains($jabB, 'penyelenggara')) $rankB = 3;
+
+            if ($rankA !== $rankB) {
+                return $rankA <=> $rankB;
+            }
+
+            return strcmp($a['nama'], $b['nama']);
+        };
+
+        usort($sangatBaikList, $sortFn);
+        usort($baikList, $sortFn);
+        usort($cukupList, $sortFn);
+        usort($kurangList, $sortFn);
+
+        $countSB = count($sangatBaikList);
+        $countB = count($baikList);
+        $countC = count($cukupList);
+        $countK = count($kurangList);
+
+        $totalEvaluasi = $countSB + $countB + $countC + $countK;
+        $totalPegawaiDinilai = $totalEvaluasi;
+        $totalPegawaiBalai = Pegawai::count() ?: max(1, $totalEvaluasi);
+
+        $pctSB = $totalEvaluasi > 0 ? number_format(($countSB / $totalEvaluasi) * 100, 1, ',', '.') : '0,0';
+        $pctB = $totalEvaluasi > 0 ? number_format(($countB / $totalEvaluasi) * 100, 1, ',', '.') : '0,0';
+        $pctPenilaian = $totalPegawaiBalai > 0 ? number_format(($totalEvaluasi / $totalPegawaiBalai) * 100, 0) : '100';
+
+        $years = [2026, 2025, 2024];
+
+        $kepalaBalai = Pegawai::where('jabatan', 'like', '%Kepala Balai%')
+            ->orWhere('nama', 'like', '%Widyanto Hendro Saputro%')
+            ->first();
+
+        return view('penilaian.rekap', compact(
+            'tahun',
+            'periode',
+            'periodeTitle',
+            'totalPegawaiDinilai',
+            'totalPegawaiBalai',
+            'sangatBaikList',
+            'baikList',
+            'cukupList',
+            'kurangList',
+            'countSB',
+            'countB',
+            'countC',
+            'countK',
+            'pctSB',
+            'pctB',
+            'pctPenilaian',
+            'years',
+            'kepalaBalai'
+        ));
+    }
+
     private function authorizeAdmin()
     {
         if (auth()->user()->role !== 'admin') {

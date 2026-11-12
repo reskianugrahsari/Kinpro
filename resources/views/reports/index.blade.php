@@ -26,14 +26,15 @@
                 </div>
 
                 <!-- Status Filter -->
-                <select name="status" onchange="this.form.submit()" class="rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#071322] text-slate-900 dark:text-slate-100 text-xs focus:bg-white dark:focus:bg-[#0B1727] focus:border-[#1769AA] focus:ring-[#1769AA]">
+                <select name="status" onchange="this.form.submit()" class="rounded-xl border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#071322] text-slate-900 dark:text-slate-100 text-xs focus:bg-white dark:focus:bg-[#0B1727] focus:border-[#1769AA] focus:ring-[#1769AA] cursor-pointer">
                     <option value="">Semua Status</option>
                     <option value="submitted" {{ request('status') === 'submitted' ? 'selected' : '' }}>Submitted</option>
                     <option value="revision_required" {{ request('status') === 'revision_required' ? 'selected' : '' }}>Perlu Revisi</option>
                     <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
                 </select>
 
-                <button type="submit" class="px-4 py-2 bg-[#0F2747] dark:bg-[#1769AA] text-white font-semibold rounded-xl hover:bg-[#1769AA] dark:hover:bg-[#0F2747] transition">Cari</button>
+                <button type="submit" class="hidden">Cari</button>
+                <a href="{{ route('reports.index') }}" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition">Reset</a>
             </form>
         </div>
 

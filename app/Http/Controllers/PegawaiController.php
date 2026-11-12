@@ -12,7 +12,16 @@ class PegawaiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pegawai::with(['unitKerja', 'user', 'latestPenilaian'])->latest();
+        $query = Pegawai::with(['unitKerja', 'user', 'latestPenilaian'])
+            ->orderByRaw("
+                CASE 
+                    WHEN jabatan LIKE '%Kepala Balai%' THEN 1
+                    WHEN jabatan LIKE '%Kepala Subbag%' OR jabatan LIKE '%Kepala Sub Bagian%' THEN 2
+                    WHEN jabatan LIKE '%Kepala Seksi%' THEN 3
+                    ELSE 4
+                END ASC
+            ")
+            ->orderBy('id', 'asc');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -44,7 +53,13 @@ class PegawaiController extends Controller
             $query->where('jabatan', $request->jabatan);
         }
 
+        if ($request->filled('unit_kerja_id') && $request->unit_kerja_id !== 'all') {
+            $query->where('unit_kerja_id', $request->unit_kerja_id);
+        }
+
         $pegawais = $query->paginate(12)->appends($request->all());
+
+        $unitKerjas = UnitKerja::all();
 
         $jabatanList = Pegawai::whereNotNull('jabatan')
             ->where('jabatan', '!=', '')
@@ -52,7 +67,7 @@ class PegawaiController extends Controller
             ->orderBy('jabatan')
             ->pluck('jabatan');
 
-        return view('admin.pegawai.index', compact('pegawais', 'jabatanList'));
+        return view('admin.pegawai.index', compact('pegawais', 'jabatanList', 'unitKerjas'));
     }
 
     public function create()

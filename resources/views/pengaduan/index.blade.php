@@ -268,8 +268,8 @@
 
                             <div class="p-4 space-y-4">
                                 <!-- ASN Header Brief -->
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-xl bg-slate-50/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 gap-2.5">
-                                    <div class="flex items-center gap-2.5">
+                                <div class="flex items-center p-3 rounded-xl bg-slate-50/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 gap-2.5">
+                                    <div class="flex items-center gap-2.5 min-w-0">
                                         <div class="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs shrink-0" x-text="activeItem.pegawai ? activeItem.pegawai.nama.substring(0,2).toUpperCase() : 'PE'">
                                         </div>
                                         <div class="min-w-0">
@@ -279,13 +279,6 @@
                                             </div>
                                             <div class="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5 truncate" x-text="activeItem.pegawai ? (activeItem.pegawai.jabatan || 'Aparatur Sipil Negara') + ' — ' + (activeItem.pegawai.unit_kerja ? activeItem.pegawai.unit_kerja.nama_unit : 'Bapekom VIII') : '-'"></div>
                                         </div>
-                                    </div>
-                                    <div class="text-left sm:text-right shrink-0">
-                                        <div class="text-[9px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status Pegawai</div>
-                                        <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.2 rounded border border-emerald-200 dark:border-emerald-800/40 mt-0.5">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                                            Aktif Bapekom VIII
-                                        </span>
                                     </div>
                                 </div>
 

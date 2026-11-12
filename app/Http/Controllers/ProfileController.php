@@ -42,15 +42,35 @@ class ProfileController extends Controller
         $user->save();
 
         if ($user->pegawai) {
-            $pegawaiData = [
-                'jabatan' => $request->input('jabatan'),
-                'unit_kerja_id' => $request->input('unit_kerja_id') ?: null,
-            ];
+            $pegawaiData = [];
+            if ($request->filled('jabatan')) {
+                $pegawaiData['jabatan'] = $request->input('jabatan');
+            }
+            if ($request->has('unit_kerja_id')) {
+                $pegawaiData['unit_kerja_id'] = $request->input('unit_kerja_id') ?: null;
+            }
             if ($request->filled('name')) {
                 $pegawaiData['nama'] = $request->input('name');
                 $pegawaiData['nama_lengkap'] = $request->input('name');
             }
-            $user->pegawai->update($pegawaiData);
+            if ($request->has('no_hp')) {
+                $pegawaiData['no_hp'] = $request->input('no_hp');
+            }
+            if ($request->has('alamat')) {
+                $pegawaiData['alamat'] = $request->input('alamat');
+            }
+            if ($request->hasFile('foto_profil')) {
+                $file = $request->file('foto_profil');
+                $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $file->getClientOriginalName());
+                if (!file_exists(public_path('uploads'))) {
+                    mkdir(public_path('uploads'), 0777, true);
+                }
+                $file->move(public_path('uploads'), $filename);
+                $pegawaiData['foto_profil'] = $filename;
+            }
+            if (!empty($pegawaiData)) {
+                $user->pegawai->update($pegawaiData);
+            }
         }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');

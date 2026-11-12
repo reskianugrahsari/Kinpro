@@ -217,10 +217,6 @@
                             </h2>
                             <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Klasifikasi matriks hasil evaluasi kinerja Triwulan III Balai Wilayah VIII</p>
                         </div>
-                        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 pl-3 pr-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300">
-                            <span>Filter: Semua Unit</span>
-                            <span class="material-symbols-outlined text-[14px] text-slate-500 dark:text-slate-400">expand_more</span>
-                        </div>
                     </div>
 
                     <!-- Donut Visual + Detail Breakdown Row -->

@@ -1,6 +1,5 @@
 <x-app-layout>
     <div class="space-y-6" x-data="{
-        calendarModalOpen: false,
         reviewModalOpen: false,
         detailModalOpen: false,
         activeIzin: null,
@@ -54,10 +53,6 @@
 
             <!-- Quick Action Buttons (Sejajar dan Proporsional) -->
             <div class="flex items-center gap-2 self-start md:self-center shrink-0">
-                <button type="button" @click="calendarModalOpen = true" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container dark:hover:bg-slate-700 hover:border-outline transition-colors cursor-pointer shadow-xs whitespace-nowrap">
-                    <span class="material-symbols-outlined text-[16px] text-secondary dark:text-slate-400">calendar_month</span>
-                    <span>Kalender Cuti</span>
-                </button>
                 <a href="{{ route('rekap.export', 'excel') }}" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-outline-variant/60 dark:border-slate-700 text-on-surface dark:text-slate-200 hover:bg-surface-container dark:hover:bg-slate-700 hover:border-outline transition-colors cursor-pointer shadow-xs whitespace-nowrap">
                     <span class="material-symbols-outlined text-[16px] text-secondary dark:text-slate-400">file_download</span>
                     <span>Ekspor Rekap</span>
@@ -515,61 +510,6 @@
                         <span class="text-[11px] text-tertiary dark:text-emerald-400 font-medium">Terhubung secara live</span>
                     </div>
                     <span class="material-symbols-outlined text-tertiary dark:text-emerald-400 text-[20px]">sync</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========================================================================= -->
-        <!-- MODAL 1: KALENDER CUTI BALAI                                              -->
-        <!-- ========================================================================= -->
-        <div x-show="calendarModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs" style="display: none;">
-            <div @click.away="calendarModalOpen = false" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl max-w-2xl w-full p-6 text-left space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-                    <div class="flex items-center gap-2.5">
-                        <span class="material-symbols-outlined text-primary dark:text-blue-400 text-2xl">calendar_month</span>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 leading-tight">Kalender Cuti Pegawai Balai</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Monitoring jadwal izin &amp; cuti aktif bulan {{ Carbon\Carbon::now()->translatedFormat('F Y') }}</p>
-                        </div>
-                    </div>
-                    <button type="button" @click="calendarModalOpen = false" class="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
-                        <span class="material-symbols-outlined">close</span>
-                    </button>
-                </div>
-
-                <div class="space-y-3">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Daftar Pegawai Sedang Cuti / Izin Bulan Ini:</h4>
-                    @if(isset($calendarLeaves) && $calendarLeaves->isNotEmpty())
-                        <div class="divide-y divide-slate-100 dark:divide-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden max-h-72 overflow-y-auto">
-                            @foreach($calendarLeaves as $cl)
-                                <div class="p-3 bg-slate-50/50 dark:bg-slate-800/40 flex items-center justify-between gap-3 text-xs">
-                                    <div class="flex items-center gap-2.5">
-                                        <div class="w-7 h-7 rounded-full bg-blue-100 dark:bg-blue-900/40 text-primary dark:text-blue-300 font-bold flex items-center justify-center text-[10px]">
-                                            {{ strtoupper(substr($cl->pegawai->nama ?? 'P', 0, 2)) }}
-                                        </div>
-                                        <div>
-                                            <div class="font-bold text-slate-800 dark:text-slate-200">{{ $cl->pegawai->nama ?? '-' }}</div>
-                                            <div class="text-[11px] text-slate-500 dark:text-slate-400">{{ ucwords(str_replace('_', ' ', $cl->jenis_izin)) }} • {{ $cl->keterangan }}</div>
-                                        </div>
-                                    </div>
-                                    <span class="font-code-mono text-slate-600 dark:text-slate-300 font-semibold whitespace-nowrap">
-                                        {{ Carbon\Carbon::parse($cl->tanggal_mulai)->translatedFormat('d M') }} – {{ Carbon\Carbon::parse($cl->tanggal_selesai)->translatedFormat('d M') }}
-                                    </span>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="p-6 text-center text-slate-400 dark:text-slate-500 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl">
-                            <span class="material-symbols-outlined text-3xl mb-1 text-slate-300">event_available</span>
-                            <p class="text-xs font-medium">Tidak ada permohonan cuti aktif pada periode ini.</p>
-                        </div>
-                    @endif
-                </div>
-
-                <div class="pt-2 flex justify-end">
-                    <button type="button" @click="calendarModalOpen = false" class="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-primary-container transition-colors cursor-pointer">
-                        Tutup Kalender
-                    </button>
                 </div>
             </div>
         </div>

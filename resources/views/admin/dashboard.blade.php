@@ -45,9 +45,17 @@
             </div>
         </div>
 
-        <!-- 2. FILTER & PERIOD TOOLBAR -->
-        <form method="GET" action="{{ route('dashboard') }}" id="filterPeriodForm" class="bg-brand-white dark:bg-slate-800/90 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs space-y-3.5">
-            <input type="hidden" name="periode" id="inputPeriode" value="{{ request('periode', 'all') }}">
+        <!-- 2. FILTER & PERIOD CARD (PILIH PERIODE - EXACT DESIGN) -->
+        @php
+            $curP = request('periode', 'all');
+            $curTahun = (int) request('tahun', date('Y'));
+            $curBulan = request('bulan', 'all');
+            // Jika ada bulan terpilih bukan 'all' dan periode adalah 'all', statusnya adalah Bulanan
+            $isBulanan = ($curP === 'all' && $curBulan !== 'all') || ($curP === 'all' && !request()->has('periode') && !request()->has('bulan'));
+        @endphp
+        <form method="GET" action="{{ route('dashboard') }}" id="filterPeriodForm" class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs p-5 lg:p-6 space-y-4">
+            <input type="hidden" name="periode" id="inputPeriode" value="{{ $curP }}">
+            <input type="hidden" name="bulan" id="inputBulan" value="{{ $curBulan }}">
             @if(request('search'))
                 <input type="hidden" name="search" value="{{ request('search') }}">
             @endif
@@ -55,77 +63,133 @@
                 <input type="hidden" name="unit_kerja_id" value="{{ request('unit_kerja_id') }}">
             @endif
 
-            <!-- Row 1: Periode & Segmented Buttons -->
-            <div class="flex flex-wrap items-center gap-3">
-                <div class="flex items-center gap-1.5 text-xs font-bold text-brand-navy dark:text-slate-200 uppercase tracking-wider shrink-0">
-                    <span class="material-symbols-outlined text-[18px] text-brand-teal dark:text-slate-400">tune</span>
-                    <span>PERIODE:</span>
+            <!-- Top Header & Year Selector / Actions -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-slate-100 dark:border-slate-700/80">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px] text-slate-500 dark:text-slate-400">calendar_today</span>
+                    <h2 class="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-200">
+                        PILIH PERIODE
+                    </h2>
                 </div>
-                <!-- Segmented Control Bar -->
-                @php
-                    $curP = request('periode', 'all');
-                    $periods = [
-                        'all' => 'Semua',
-                        'tw1' => 'TW I',
-                        'tw2' => 'TW II',
-                        'tw3' => 'TW III',
-                        'tw4' => 'TW IV',
-                        'smt1' => 'Smt I',
-                        'smt2' => 'Smt II',
-                        'tahunan' => 'Tahunan ' . (request('tahun', date('Y'))),
-                    ];
-                @endphp
-                <div class="inline-flex rounded-xl border border-brand-sky dark:border-slate-700 p-1 bg-brand-beige/80 dark:bg-slate-900 overflow-x-auto max-w-full shadow-inner">
-                    @foreach($periods as $key => $label)
-                        <button type="button" 
-                                onclick="document.getElementById('inputPeriode').value='{{ $key }}'; document.getElementById('filterPeriodForm').submit();"
-                                class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition shrink-0 cursor-pointer {{ $curP === $key ? 'bg-brand-navy text-white shadow-sm ring-1 ring-white/10' : 'text-slate-700 dark:text-slate-300 hover:text-white hover:bg-brand-teal' }}">
-                            {{ $label }}
-                        </button>
-                    @endforeach
+
+                <div class="flex items-center gap-2.5 flex-wrap">
+                    <!-- Dropdown Tahun -->
+                    <div class="relative inline-flex items-center">
+                        <span class="material-symbols-outlined text-[15px] text-slate-500 dark:text-slate-400 absolute left-2.5 pointer-events-none">event</span>
+                        <select name="tahun" onchange="document.getElementById('filterPeriodForm').submit();" class="pl-7 pr-8 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 shadow-2xs appearance-none cursor-pointer">
+                            @foreach([date('Y'), date('Y') - 1, date('Y') - 2] as $yr)
+                                <option value="{{ $yr }}" {{ $curTahun === $yr ? 'selected' : '' }}>Tahun {{ $yr }}</option>
+                            @endforeach
+                        </select>
+                        <span class="material-symbols-outlined text-[15px] text-slate-400 absolute right-2 pointer-events-none">expand_more</span>
+                    </div>
+
+                    <!-- Dropdown Pilihan Bulan (Jika Mode Bulanan Aktif) -->
+                    <div class="relative inline-flex items-center">
+                        <select onchange="document.getElementById('inputPeriode').value='all'; document.getElementById('inputBulan').value=this.value; document.getElementById('filterPeriodForm').submit();" class="pl-3 pr-8 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 shadow-2xs appearance-none cursor-pointer">
+                            <option value="all" {{ $curBulan === 'all' ? 'selected' : '' }}>Semua Bulan</option>
+                            @foreach(['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] as $mName)
+                                <option value="{{ $mName }}" {{ $curBulan === $mName ? 'selected' : '' }}>{{ $mName }}</option>
+                            @endforeach
+                        </select>
+                        <span class="material-symbols-outlined text-[15px] text-slate-400 absolute right-2 pointer-events-none">expand_more</span>
+                    </div>
+
+                    <!-- Ekspor Excel -->
+                    <a href="{{ route('rekap.export', ['type' => 'excel', 'periode' => request('periode', 'all'), 'tahun' => request('tahun', date('Y')), 'bulan' => request('bulan', 'all')]) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition shadow-2xs">
+                        <span class="material-symbols-outlined text-[15px]">file_download</span>
+                        <span>Ekspor Excel</span>
+                    </a>
+
+                    @if((request('periode') && request('periode') !== 'all') || (request('bulan') && request('bulan') !== 'all'))
+                        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1 text-xs font-bold text-rose-500 hover:text-rose-600 dark:text-rose-400 px-2 py-1 rounded-md hover:bg-rose-50 dark:hover:bg-rose-950/40 transition">
+                            <span class="material-symbols-outlined text-[14px]">close</span>
+                            <span>Reset</span>
+                        </a>
+                    @endif
                 </div>
             </div>
 
-            <!-- Row 2: Dropdowns & Action Button -->
-            <div class="flex flex-wrap items-center gap-3 pt-2.5 border-t border-brand-sky/60 dark:border-slate-700/60">
-                <!-- Dropdown 1: Tahun -->
-                @php
-                    $curTahun = (int) request('tahun', date('Y'));
-                    $curBulan = request('bulan', 'all');
-                @endphp
-                <div class="relative inline-flex items-center">
-                    <span class="material-symbols-outlined text-[16px] text-brand-teal dark:text-slate-400 absolute left-3 pointer-events-none">calendar_today</span>
-                    <select name="tahun" onchange="document.getElementById('filterPeriodForm').submit();" class="pl-8 pr-9 py-1.5 bg-brand-white dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-lg text-xs font-semibold text-brand-navy dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-teal shadow-2xs appearance-none cursor-pointer">
-                        @foreach([date('Y'), date('Y') - 1, date('Y') - 2] as $yr)
-                            <option value="{{ $yr }}" {{ $curTahun === $yr ? 'selected' : '' }}>Tahun: {{ $yr }}</option>
-                        @endforeach
-                    </select>
-                    <span class="material-symbols-outlined text-[16px] text-slate-500 dark:text-slate-400 absolute right-2 pointer-events-none">expand_more</span>
+            <!-- Group Flex Container: BULANAN | TRIWULAN | SEMESTER | TAHUNAN -->
+            <div class="flex flex-wrap lg:flex-nowrap items-start gap-3 lg:gap-3.5">
+                
+                <!-- 1. BULANAN (Kompak/Fit Width) -->
+                <div class="w-full sm:w-auto lg:w-[130px] shrink-0 space-y-1">
+                    <span class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-400 block">
+                        BULANAN
+                    </span>
+                    <button type="button"
+                            onclick="document.getElementById('inputPeriode').value='all'; document.getElementById('inputBulan').value='all'; document.getElementById('filterPeriodForm').submit();"
+                            class="w-full flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition shadow-xs cursor-pointer {{ ($curP === 'all') ? 'bg-[#5D6BF8] hover:bg-[#4E5CE6] text-white shadow-[#5D6BF8]/20' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                        <span class="material-symbols-outlined text-[15px]">calendar_month</span>
+                        <span>Bulanan</span>
+                    </button>
                 </div>
 
-                <!-- Dropdown 2: Semua Bulan -->
-                <div class="relative inline-flex items-center">
-                    <select name="bulan" onchange="document.getElementById('inputPeriode').value='all'; document.getElementById('filterPeriodForm').submit();" class="pl-3.5 pr-9 py-1.5 bg-brand-white dark:bg-slate-900 border border-brand-sky dark:border-slate-700 rounded-lg text-xs font-semibold text-brand-navy dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-teal shadow-2xs appearance-none cursor-pointer">
-                        <option value="all" {{ $curBulan === 'all' ? 'selected' : '' }}>Semua Bulan</option>
-                        @foreach(['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'] as $mName)
-                            <option value="{{ $mName }}" {{ $curBulan === $mName ? 'selected' : '' }}>{{ $mName }}</option>
+                <!-- 2. TRIWULAN (Flexible / Utama) -->
+                <div class="w-full sm:w-auto flex-1 min-w-[280px] space-y-1">
+                    <span class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-400 block">
+                        TRIWULAN
+                    </span>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                        @php
+                            $twList = [
+                                'tw1' => ['label' => 'I (Jan-Mar)'],
+                                'tw2' => ['label' => 'II (Apr-Jun)'],
+                                'tw3' => ['label' => 'III (Jul-Sep)'],
+                                'tw4' => ['label' => 'IV (Okt-Des)'],
+                            ];
+                        @endphp
+                        @foreach($twList as $k => $v)
+                            @php $isActive = ($curP === $k); @endphp
+                            <button type="button"
+                                    onclick="document.getElementById('inputPeriode').value='{{ $k }}'; document.getElementById('inputBulan').value='all'; document.getElementById('filterPeriodForm').submit();"
+                                    class="flex items-center justify-center gap-1 px-1.5 py-1.5 rounded-lg text-[10.5px] font-bold transition shadow-xs cursor-pointer {{ $isActive ? 'bg-[#5D6BF8] hover:bg-[#4E5CE6] text-white shadow-[#5D6BF8]/20' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                                <span class="material-symbols-outlined text-[14px] shrink-0">layers</span>
+                                <span class="truncate">{{ $v['label'] }}</span>
+                            </button>
                         @endforeach
-                    </select>
-                    <span class="material-symbols-outlined text-[16px] text-slate-500 dark:text-slate-400 absolute right-2 pointer-events-none">expand_more</span>
+                    </div>
                 </div>
 
-                <!-- Button: Ekspor Laporan (Styled Accent) -->
-                <a href="{{ route('rekap.export', ['type' => 'excel', 'periode' => request('periode', 'all'), 'tahun' => request('tahun', date('Y')), 'bulan' => request('bulan', 'all')]) }}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition shadow-xs">
-                    <span class="material-symbols-outlined text-[16px] text-white">file_download</span>
-                    <span>Ekspor Excel</span>
-                </a>
+                <!-- 3. SEMESTER (Kompak 2 Tombol) -->
+                <div class="w-full sm:w-auto lg:w-[200px] shrink-0 space-y-1">
+                    <span class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-400 block">
+                        SEMESTER
+                    </span>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        @php
+                            $smtList = [
+                                'smt1' => ['label' => 'I (Jan-Jun)'],
+                                'smt2' => ['label' => 'II (Jul-Des)'],
+                            ];
+                        @endphp
+                        @foreach($smtList as $k => $v)
+                            @php $isActive = ($curP === $k); @endphp
+                            <button type="button"
+                                    onclick="document.getElementById('inputPeriode').value='{{ $k }}'; document.getElementById('inputBulan').value='all'; document.getElementById('filterPeriodForm').submit();"
+                                    class="flex items-center justify-center gap-1 px-1 py-1.5 rounded-lg text-[10.5px] font-bold transition shadow-xs cursor-pointer {{ $isActive ? 'bg-[#5D6BF8] hover:bg-[#4E5CE6] text-white shadow-[#5D6BF8]/20' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                                <span class="material-symbols-outlined text-[14px] shrink-0">date_range</span>
+                                <span class="truncate">{{ $v['label'] }}</span>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
 
-                @if(request('periode') && request('periode') !== 'all' || request('bulan') && request('bulan') !== 'all')
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-1 text-xs font-bold text-rose-500 hover:text-rose-600 dark:text-rose-400 px-2 py-1 rounded-md hover:bg-rose-50 dark:hover:bg-rose-950/40 transition">
-                        <span class="material-symbols-outlined text-[14px]">close</span>
-                        <span>Reset Filter</span>
-                    </a>
-                @endif
+                <!-- 4. TAHUNAN (Kompak/Fit Width) -->
+                <div class="w-full sm:w-auto lg:w-[130px] shrink-0 space-y-1">
+                    <span class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-400 block">
+                        TAHUNAN
+                    </span>
+                    @php $isTahunan = ($curP === 'tahunan'); @endphp
+                    <button type="button"
+                            onclick="document.getElementById('inputPeriode').value='tahunan'; document.getElementById('inputBulan').value='all'; document.getElementById('filterPeriodForm').submit();"
+                            class="w-full flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition shadow-xs cursor-pointer {{ $isTahunan ? 'bg-[#5D6BF8] hover:bg-[#4E5CE6] text-white shadow-[#5D6BF8]/20' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                        <span class="material-symbols-outlined text-[15px]">calendar_today</span>
+                        <span>Tahunan</span>
+                    </button>
+                </div>
+
             </div>
         </form>
 
@@ -224,10 +288,6 @@
                                 Distribusi Capaian Kinerja ASN (SKP 2026)
                             </h2>
                             <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Klasifikasi matriks hasil evaluasi kinerja Triwulan III Balai Wilayah VIII</p>
-                        </div>
-                        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 pl-3 pr-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300">
-                            <span>Filter: Semua Unit</span>
-                            <span class="material-symbols-outlined text-[14px] text-slate-500 dark:text-slate-400">expand_more</span>
                         </div>
                     </div>
 
@@ -437,7 +497,7 @@
                     <select onchange="window.location.href = '{{ request()->fullUrlWithQuery(['unit_kerja_id' => 'PLACEHOLDER']) }}'.replace('PLACEHOLDER', this.value)" class="px-3 py-2 bg-brand-beige dark:bg-slate-700 hover:bg-brand-sky/40 text-brand-navy dark:text-slate-200 text-xs font-semibold rounded-xl transition shrink-0 border border-brand-sky/70 dark:border-transparent cursor-pointer">
                         <option value="">Semua Unit Kerja</option>
                         @foreach($unitKerjaList as $uk)
-                            <option value="{{ $uk->id }}" {{ request('unit_kerja_id') == $uk->id ? 'selected' : '' }}>{{ $uk->nama }}</option>
+                            <option value="{{ $uk->id }}" {{ request('unit_kerja_id') == $uk->id ? 'selected' : '' }}>{{ $uk->nama_unit ?? $uk->nama }}</option>
                         @endforeach
                     </select>
                 </div>

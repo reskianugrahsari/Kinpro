@@ -26,50 +26,65 @@
                 </div>
             @endif
 
-            <!-- Filter Toolbar Container (Exact as image) -->
-            <form method="GET" action="{{ route('admin.pegawai.index') }}" class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col lg:flex-row justify-between items-center gap-4 transition-colors">
+            <!-- Filter Toolbar Container -->
+            <form method="GET" action="{{ auth()->user()->isAdmin() ? route('admin.pegawai.index') : route('pegawai.index') }}" class="bg-white dark:bg-slate-900 p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-nowrap items-center gap-2.5 overflow-x-auto transition-colors">
                 <input type="hidden" name="view" value="{{ request('view', 'grid') }}">
 
-                <div class="w-full lg:flex-1 relative">
-                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <!-- Input Pencarian -->
+                <div class="relative min-w-[200px] flex-1">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 dark:text-slate-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </span>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, NIP, jabatan..." class="block w-full pl-12 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 rounded-xl text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" />
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, NIP, jabatan..." class="block w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 rounded-xl text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" />
                 </div>
 
-                <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
-                    <select name="status" class="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl pl-3.5 pr-9 py-2.5 focus:ring-[#1769AA] focus:border-[#1769AA] cursor-pointer">
+                <!-- Dropdown Unit Kerja (Lebar ringkas max-w-[150px]) -->
+                <div class="relative shrink-0 w-36 sm:w-40">
+                    <select name="unit_kerja_id" onchange="this.form.submit()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl pl-3 pr-7 py-2 focus:ring-[#1769AA] focus:border-[#1769AA] cursor-pointer truncate">
+                        <option value="">Semua Unit</option>
+                        @foreach($unitKerjas as $uk)
+                            <option value="{{ $uk->id }}" {{ request('unit_kerja_id') == $uk->id ? 'selected' : '' }}>{{ $uk->singkatan ?? ($uk->nama_unit ?? $uk->nama) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Dropdown Status -->
+                <div class="relative shrink-0 w-28">
+                    <select name="status" onchange="this.form.submit()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl pl-3 pr-7 py-2 focus:ring-[#1769AA] focus:border-[#1769AA] cursor-pointer">
                         <option value="">Semua Status</option>
                         <option value="PNS" {{ request('status') === 'PNS' ? 'selected' : '' }}>PNS</option>
                         <option value="PPPK" {{ request('status') === 'PPPK' ? 'selected' : '' }}>PPPK</option>
                     </select>
+                </div>
 
-                    <select name="jabatan" class="bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl pl-3.5 pr-9 py-2.5 focus:ring-[#1769AA] focus:border-[#1769AA] max-w-xs cursor-pointer">
+                <!-- Dropdown Jabatan -->
+                <div class="relative shrink-0 w-36 sm:w-44">
+                    <select name="jabatan" onchange="this.form.submit()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl pl-3 pr-7 py-2 focus:ring-[#1769AA] focus:border-[#1769AA] cursor-pointer truncate">
                         <option value="">Semua Jabatan</option>
                         @foreach($jabatanList as $jbt)
                             <option value="{{ $jbt }}" {{ request('jabatan') === $jbt ? 'selected' : '' }}>{{ $jbt }}</option>
                         @endforeach
                     </select>
-                    <button type="submit" class="px-5 py-2.5 bg-[#1769AA] hover:bg-[#0F2747] text-white text-xs font-bold rounded-xl transition shadow-sm flex items-center space-x-1.5 cursor-pointer">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
-                        <span>Filter</span>
-                    </button>
-                    <a href="{{ route('admin.pegawai.index', ['view' => request('view', 'grid')]) }}" class="px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl transition flex items-center space-x-1.5 shadow-xs cursor-pointer">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                        <span>Reset</span>
+                </div>
+
+                <!-- Tombol Reset -->
+                <a href="{{ auth()->user()->isAdmin() ? route('admin.pegawai.index', ['view' => request('view', 'grid')]) : route('pegawai.index', ['view' => request('view', 'grid')]) }}" class="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl transition flex items-center space-x-1 shadow-xs cursor-pointer shrink-0" title="Reset Filter">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    <span>Reset</span>
+                </a>
+
+                <!-- Switch Mode Grid / Table -->
+                <div class="flex items-center space-x-1 border-l pl-2 border-slate-200 dark:border-slate-700 shrink-0">
+                    <a href="{{ request()->fullUrlWithQuery(['view' => 'grid']) }}" 
+                       class="p-2 rounded-xl shadow-xs transition {{ request('view', 'grid') === 'grid' ? 'bg-[#1769AA] text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700' }}" 
+                       title="Tampilan Grid Kartu">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                     </a>
-                    <div class="flex items-center space-x-1 border-l pl-3 border-slate-200 dark:border-slate-700">
-                        <a href="{{ request()->fullUrlWithQuery(['view' => 'grid']) }}" 
-                           class="p-2.5 rounded-xl shadow-xs transition {{ request('view', 'grid') === 'grid' ? 'bg-[#1769AA] text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700' }}" 
-                           title="Tampilan Grid Kartu">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                        </a>
-                        <a href="{{ request()->fullUrlWithQuery(['view' => 'list']) }}" 
-                           class="p-2.5 rounded-xl shadow-xs transition {{ request('view') === 'list' ? 'bg-[#1769AA] text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700' }}" 
-                           title="Tampilan List Tabel">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                        </a>
-                    </div>
+                    <a href="{{ request()->fullUrlWithQuery(['view' => 'list']) }}" 
+                       class="p-2 rounded-xl shadow-xs transition {{ request('view') === 'list' ? 'bg-[#1769AA] text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700' }}" 
+                       title="Tampilan List Tabel">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </a>
                 </div>
             </form>
 
@@ -129,7 +144,7 @@
                                             </span>
                                         </td>
                                         <td class="py-3 px-4 text-slate-700 dark:text-slate-300">{{ $p->jabatan ?? '-' }}</td>
-                                        <td class="py-3 px-4 text-slate-500 dark:text-slate-400">{{ $p->unitKerja?->nama ?? 'Bapekom Wil. VIII' }}</td>
+                                        <td class="py-3 px-4 text-slate-500 dark:text-slate-400">{{ $p->unitKerja?->nama_unit ?? ($p->unitKerja?->nama ?? 'Bapekom Wil. VIII') }}</td>
                                         <td class="py-3 px-4 text-center">
                                             @if($skor !== '-')
                                                 <span class="font-bold px-2 py-0.5 rounded-lg text-xs {{ $skor >= 85 ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300' : ($skor >= 75 ? 'bg-blue-100 dark:bg-blue-950/70 text-[#1769AA] dark:text-blue-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300') }}">
@@ -173,7 +188,9 @@
                                         <img src="{{ $p->foto_depan_url }}" alt="ID Card Depan {{ $p->nama }}" class="w-full h-full object-cover">
                                     @else
                                         <div class="w-full h-full flex flex-col items-center justify-center p-4 text-center">
-                                            <span class="material-symbols-outlined text-4xl text-slate-400 mb-2">badge</span>
+                                            <div class="w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xl font-bold text-slate-700 dark:text-slate-200 mb-2">
+                                                {{ strtoupper(substr($p->nama, 0, 2)) }}
+                                            </div>
                                             <h4 class="font-black text-sm text-slate-700 dark:text-slate-200">{{ $p->nama }}</h4>
                                             <p class="text-xs text-slate-500 font-mono mt-1">{{ $p->nip }}</p>
                                         </div>
@@ -217,7 +234,7 @@
                     @empty
                         <div class="col-span-full bg-white dark:bg-slate-900 p-12 text-center rounded-3xl border border-slate-200 dark:border-slate-800">
                             <p class="text-slate-500 dark:text-slate-400 font-medium">Tidak ada data pegawai yang sesuai filter.</p>
-                            <a href="{{ route('admin.pegawai.index') }}" class="mt-3 inline-block text-xs font-bold text-[#4F46E5] dark:text-indigo-400 hover:underline">Reset Semua Filter</a>
+                            <a href="{{ auth()->user()->isAdmin() ? route('admin.pegawai.index') : route('pegawai.index') }}" class="mt-3 inline-block text-xs font-bold text-[#4F46E5] dark:text-indigo-400 hover:underline">Reset Semua Filter</a>
                         </div>
                     @endforelse
                 </div>

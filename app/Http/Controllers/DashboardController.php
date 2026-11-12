@@ -160,6 +160,15 @@ class DashboardController extends Controller
                 $pegawaiQuery->where('unit_kerja_id', $request->unit_kerja_id);
             }
 
+            $pegawaiQuery->orderByRaw("
+                CASE 
+                    WHEN jabatan LIKE '%Kepala Balai%' THEN 1
+                    WHEN jabatan LIKE '%Kepala Subbag%' OR jabatan LIKE '%Kepala Sub Bagian%' THEN 2
+                    WHEN jabatan LIKE '%Kepala Seksi%' THEN 3
+                    ELSE 4
+                END ASC
+            ")->orderBy('id', 'asc');
+
             $pegawaiList = $pegawaiQuery->paginate(5)->withQueryString();
             $unitKerjaList = UnitKerja::all();
 

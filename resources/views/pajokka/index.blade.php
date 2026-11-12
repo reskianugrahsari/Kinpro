@@ -37,10 +37,6 @@
                         <span>Buat Laporan Baru</span>
                     </a>
                 @endif
-                <button type="button" onclick="alert('Konfigurasi SPT Balai aktif: Standard Permenkeu SBU 2026 / Perpres SPPD.')" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-outline-variant/60 dark:border-slate-700 bg-surface-container-lowest dark:bg-slate-800 text-on-surface dark:text-slate-200 font-semibold text-xs hover:bg-surface-container-low dark:hover:bg-slate-700 transition-colors shadow-xs cursor-pointer active:scale-95">
-                    <span class="material-symbols-outlined text-on-surface-variant dark:text-slate-400 text-sm">tune</span>
-                    <span>Konfigurasi SPT</span>
-                </button>
                 <a href="{{ route('rekap.export', 'excel') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary-container text-white font-semibold text-xs hover:bg-primary transition-colors shadow-xs cursor-pointer active:scale-95">
                     <span class="material-symbols-outlined text-sm">download</span>
                     <span>Export Rekap Laporan</span>

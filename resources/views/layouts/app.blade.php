@@ -22,9 +22,21 @@
             } else {
                 document.documentElement.classList.remove('dark');
             }
+
+            const savedWidth = localStorage.getItem('kinpro_sidebar_width');
+            const isCollapsed = localStorage.getItem('kinpro_sidebar_collapsed') === 'true';
+            if (isCollapsed || (savedWidth && parseInt(savedWidth) <= 125)) {
+                document.documentElement.classList.add('sidebar-is-collapsed');
+                document.documentElement.style.setProperty('--sidebar-w', '68px');
+            } else if (savedWidth) {
+                document.documentElement.style.setProperty('--sidebar-w', savedWidth + 'px');
+            }
         })();
     </script>
     <style>
+        :root {
+            --sidebar-w: 256px;
+        }
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
             font-weight: normal;
@@ -47,6 +59,86 @@
         .tabular-nums {
             font-variant-numeric: tabular-nums;
         }
+        /* Sidebar Resizing & Mini Mode */
+        #app-sidebar.is-mini,
+        #app-sidebar[data-collapsed="true"],
+        html.sidebar-is-collapsed #app-sidebar {
+            width: 68px !important;
+            min-width: 68px !important;
+        }
+        #app-sidebar.is-mini .sidebar-text,
+        #app-sidebar[data-collapsed="true"] .sidebar-text,
+        html.sidebar-is-collapsed #app-sidebar .sidebar-text {
+            display: none !important;
+        }
+        #app-sidebar.is-mini .sidebar-category,
+        #app-sidebar[data-collapsed="true"] .sidebar-category,
+        html.sidebar-is-collapsed #app-sidebar .sidebar-category {
+            display: none !important;
+        }
+        #app-sidebar.is-mini .sidebar-divider,
+        #app-sidebar[data-collapsed="true"] .sidebar-divider,
+        html.sidebar-is-collapsed #app-sidebar .sidebar-divider {
+            display: block !important;
+        }
+        #app-sidebar.is-mini .sidebar-nav-container,
+        #app-sidebar[data-collapsed="true"] .sidebar-nav-container,
+        html.sidebar-is-collapsed #app-sidebar .sidebar-nav-container {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+        #app-sidebar.is-mini .sidebar-item,
+        #app-sidebar[data-collapsed="true"] .sidebar-item,
+        html.sidebar-is-collapsed #app-sidebar .sidebar-item {
+            width: 2.75rem !important; /* 44px centered */
+            height: 2.75rem !important;
+            padding: 0 !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            justify-content: center !important;
+        }
+        #app-sidebar.is-mini .sidebar-item > span,
+        #app-sidebar[data-collapsed="true"] .sidebar-item > span,
+        html.sidebar-is-collapsed #app-sidebar .sidebar-item > span {
+            justify-content: center !important;
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            gap: 0 !important;
+        }
+        #app-sidebar.is-mini .sidebar-item > span > div,
+        #app-sidebar[data-collapsed="true"] .sidebar-item > span > div,
+        html.sidebar-is-collapsed #app-sidebar .sidebar-item > span > div {
+            background-color: transparent !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        #app-sidebar.is-mini .sidebar-badge-dot,
+        #app-sidebar[data-collapsed="true"] .sidebar-badge-dot,
+        html.sidebar-is-collapsed #app-sidebar .sidebar-badge-dot {
+            display: block !important;
+        }
+        #app-sidebar.is-mini .sidebar-brand-text,
+        #app-sidebar[data-collapsed="true"] .sidebar-brand-text,
+        html.sidebar-is-collapsed #app-sidebar .sidebar-brand-text {
+            display: none !important;
+        }
+        #app-sidebar.is-mini .sidebar-brand-box,
+        #app-sidebar[data-collapsed="true"] .sidebar-brand-box,
+        html.sidebar-is-collapsed #app-sidebar .sidebar-brand-box {
+            justify-content: center !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        body.is-resizing {
+            user-select: none !important;
+            cursor: col-resize !important;
+        }
+        body.is-resizing * {
+            user-select: none !important;
+            cursor: col-resize !important;
+        }
     </style>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -54,43 +146,46 @@
     <x-loading-screen />
     <div class="h-screen flex overflow-hidden">
             <!-- Sidebar (Navy #0A1931) -->
-            <aside class="w-64 bg-[#0A1931] text-slate-200 flex flex-col shrink-0 shadow-xl border-r border-slate-800/80 h-full overflow-hidden">
-                <!-- Brand Header -->
-                <div class="h-16 flex items-center px-5 border-b border-slate-800/80 space-x-3 shrink-0">
-                    <img src="{{ asset('images/logo-kinpro.png') }}?v={{ file_exists(public_path('images/logo-kinpro.png')) ? filemtime(public_path('images/logo-kinpro.png')) : time() }}" alt="Logo KinPro" class="w-9 h-9 object-contain shrink-0">
-                    <div class="min-w-0 flex-1">
-                        <span class="text-white font-extrabold tracking-tight text-base block leading-tight">KinPro</span>
-                        <span class="text-[10px] text-brand-sky/80 truncate block mt-0.5">Bapekom PU Wil. VIII Makassar</span>
+            <aside id="app-sidebar" class="relative bg-[#0A1931] text-slate-200 flex flex-col shrink-0 shadow-xl border-r border-slate-800/80 h-full transition-[width] duration-200 select-none" style="width: var(--sidebar-w, 256px); min-width: 68px; max-width: 380px;">
+                <!-- Brand Header (Klik untuk Perkecil / Perbesar) -->
+                <div id="sidebar-brand-header" class="h-16 flex items-center px-4 border-b border-slate-800/80 shrink-0 sidebar-brand-box cursor-pointer select-none hover:bg-white/5 transition-colors overflow-hidden" title="Klik untuk perkecil / perbesar sidebar">
+                    <div class="flex items-center space-x-3 min-w-0 pointer-events-none">
+                        <img src="{{ asset('images/logo-kinpro.png') }}?v={{ file_exists(public_path('images/logo-kinpro.png')) ? filemtime(public_path('images/logo-kinpro.png')) : time() }}" alt="Logo KinPro" class="w-9 h-9 object-contain shrink-0 mx-auto">
+                        <div class="min-w-0 flex-1 sidebar-brand-text">
+                            <span class="text-white font-extrabold tracking-tight text-base block leading-tight">KinPro</span>
+                            <span class="text-[10px] text-brand-sky/80 truncate block mt-0.5">Bapekom PU Wil. VIII Makassar</span>
+                        </div>
                     </div>
                 </div>
 
-                <nav class="flex-1 px-3 py-5 space-y-6 text-xs font-semibold overflow-y-auto">
+                <nav class="flex-1 px-3 py-5 space-y-6 text-xs font-semibold overflow-y-auto overflow-x-hidden sidebar-nav-container">
                     <!-- Menu Utama -->
                     <div>
-                        <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
+                        <div class="sidebar-category px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
                             MENU UTAMA
                         </div>
+                        <div class="sidebar-divider hidden my-2 mx-auto w-6 border-t border-slate-800"></div>
                         <div class="space-y-1">
-                            <a href="{{ route('dashboard') }}" class="group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('dashboard') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                <span class="flex items-center space-x-3">
-                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('dashboard') ? 'bg-white/20 text-white' : 'bg-blue-500/15 text-blue-300 group-hover:bg-blue-500/25 group-hover:text-white' }}">
+                            <a href="{{ route('dashboard') }}" title="Dashboard" class="sidebar-item group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('dashboard') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                <span class="flex items-center space-x-3 min-w-0">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('dashboard') ? 'bg-white/20 text-white' : 'bg-blue-500/15 text-blue-300 group-hover:bg-blue-500/25 group-hover:text-white' }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                                     </div>
-                                    <span>Dashboard</span>
+                                    <span class="sidebar-text truncate">Dashboard</span>
                                 </span>
                             </a>
                             @if(auth()->user()->role === 'admin')
-                                <a href="{{ route('admin.pegawai.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('admin.pegawai.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('admin.pegawai.*') ? 'bg-white/20 text-white' : 'bg-indigo-500/15 text-indigo-300 group-hover:bg-indigo-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('admin.pegawai.index') }}" title="Data Pegawai" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('admin.pegawai.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('admin.pegawai.*') ? 'bg-white/20 text-white' : 'bg-indigo-500/15 text-indigo-300 group-hover:bg-indigo-500/25 group-hover:text-white' }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                                     </div>
-                                    <span>Data Pegawai</span>
+                                    <span class="sidebar-text truncate">Data Pegawai</span>
                                 </a>
-                                <a href="{{ route('penilaian.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('penilaian.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('penilaian.*') ? 'bg-white/20 text-white' : 'bg-emerald-500/15 text-emerald-300 group-hover:bg-emerald-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('penilaian.index') }}" title="Penilaian Kinerja" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('penilaian.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('penilaian.*') ? 'bg-white/20 text-white' : 'bg-emerald-500/15 text-emerald-300 group-hover:bg-emerald-500/25 group-hover:text-white' }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     </div>
-                                    <span>Penilaian Kinerja</span>
+                                    <span class="sidebar-text truncate">Penilaian Kinerja</span>
                                 </a>
                             @endif
                         </div>
@@ -99,52 +194,65 @@
                     @if(auth()->user()->role === 'admin')
                         <!-- Manajemen & Verifikasi -->
                         <div>
-                            <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
+                            <div class="sidebar-category px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
                                 MANAJEMEN & VERIFIKASI
                             </div>
+                            <div class="sidebar-divider hidden my-2 mx-auto w-6 border-t border-slate-800"></div>
                             <div class="space-y-1">
-                                <a href="{{ route('izin.index') }}" class="group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('izin.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <span class="flex items-center space-x-3">
-                                        <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('izin.*') ? 'bg-white/20 text-white' : 'bg-amber-500/15 text-amber-300 group-hover:bg-amber-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('izin.index') }}" title="Kelola Izin" class="sidebar-item group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('izin.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <span class="flex items-center space-x-3 min-w-0">
+                                        <div class="relative w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('izin.*') ? 'bg-white/20 text-white' : 'bg-amber-500/15 text-amber-300 group-hover:bg-amber-500/25 group-hover:text-white' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                            @if(($badgeCounts['izin'] ?? 0) > 0)
+                                                <span class="sidebar-badge-dot hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 rounded-full ring-2 ring-[#0A1931]"></span>
+                                            @endif
                                         </div>
-                                        <span>Kelola Izin</span>
+                                        <span class="sidebar-text truncate">Kelola Izin</span>
                                     </span>
                                     @if(($badgeCounts['izin'] ?? 0) > 0)
-                                        <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ $badgeCounts['izin'] }}</span>
+                                        <span class="sidebar-text sidebar-badge bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ $badgeCounts['izin'] }}</span>
                                     @endif
                                 </a>
-                                <a href="{{ route('pengaduan.index') }}" class="group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('pengaduan.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <span class="flex items-center space-x-3">
-                                        <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('pengaduan.*') ? 'bg-white/20 text-white' : 'bg-rose-500/15 text-rose-300 group-hover:bg-rose-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('pengaduan.index') }}" title="Kelola Pengaduan" class="sidebar-item group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('pengaduan.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <span class="flex items-center space-x-3 min-w-0">
+                                        <div class="relative w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('pengaduan.*') ? 'bg-white/20 text-white' : 'bg-rose-500/15 text-rose-300 group-hover:bg-rose-500/25 group-hover:text-white' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                                            @if(($badgeCounts['pengaduan'] ?? 0) > 0)
+                                                <span class="sidebar-badge-dot hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-400 rounded-full ring-2 ring-[#0A1931]"></span>
+                                            @endif
                                         </div>
-                                        <span>Kelola Pengaduan</span>
+                                        <span class="sidebar-text truncate">Kelola Pengaduan</span>
                                     </span>
                                     @if(($badgeCounts['pengaduan'] ?? 0) > 0)
-                                        <span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ $badgeCounts['pengaduan'] }}</span>
+                                        <span class="sidebar-text sidebar-badge bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ $badgeCounts['pengaduan'] }}</span>
                                     @endif
                                 </a>
-                                <a href="{{ route('absen.index') }}" class="group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('absen.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <span class="flex items-center space-x-3">
-                                        <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('absen.*') ? 'bg-white/20 text-white' : 'bg-sky-500/15 text-sky-300 group-hover:bg-sky-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('absen.index') }}" title="Kelola Lupa Absen" class="sidebar-item group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('absen.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <span class="flex items-center space-x-3 min-w-0">
+                                        <div class="relative w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('absen.*') ? 'bg-white/20 text-white' : 'bg-sky-500/15 text-sky-300 group-hover:bg-sky-500/25 group-hover:text-white' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            @if(($badgeCounts['absen'] ?? 0) > 0)
+                                                <span class="sidebar-badge-dot hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-sky-400 rounded-full ring-2 ring-[#0A1931]"></span>
+                                            @endif
                                         </div>
-                                        <span>Kelola Lupa Absen</span>
+                                        <span class="sidebar-text truncate">Kelola Lupa Absen</span>
                                     </span>
                                     @if(($badgeCounts['absen'] ?? 0) > 0)
-                                        <span class="bg-sky-500/20 text-sky-300 border border-sky-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ $badgeCounts['absen'] }}</span>
+                                        <span class="sidebar-text sidebar-badge bg-sky-500/20 text-sky-300 border border-sky-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ $badgeCounts['absen'] }}</span>
                                     @endif
                                 </a>
-                                <a href="{{ route('pajokka.index') }}" class="group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('pajokka.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <span class="flex items-center space-x-3">
-                                        <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('pajokka.*') ? 'bg-white/20 text-white' : 'bg-teal-500/15 text-teal-300 group-hover:bg-teal-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('pajokka.index') }}" title="Review Perjalanan Dinas" class="sidebar-item group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('pajokka.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <span class="flex items-center space-x-3 min-w-0">
+                                        <div class="relative w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('pajokka.*') ? 'bg-white/20 text-white' : 'bg-teal-500/15 text-teal-300 group-hover:bg-teal-500/25 group-hover:text-white' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                            @if(($badgeCounts['pajokka'] ?? 0) > 0)
+                                                <span class="sidebar-badge-dot hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-[#0A1931]"></span>
+                                            @endif
                                         </div>
-                                        <span>Review Perjalanan Dinas</span>
+                                        <span class="sidebar-text truncate">Review Perjalanan Dinas</span>
                                     </span>
                                     @if(($badgeCounts['pajokka'] ?? 0) > 0)
-                                        <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ $badgeCounts['pajokka'] }}</span>
+                                        <span class="sidebar-text sidebar-badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ $badgeCounts['pajokka'] }}</span>
                                     @endif
                                 </a>
                             </div>
@@ -152,83 +260,95 @@
 
                         <!-- Laporan & Audit -->
                         <div>
-                            <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
+                            <div class="sidebar-category px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
                                 LAPORAN & AUDIT
                             </div>
+                            <div class="sidebar-divider hidden my-2 mx-auto w-6 border-t border-slate-800"></div>
                             <div class="space-y-1">
-                                <a href="{{ route('rekap.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('rekap.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('rekap.*') ? 'bg-white/20 text-white' : 'bg-purple-500/15 text-purple-300 group-hover:bg-purple-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('rekap.index') }}" title="Rekap & Statistik" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('rekap.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('rekap.*') ? 'bg-white/20 text-white' : 'bg-purple-500/15 text-purple-300 group-hover:bg-purple-500/25 group-hover:text-white' }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                                     </div>
-                                    <span>Rekap & Statistik</span>
+                                    <span class="sidebar-text truncate">Rekap & Statistik</span>
                                 </a>
-                                <a href="{{ route('rating.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('rating.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('rating.*') ? 'bg-white/20 text-white' : 'bg-amber-400/15 text-amber-300 group-hover:bg-amber-400/25 group-hover:text-white' }}">
+                                <a href="{{ route('rating.index') }}" title="Rating Pegawai" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('rating.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('rating.*') ? 'bg-white/20 text-white' : 'bg-amber-400/15 text-amber-300 group-hover:bg-amber-400/25 group-hover:text-white' }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
                                     </div>
-                                    <span>Rating Pegawai</span>
+                                    <span class="sidebar-text truncate">Rating Pegawai</span>
                                 </a>
                             </div>
                         </div>
                     @else
                         <!-- Menu Pegawai: Layanan Mandiri Saja -->
                         <div>
-                            <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
+                            <div class="sidebar-category px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
                                 INFORMASI & DIREKTORI
                             </div>
+                            <div class="sidebar-divider hidden my-2 mx-auto w-6 border-t border-slate-800"></div>
                             <div class="space-y-1 mb-4">
-                                <a href="{{ route('pegawai.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('pegawai.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('pegawai.*') ? 'bg-white/20 text-white' : 'bg-indigo-500/15 text-indigo-300 group-hover:bg-indigo-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('pegawai.index') }}" title="Data Pegawai" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('pegawai.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('pegawai.*') ? 'bg-white/20 text-white' : 'bg-indigo-500/15 text-indigo-300 group-hover:bg-indigo-500/25 group-hover:text-white' }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                                     </div>
-                                    <span>Data Pegawai</span>
+                                    <span class="sidebar-text truncate">Data Pegawai</span>
                                 </a>
                             </div>
 
-                            <div class="px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
+                            <div class="sidebar-category px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
                                 LAYANAN PEGAWAI
                             </div>
+                            <div class="sidebar-divider hidden my-2 mx-auto w-6 border-t border-slate-800"></div>
                             <div class="space-y-1">
-                                <a href="{{ route('penilaian.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('penilaian.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('penilaian.*') ? 'bg-white/20 text-white' : 'bg-emerald-500/15 text-emerald-300 group-hover:bg-emerald-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('penilaian.index') }}" title="Penilaian Saya" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('penilaian.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('penilaian.*') ? 'bg-white/20 text-white' : 'bg-emerald-500/15 text-emerald-300 group-hover:bg-emerald-500/25 group-hover:text-white' }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     </div>
-                                    <span>Penilaian Saya</span>
+                                    <span class="sidebar-text truncate">Penilaian Saya</span>
                                 </a>
-                                <a href="{{ route('izin.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('izin.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('izin.*') ? 'bg-white/20 text-white' : 'bg-amber-500/15 text-amber-300 group-hover:bg-amber-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('izin.index') }}" title="Pengajuan Izin" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('izin.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('izin.*') ? 'bg-white/20 text-white' : 'bg-amber-500/15 text-amber-300 group-hover:bg-amber-500/25 group-hover:text-white' }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                     </div>
-                                    <span>Pengajuan Izin</span>
+                                    <span class="sidebar-text truncate">Pengajuan Izin</span>
                                 </a>
-                                <a href="{{ route('absen.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('absen.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('absen.*') ? 'bg-white/20 text-white' : 'bg-sky-500/15 text-sky-300 group-hover:bg-sky-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('absen.index') }}" title="Pengajuan Lupa Absen" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('absen.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('absen.*') ? 'bg-white/20 text-white' : 'bg-sky-500/15 text-sky-300 group-hover:bg-sky-500/25 group-hover:text-white' }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     </div>
-                                    <span>Pengajuan Lupa Absen</span>
+                                    <span class="sidebar-text truncate">Pengajuan Lupa Absen</span>
                                 </a>
-                                <a href="{{ route('pengaduan.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('pengaduan.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('pengaduan.*') ? 'bg-white/20 text-white' : 'bg-rose-500/15 text-rose-300 group-hover:bg-rose-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('pengaduan.index') }}" title="Pengaduan Saya" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('pengaduan.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('pengaduan.*') ? 'bg-white/20 text-white' : 'bg-rose-500/15 text-rose-300 group-hover:bg-rose-500/25 group-hover:text-white' }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
                                     </div>
-                                    <span>Pengaduan Saya</span>
+                                    <span class="sidebar-text truncate">Pengaduan Saya</span>
                                 </a>
-                                <a href="{{ route('pajokka.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('pajokka.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('pajokka.*') ? 'bg-white/20 text-white' : 'bg-teal-500/15 text-teal-300 group-hover:bg-teal-500/25 group-hover:text-white' }}">
+                                <a href="{{ route('pajokka.index') }}" title="Laporan Perjalanan Dinas" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('pajokka.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('pajokka.*') ? 'bg-white/20 text-white' : 'bg-teal-500/15 text-teal-300 group-hover:bg-teal-500/25 group-hover:text-white' }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                     </div>
-                                    <span>Laporan Perjalanan Dinas</span>
+                                    <span class="sidebar-text truncate">Laporan Perjalanan Dinas</span>
                                 </a>
-                                <a href="{{ route('rating.index') }}" class="group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('rating.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
-                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center transition-colors {{ request()->routeIs('rating.*') ? 'bg-white/20 text-white' : 'bg-amber-400/15 text-amber-300 group-hover:bg-amber-400/25 group-hover:text-white' }}">
+                                <a href="{{ route('rating.index') }}" title="Rating Pegawai" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('rating.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('rating.*') ? 'bg-white/20 text-white' : 'bg-amber-400/15 text-amber-300 group-hover:bg-amber-400/25 group-hover:text-white' }}">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
                                     </div>
-                                    <span>Rating Pegawai</span>
+                                    <span class="sidebar-text truncate">Rating Pegawai</span>
                                 </a>
                             </div>
                         </div>
                     @endif
                 </nav>
+
+                <!-- Drag Handle Resizer -->
+                <div id="sidebar-resizer" 
+                     class="sidebar-resizer absolute top-0 -right-2 w-4 h-full cursor-col-resize z-40 flex items-center justify-center group select-none"
+                     title="Tarik ke samping untuk mengubah ukuran, klik 2x untuk minimize/maximize">
+                    <div class="w-1 h-full group-hover:bg-sky-400/80 group-active:bg-sky-400 transition-colors flex items-center justify-center">
+                        <div class="w-0.5 h-8 bg-slate-600/80 group-hover:bg-sky-200 group-active:bg-white rounded-full transition-colors"></div>
+                    </div>
+                </div>
             </aside>
 
             <!-- Main Content Area -->
@@ -408,6 +528,162 @@
                     localStorage.setItem('theme', 'dark');
                 }
             }
+
+            // Sidebar Resizing & Collapse Controller (Click & Drag)
+            (function initSidebar() {
+                const sidebar = document.getElementById('app-sidebar');
+                const brandHeader = document.getElementById('sidebar-brand-header');
+                const resizer = document.getElementById('sidebar-resizer');
+                if (!sidebar || !resizer) return;
+
+                const COLLAPSED_WIDTH = 68;
+                const MIN_EXPANDED = 180;
+                const MAX_WIDTH = 380;
+                const DEFAULT_WIDTH = 256;
+                const SNAP_THRESHOLD = 125;
+
+                let isDragging = false;
+                let startX = 0;
+                let startWidth = DEFAULT_WIDTH;
+
+                function applyState(width, isCollapsed, persist = true) {
+                    const finalWidth = isCollapsed ? COLLAPSED_WIDTH : Math.min(Math.max(width, MIN_EXPANDED), MAX_WIDTH);
+
+                    sidebar.style.width = finalWidth + 'px';
+                    document.documentElement.style.setProperty('--sidebar-w', finalWidth + 'px');
+
+                    if (isCollapsed) {
+                        sidebar.classList.add('is-mini');
+                        sidebar.setAttribute('data-collapsed', 'true');
+                        document.documentElement.classList.add('sidebar-is-collapsed');
+                    } else {
+                        sidebar.classList.remove('is-mini');
+                        sidebar.setAttribute('data-collapsed', 'false');
+                        document.documentElement.classList.remove('sidebar-is-collapsed');
+                    }
+
+                    if (persist) {
+                        localStorage.setItem('kinpro_sidebar_width', finalWidth);
+                        localStorage.setItem('kinpro_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+                    }
+                }
+
+                function toggleSidebar() {
+                    const isCollapsed = sidebar.classList.contains('is-mini') || sidebar.getAttribute('data-collapsed') === 'true';
+                    sidebar.classList.add('transition-[width]', 'duration-200');
+
+                    if (isCollapsed) {
+                        const savedLast = parseInt(localStorage.getItem('kinpro_sidebar_last_expanded')) || DEFAULT_WIDTH;
+                        const targetW = (savedLast >= MIN_EXPANDED && savedLast <= MAX_WIDTH) ? savedLast : DEFAULT_WIDTH;
+                        applyState(targetW, false, true);
+                    } else {
+                        const currentW = sidebar.getBoundingClientRect().width;
+                        if (currentW >= MIN_EXPANDED) {
+                            localStorage.setItem('kinpro_sidebar_last_expanded', currentW);
+                        }
+                        applyState(COLLAPSED_WIDTH, true, true);
+                    }
+                }
+
+                // Klik header brand untuk toggle perkecil/perbesar
+                if (brandHeader) {
+                    brandHeader.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        toggleSidebar();
+                    });
+                }
+
+                // Saat sidebar dalam mode kecil (mini), klik di area sidebar manapun (selain klik link) otomatis perbesar
+                sidebar.addEventListener('click', function(e) {
+                    if (e.target.closest('a')) return;
+                    if (e.target.closest('#sidebar-resizer')) return;
+
+                    const isCollapsed = sidebar.classList.contains('is-mini') || sidebar.getAttribute('data-collapsed') === 'true';
+                    if (isCollapsed) {
+                        toggleSidebar();
+                    }
+                });
+
+                resizer.addEventListener('dblclick', toggleSidebar);
+
+                window.addEventListener('keydown', function(e) {
+                    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b' && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) {
+                        e.preventDefault();
+                        toggleSidebar();
+                    }
+                });
+
+                function startDrag(clientX) {
+                    isDragging = true;
+                    startX = clientX;
+                    startWidth = sidebar.getBoundingClientRect().width;
+                    sidebar.classList.remove('transition-[width]', 'duration-200');
+                    document.body.classList.add('is-resizing');
+                }
+
+                function moveDrag(clientX) {
+                    if (!isDragging) return;
+                    const delta = clientX - startX;
+                    const targetWidth = startWidth + delta;
+
+                    if (targetWidth < SNAP_THRESHOLD) {
+                        applyState(COLLAPSED_WIDTH, true, false);
+                    } else {
+                        const clamped = Math.min(Math.max(targetWidth, MIN_EXPANDED), MAX_WIDTH);
+                        applyState(clamped, false, false);
+                    }
+                }
+
+                function stopDrag() {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    document.body.classList.remove('is-resizing');
+                    sidebar.classList.add('transition-[width]', 'duration-200');
+
+                    const currentW = sidebar.getBoundingClientRect().width;
+                    if (currentW <= SNAP_THRESHOLD) {
+                        applyState(COLLAPSED_WIDTH, true, true);
+                    } else {
+                        const clamped = Math.min(Math.max(currentW, MIN_EXPANDED), MAX_WIDTH);
+                        localStorage.setItem('kinpro_sidebar_last_expanded', clamped);
+                        applyState(clamped, false, true);
+                    }
+                }
+
+                resizer.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+                    startDrag(e.clientX);
+                });
+
+                window.addEventListener('mousemove', function(e) {
+                    moveDrag(e.clientX);
+                });
+
+                window.addEventListener('mouseup', stopDrag);
+
+                // Touch support
+                resizer.addEventListener('touchstart', function(e) {
+                    if (e.touches.length !== 1) return;
+                    startDrag(e.touches[0].clientX);
+                }, { passive: true });
+
+                window.addEventListener('touchmove', function(e) {
+                    if (!isDragging || e.touches.length !== 1) return;
+                    moveDrag(e.touches[0].clientX);
+                }, { passive: true });
+
+                window.addEventListener('touchend', stopDrag);
+
+                // Init from storage
+                const savedWidth = parseInt(localStorage.getItem('kinpro_sidebar_width'));
+                const isInitiallyCollapsed = localStorage.getItem('kinpro_sidebar_collapsed') === 'true';
+
+                if (isInitiallyCollapsed || (savedWidth && savedWidth <= SNAP_THRESHOLD)) {
+                    applyState(COLLAPSED_WIDTH, true, false);
+                } else if (savedWidth) {
+                    applyState(savedWidth, false, false);
+                }
+            })();
         </script>
     </body>
 </html>

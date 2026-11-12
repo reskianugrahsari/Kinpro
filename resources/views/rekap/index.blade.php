@@ -20,26 +20,15 @@
                     <span class="text-primary dark:text-sky-400 font-semibold">Rekap & Statistik</span>
                 </nav>
                 <h1 class="font-headline-md text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-                    Rekap & Statistik Kepegawaian
+                    Rekap & Statistik Gabungan
                 </h1>
                 <p class="font-body-md text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     Monitoring real-time distribusi personil, capaian kinerja, dan validasi berkas dinas Bapekom PU Makassar.
                 </p>
             </div>
             
-            <!-- Controls Group: Periode, Sync & Export (Sejajar Rapi Tanpa Scroll) -->
+            <!-- Controls Group: Sync & Export (Sejajar Rapi Tanpa Scroll) -->
             <div class="flex items-center gap-2 shrink-0">
-                <!-- Filter Periode Dropdown -->
-                <div class="relative">
-                    <select class="h-9 pl-2.5 pr-7 rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-xs focus:border-primary focus:ring-1 focus:ring-primary appearance-none cursor-pointer">
-                        <option>TA {{ $tahun ?? date('Y') }} (Semua Kuartal)</option>
-                        <option>Kuartal IV - {{ $tahun ?? date('Y') }} (Aktif)</option>
-                        <option>Kuartal III - {{ $tahun ?? date('Y') }}</option>
-                        <option>Kuartal II - {{ $tahun ?? date('Y') }}</option>
-                    </select>
-                    <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-[16px] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">expand_more</span>
-                </div>
-
                 <!-- Refresh / Sync Button -->
                 <button type="button" onclick="window.location.reload()" class="h-9 px-2.5 rounded-lg bg-surface-container-lowest dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-700 shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 whitespace-nowrap">
                     <span class="material-symbols-outlined text-sm">sync</span>
@@ -105,9 +94,10 @@
                     </div>
                 </div>
                 <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                        Rata-rata: {{ $avgPenilaian }}
-                    </span>
+                    <a href="{{ route('penilaian.rekap') }}" class="inline-flex items-center gap-1 text-xs font-bold text-primary dark:text-sky-400 hover:underline">
+                        <span>Lihat Infografis SKP</span>
+                        <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                    </a>
                     <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium font-label-md">Predikat Baik</span>
                 </div>
             </div>

@@ -45,6 +45,14 @@ class ModulF2Test extends TestCase
              ->get('/penilaian')->assertStatus(200);
 
         $this->actingAs($admin)
+             ->get('/penilaian/rekap')->assertStatus(200)
+             ->assertSee('REKAPITULASI')
+             ->assertSee('PREDIKAT SKP')
+             ->assertSee('TRIWULAN III (TW3) 2026')
+             ->assertSee('Sangat Baik')
+             ->assertSee('Baik');
+
+        $this->actingAs($admin)
              ->get('/izin')->assertStatus(200);
 
         $this->actingAs($admin)

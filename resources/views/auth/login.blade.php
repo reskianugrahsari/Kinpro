@@ -41,13 +41,9 @@
 
             <!-- Center Stage Hero: Logo Center Horizontal & Vertikal, Title, Description -->
             <div class="relative z-10 my-auto py-6 flex flex-col items-center text-center">
-                <!-- Main Centered Enlarged Logo (Clean Transparent without Wrapper Box) -->
+                <!-- Main Centered Enlarged Logo (Clean Transparent without Wrapper Box / Backlight) -->
                 <div class="relative mb-6 group flex items-center justify-center">
-                    <!-- Ambient Backlight / Glow Effect -->
-                    <div class="absolute -inset-4 bg-sky-400/30 rounded-full blur-2xl pointer-events-none"></div>
-                    <div class="absolute inset-2 bg-gradient-to-tr from-cyan-400/40 via-sky-300/50 to-teal-300/35 rounded-full blur-xl pointer-events-none"></div>
-                    <div class="absolute inset-6 bg-white/25 rounded-full blur-lg pointer-events-none"></div>
-                    <img src="{{ asset('images/logo-kinpro-auth.png') }}?v={{ file_exists(public_path('images/logo-kinpro-auth.png')) ? filemtime(public_path('images/logo-kinpro-auth.png')) : time() }}" alt="KinPro Logo" class="relative z-10 w-40 sm:w-48 md:w-52 max-h-48 sm:max-h-52 object-contain filter drop-shadow-[0_4px_16px_rgba(56,189,248,0.4)] transition-transform duration-300 group-hover:scale-105">
+                    <img src="{{ asset('images/logo-kinpro-auth.png') }}?v={{ file_exists(public_path('images/logo-kinpro-auth.png')) ? filemtime(public_path('images/logo-kinpro-auth.png')) : time() }}" alt="KinPro Logo" class="relative z-10 w-40 sm:w-48 md:w-52 max-h-48 sm:max-h-52 object-contain transition-transform duration-300 group-hover:scale-105">
                 </div>
 
                 <!-- Dynamic & Vivid Main Title with Gradient -->
@@ -60,7 +56,7 @@
 
                 <!-- Body description -->
                 <p class="text-slate-200 text-xs sm:text-sm leading-relaxed max-w-lg font-normal mb-8">
-                    Platform cerdas pemantauan, evaluasi berkala, dan penilaian kinerja ASN Balai Pengembangan Kompetensi PUPR Wilayah VIII Makassar yang transparan, akurat, dan berbasis data realtime.
+                    Platform cerdas pemantauan, evaluasi berkala, dan penilaian kinerja ASN Balai Pengembangan Kompetensi PU Wilayah VIII Makassar yang transparan, akurat, dan berbasis data realtime.
                 </p>
 
                 <!-- Stats 3 Cards Centered with Animated Float & Glow Hover -->
@@ -114,7 +110,7 @@
                 <x-auth-session-status class="mb-5" :status="session('status')" />
 
                 <!-- Form -->
-                <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                <form id="loginForm" method="POST" action="{{ route('login') }}" class="space-y-5">
                     @csrf
 
                     <!-- Field 1: Email / Username / NIP -->

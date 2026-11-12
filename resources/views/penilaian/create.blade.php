@@ -6,12 +6,57 @@
         selectedTahun: '{{ old('tahun', date('Y')) }}',
         periodeKinerja: 'Triwulan I',
 
-        dis: {{ old('nilai_kedisiplinan', 85) }},
-        kin: {{ old('kinerja', 80) }},
-        sik: {{ old('sikap', 85) }},
-        kep: {{ old('kepemimpinan', 80) }},
-        loy: {{ old('loyalitas', 90) }},
-        itVal: {{ old('it', 75) }},
+        // Parameter penghitungan hari kerja untuk Kedisiplinan & Kinerja (kosong untuk diisi manual oleh Admin)
+        hariEfektifDis: '{{ old('hari_efektif_dis', '') }}',
+        hariKerjaDis: '{{ old('hari_kerja_dis', '') }}',
+        lupaAbsenDis: '{{ old('lupa_absen_dis', '') }}',
+        dis: {{ old('nilai_kedisiplinan', 0) }},
+
+        targetKin: '{{ old('target_kin', '') }}',
+        realisasiKin: '{{ old('realisasi_kin', '') }}',
+        tertundaKin: '{{ old('tertunda_kin', '') }}',
+        kin: {{ old('kinerja', 0) }},
+
+        calcDis() {
+            if (this.hariEfektifDis === '' || this.hariEfektifDis === null) {
+                this.hariKerjaDis = '';
+                this.dis = 0;
+                return;
+            }
+            let efektif = parseFloat(this.hariEfektifDis);
+            if (isNaN(efektif) || efektif <= 0) {
+                this.hariKerjaDis = isNaN(efektif) ? '' : 0;
+                this.dis = 0;
+                return;
+            }
+            let lupa = (this.lupaAbsenDis !== '' && this.lupaAbsenDis !== null) ? (parseFloat(this.lupaAbsenDis) || 0) : 0;
+            this.hariKerjaDis = Math.max(0, efektif - lupa);
+            let raw = (this.hariKerjaDis / efektif) * 100;
+            this.dis = Math.min(100, Math.max(0, Math.round(raw * 100) / 100));
+        },
+
+        calcKin() {
+            if (this.targetKin === '' || this.targetKin === null) {
+                this.realisasiKin = '';
+                this.kin = 0;
+                return;
+            }
+            let target = parseFloat(this.targetKin);
+            if (isNaN(target) || target <= 0) {
+                this.realisasiKin = isNaN(target) ? '' : 0;
+                this.kin = 0;
+                return;
+            }
+            let tertunda = (this.tertundaKin !== '' && this.tertundaKin !== null) ? (parseFloat(this.tertundaKin) || 0) : 0;
+            this.realisasiKin = Math.max(0, target - tertunda);
+            let raw = (this.realisasiKin / target) * 100;
+            this.kin = Math.min(100, Math.max(0, Math.round(raw * 100) / 100));
+        },
+
+        sik: {{ old('sikap', 0) }},
+        kep: {{ old('kepemimpinan', 0) }},
+        loy: {{ old('loyalitas', 0) }},
+        itVal: {{ old('it', 0) }},
 
         catatan: `{{ old('masukan_atasan', '') }}`,
         karakterCount() {
@@ -69,7 +114,7 @@
                 this.catatan += ' ' + text;
             }
         }
-    }">
+    }" x-init="calcDis(); calcKin()">
         <!-- Breadcrumbs & Return Bar -->
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-2 text-xs">
@@ -101,7 +146,6 @@
             <div class="space-y-1.5">
                 <div class="flex items-center gap-2.5">
                     <span class="px-2.5 py-1 rounded text-[10px] font-bold tracking-wider bg-primary-container text-on-primary">FORMULIR RESMI ASN</span>
-                    <span class="text-xs text-secondary dark:text-slate-400 font-mono">KODE: FORM-EVAL-PUPR-08</span>
                 </div>
                 <h1 class="text-xl sm:text-2xl font-bold text-on-surface dark:text-slate-100 tracking-tight">Input Penilaian Kinerja Pegawai</h1>
                 <p class="text-xs text-on-surface-variant dark:text-slate-400 max-w-3xl leading-relaxed">
@@ -256,50 +300,130 @@
 
                         <!-- Grid 6 Mini Interactive Indicator Cards -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                            <!-- Aspek 1: Kedisiplinan -->
-                            <div class="p-3.5 rounded-lg border border-outline-variant/40 dark:border-slate-700 bg-surface/50 dark:bg-slate-800/40 hover:border-primary transition-all space-y-2.5">
-                                <div class="flex items-start justify-between">
-                                    <div>
-                                        <span class="text-[10px] font-bold text-primary dark:text-blue-400 uppercase tracking-wider">Aspek 1</span>
-                                        <h3 class="text-xs font-bold text-on-surface dark:text-slate-100">Kedisiplinan</h3>
-                                        <p class="text-[11px] text-secondary dark:text-slate-400">Presensi, ketepatan jam kerja &amp; kepatuhan apel</p>
+                            <!-- Aspek 1: Kedisiplinan (Card Sesuai Desain Kehadiran) -->
+                            <div class="col-span-1 md:col-span-2 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-[#2F4156] dark:border-t-blue-500 bg-[#F8FAFC] dark:bg-slate-900/80 shadow-xs space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3.5">
+                                        <div class="w-11 h-11 rounded-xl bg-[#2F4156] dark:bg-slate-800 text-white flex items-center justify-center shrink-0 shadow-sm">
+                                            <span class="material-symbols-outlined text-2xl">person_check</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-sm sm:text-base font-extrabold text-[#1E3A8A] dark:text-blue-400 tracking-wide uppercase">
+                                                KEDISIPLINAN (DIS) — INPUT DATA KEHADIRAN
+                                            </h3>
+                                        </div>
                                     </div>
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold border" :class="getAspectStatus(dis).color" x-text="getAspectStatus(dis).label"></span>
+                                    <span class="px-2.5 py-1 rounded text-[10px] font-bold border" :class="getAspectStatus(dis).color" x-text="getAspectStatus(dis).label"></span>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <input type="range" min="0" max="100" x-model="dis" class="w-full accent-primary cursor-pointer">
-                                    <div class="w-16 shrink-0">
-                                        <input type="number" min="0" max="100" name="nilai_kedisiplinan" x-model="dis" class="w-full text-center font-mono font-bold text-xs py-1 px-1 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant dark:border-slate-700 rounded text-on-surface dark:text-slate-100 focus:border-primary focus:outline-none" required>
+
+                                <!-- 3 Metric Columns -->
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                                    <div class="space-y-1.5">
+                                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                            Jumlah Hari Efektif
+                                        </label>
+                                        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+                                            <input type="number" min="0" max="31" x-model="hariEfektifDis" @input="calcDis()" placeholder="0" class="w-full bg-transparent text-center text-xl sm:text-2xl font-bold text-[#0F2747] dark:text-slate-100 py-3 px-2 border-0 focus:outline-none focus:ring-0 font-mono">
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-1.5">
+                                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-between">
+                                            <span>Jumlah Hari Kerja</span>
+                                            <span class="text-[10px] font-normal text-slate-400 dark:text-slate-500">(Otomatis)</span>
+                                        </label>
+                                        <div class="bg-slate-100 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
+                                            <input type="number" readonly tabindex="-1" x-model="hariKerjaDis" placeholder="0" class="w-full bg-transparent text-center text-xl sm:text-2xl font-bold text-[#0F2747]/80 dark:text-slate-300 py-3 px-2 border-0 focus:outline-none focus:ring-0 font-mono cursor-not-allowed select-none">
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-1.5">
+                                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                            Lupa Absen
+                                        </label>
+                                        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+                                            <input type="number" min="0" max="31" x-model="lupaAbsenDis" @input="calcDis()" placeholder="0" class="w-full bg-transparent text-center text-xl sm:text-2xl font-bold text-[#0F2747] dark:text-slate-100 py-3 px-2 border-0 focus:outline-none focus:ring-0 font-mono">
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="flex justify-between text-[10px] font-mono text-outline dark:text-slate-500">
-                                    <span>Min: 0</span>
-                                    <span class="text-primary dark:text-blue-400 font-bold">Ambang Balai: 78</span>
-                                    <span>Maks: 100</span>
+
+                                <!-- Result Box -->
+                                <div class="bg-[#FEFCE8] dark:bg-amber-950/20 border-2 border-[#FDE047] dark:border-amber-700/60 rounded-xl p-4 text-center space-y-1 shadow-xs">
+                                    <p class="text-xs sm:text-sm font-bold text-[#854D0E] dark:text-amber-400">
+                                        Hasil Nilai Kedisiplinan (DIS)
+                                    </p>
+                                    <div class="text-3xl sm:text-4xl font-extrabold text-[#D97706] dark:text-amber-400 tracking-tight font-mono my-1" x-text="(parseFloat(dis) || 0).toFixed(2)">
+                                        0.00
+                                    </div>
+                                    <p class="text-[11px] sm:text-xs text-[#92400E] dark:text-amber-300/90 font-medium leading-relaxed">
+                                        Otomatis: (Hari Efektif - Lupa Absen = Hari Kerja) &rarr; (Hari Kerja / Hari Efektif) &times; 100
+                                    </p>
                                 </div>
+
+                                <input type="hidden" name="nilai_kedisiplinan" :value="Math.round(dis)">
                             </div>
 
-                            <!-- Aspek 2: Kinerja -->
-                            <div class="p-3.5 rounded-lg border border-outline-variant/40 dark:border-slate-700 bg-surface/50 dark:bg-slate-800/40 hover:border-primary transition-all space-y-2.5">
-                                <div class="flex items-start justify-between">
-                                    <div>
-                                        <span class="text-[10px] font-bold text-primary dark:text-blue-400 uppercase tracking-wider">Aspek 2</span>
-                                        <h3 class="text-xs font-bold text-on-surface dark:text-slate-100">Kinerja</h3>
-                                        <p class="text-[11px] text-secondary dark:text-slate-400">Target output SKP &amp; kualitas hasil fisik/keuangan</p>
+                            <!-- Aspek 2: Kinerja (Card Sesuai Desain Capaian SKP) -->
+                            <div class="col-span-1 md:col-span-2 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-[#2F4156] dark:border-t-blue-500 bg-[#F8FAFC] dark:bg-slate-900/80 shadow-xs space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3.5">
+                                        <div class="w-11 h-11 rounded-xl bg-[#2F4156] dark:bg-slate-800 text-white flex items-center justify-center shrink-0 shadow-sm">
+                                            <span class="material-symbols-outlined text-2xl">task_alt</span>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-sm sm:text-base font-extrabold text-[#1E3A8A] dark:text-blue-400 tracking-wide uppercase">
+                                                KINERJA (KIN) — INPUT CAPAIAN SKP
+                                            </h3>
+                                        </div>
                                     </div>
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold border" :class="getAspectStatus(kin).color" x-text="getAspectStatus(kin).label"></span>
+                                    <span class="px-2.5 py-1 rounded text-[10px] font-bold border" :class="getAspectStatus(kin).color" x-text="getAspectStatus(kin).label"></span>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <input type="range" min="0" max="100" x-model="kin" class="w-full accent-primary cursor-pointer">
-                                    <div class="w-16 shrink-0">
-                                        <input type="number" min="0" max="100" name="kinerja" x-model="kin" class="w-full text-center font-mono font-bold text-xs py-1 px-1 bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant dark:border-slate-700 rounded text-on-surface dark:text-slate-100 focus:border-primary focus:outline-none" required>
+
+                                <!-- 3 Metric Columns -->
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                                    <div class="space-y-1.5">
+                                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                            Jumlah Target SKP
+                                        </label>
+                                        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+                                            <input type="number" min="0" max="100" x-model="targetKin" @input="calcKin()" placeholder="0" class="w-full bg-transparent text-center text-xl sm:text-2xl font-bold text-[#0F2747] dark:text-slate-100 py-3 px-2 border-0 focus:outline-none focus:ring-0 font-mono">
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-1.5">
+                                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-between">
+                                            <span>Jumlah Realisasi SKP</span>
+                                            <span class="text-[10px] font-normal text-slate-400 dark:text-slate-500">(Otomatis)</span>
+                                        </label>
+                                        <div class="bg-slate-100 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
+                                            <input type="number" readonly tabindex="-1" x-model="realisasiKin" placeholder="0" class="w-full bg-transparent text-center text-xl sm:text-2xl font-bold text-[#0F2747]/80 dark:text-slate-300 py-3 px-2 border-0 focus:outline-none focus:ring-0 font-mono cursor-not-allowed select-none">
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-1.5">
+                                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                            Target Tertunda
+                                        </label>
+                                        <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+                                            <input type="number" min="0" max="100" x-model="tertundaKin" @input="calcKin()" placeholder="0" class="w-full bg-transparent text-center text-xl sm:text-2xl font-bold text-[#0F2747] dark:text-slate-100 py-3 px-2 border-0 focus:outline-none focus:ring-0 font-mono">
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="flex justify-between text-[10px] font-mono text-outline dark:text-slate-500">
-                                    <span>Min: 0</span>
-                                    <span class="text-primary dark:text-blue-400 font-bold">Ambang Balai: 78</span>
-                                    <span>Maks: 100</span>
+
+                                <!-- Result Box -->
+                                <div class="bg-[#FEFCE8] dark:bg-amber-950/20 border-2 border-[#FDE047] dark:border-amber-700/60 rounded-xl p-4 text-center space-y-1 shadow-xs">
+                                    <p class="text-xs sm:text-sm font-bold text-[#854D0E] dark:text-amber-400">
+                                        Hasil Nilai Kinerja (KIN)
+                                    </p>
+                                    <div class="text-3xl sm:text-4xl font-extrabold text-[#D97706] dark:text-amber-400 tracking-tight font-mono my-1" x-text="(parseFloat(kin) || 0).toFixed(2)">
+                                        0.00
+                                    </div>
+                                    <p class="text-[11px] sm:text-xs text-[#92400E] dark:text-amber-300/90 font-medium leading-relaxed">
+                                        Otomatis: (Target SKP - Target Tertunda = Realisasi SKP) &rarr; (Realisasi SKP / Target SKP) &times; 100
+                                    </p>
                                 </div>
+
+                                <input type="hidden" name="kinerja" :value="Math.round(kin)">
                             </div>
 
                             <!-- Aspek 3: Sikap Perilaku -->

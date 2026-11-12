@@ -132,7 +132,7 @@
                 <!-- Status Dropdown -->
                 <div class="w-full lg:w-44">
                     <label class="block text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Status Verifikasi</label>
-                    <select name="status" class="w-full pl-2.5 pr-8 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-on-surface dark:text-slate-100 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none cursor-pointer">
+                    <select name="status" onchange="this.form.submit()" class="w-full pl-2.5 pr-8 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-on-surface dark:text-slate-100 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none cursor-pointer">
                         <option value="">Semua Status</option>
                         <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
@@ -143,7 +143,7 @@
                 <!-- Type Dropdown -->
                 <div class="w-full lg:w-48">
                     <label class="block text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">Jenis Lupa Absen</label>
-                    <select name="jenis" class="w-full pl-2.5 pr-8 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-on-surface dark:text-slate-100 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none cursor-pointer">
+                    <select name="jenis" onchange="this.form.submit()" class="w-full pl-2.5 pr-8 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-on-surface dark:text-slate-100 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none cursor-pointer">
                         <option value="">Semua Jenis</option>
                         <option value="masuk" {{ request('jenis') === 'masuk' ? 'selected' : '' }}>Lupa Absen Masuk</option>
                         <option value="pulang" {{ request('jenis') === 'pulang' ? 'selected' : '' }}>Lupa Absen Pulang</option>
@@ -152,10 +152,7 @@
 
                 <!-- Actions -->
                 <div class="flex items-end gap-2 pt-1 lg:pt-0">
-                    <button type="submit" class="px-3.5 py-1.5 bg-primary-container text-white text-xs font-semibold rounded-lg hover:bg-primary transition-colors flex items-center gap-1.5 h-[34px] self-end cursor-pointer shadow-2xs">
-                        <span class="material-symbols-outlined text-sm">filter_alt</span>
-                        <span>Filter Data</span>
-                    </button>
+                    <button type="submit" class="hidden">Filter</button>
                     <a href="{{ route('absen.index') }}" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors h-[34px] flex items-center justify-center self-end cursor-pointer">
                         Reset
                     </a>

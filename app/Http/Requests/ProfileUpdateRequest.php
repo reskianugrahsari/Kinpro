@@ -28,6 +28,9 @@ class ProfileUpdateRequest extends FormRequest
             ],
             'jabatan' => ['nullable', 'string', 'max:255'],
             'unit_kerja_id' => ['nullable', 'exists:unit_kerja,id'],
+            'no_hp' => ['nullable', 'string', 'max:25'],
+            'alamat' => ['nullable', 'string'],
+            'foto_profil' => ['nullable', 'image', 'max:5120'],
         ];
     }
 }

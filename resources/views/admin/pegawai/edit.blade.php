@@ -41,7 +41,7 @@
                         <select id="unit_kerja_id" name="unit_kerja_id" class="block mt-1 w-full border-slate-300 focus:border-[#1769AA] focus:ring-[#1769AA] rounded-md shadow-sm">
                             <option value="">-- Pilih Unit Kerja --</option>
                             @foreach($unitKerjas as $uk)
-                                <option value="{{ $uk->id }}" {{ old('unit_kerja_id', $pegawai->unit_kerja_id) == $uk->id ? 'selected' : '' }}>{{ $uk->nama }}</option>
+                                <option value="{{ $uk->id }}" {{ old('unit_kerja_id', $pegawai->unit_kerja_id) == $uk->id ? 'selected' : '' }}>{{ $uk->nama_unit ?? $uk->nama }}</option>
                             @endforeach
                         </select>
                         <x-input-error :messages="$errors->get('unit_kerja_id')" class="mt-2" />
