@@ -2,14 +2,14 @@
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h2 class="font-extrabold text-2xl text-[#0F2747] tracking-tight">
+                <h2 class="font-extrabold text-2xl text-[#0F2747] dark:text-slate-100 tracking-tight">
                     Pengajuan Lupa Absen (Don't Forget)
                 </h2>
-                <p class="text-xs text-slate-500 font-medium mt-0.5">Layanan administrasi permohonan absen & surat dinas Balai Wilayah VIII Makassar</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Layanan administrasi permohonan absen & surat dinas Balai Wilayah VIII Makassar</p>
             </div>
             <div>
-                <a href="{{ route('absen.index') }}" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition shadow-xs flex items-center space-x-1.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                <a href="{{ route('absen.index') }}" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl text-xs font-bold transition shadow-xs flex items-center space-x-1.5">
+                    <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     <span>Daftar Riwayat Absen</span>
                 </a>
             </div>
@@ -68,36 +68,36 @@
 
     <div x-data="dontForgetApp()" class="space-y-6">
         @if(session('success'))
-            <div class="p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-xl text-emerald-800 shadow-sm flex items-center gap-3 no-print">
-                <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="p-4 bg-emerald-50 dark:bg-emerald-950/60 border-l-4 border-emerald-500 rounded-xl text-emerald-800 dark:text-emerald-300 shadow-sm flex items-center gap-3 no-print">
+                <svg class="w-5 h-5 text-emerald-500 dark:text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <span class="font-medium text-xs">{{ session('success') }}</span>
             </div>
         @endif
 
         @if(session('error'))
-            <div class="p-4 bg-rose-50 border-l-4 border-rose-500 rounded-xl text-rose-800 shadow-sm flex items-center gap-3 no-print">
-                <svg class="w-5 h-5 text-rose-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div class="p-4 bg-rose-50 dark:bg-rose-950/60 border-l-4 border-rose-500 rounded-xl text-rose-800 dark:text-rose-300 shadow-sm flex items-center gap-3 no-print">
+                <svg class="w-5 h-5 text-rose-500 dark:text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <span class="font-medium text-xs">{{ session('error') }}</span>
             </div>
         @endif
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start no-print">
             <!-- Form Input (Don't Forget Layout) -->
-            <div class="lg:col-span-5 bg-white p-6 sm:p-7 rounded-2xl border border-slate-200/80 shadow-xs space-y-5">
-                <div class="border-b border-slate-100 pb-3">
-                    <h3 class="text-base font-bold text-[#0F2747]">Formulir Surat Permohonan</h3>
-                    <p class="text-[11px] text-slate-400">Pilih identitas Anda dan isi rincian lupa absen</p>
+            <div class="lg:col-span-5 bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs space-y-5 transition-colors">
+                <div class="border-b border-slate-100 dark:border-slate-800 pb-3">
+                    <h3 class="text-base font-bold text-[#0F2747] dark:text-slate-100">Formulir Surat Permohonan</h3>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-400">Pilih identitas Anda dan isi rincian lupa absen</p>
                 </div>
 
                 <form action="{{ route('absen.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <!-- Pilih Pegawai -->
                     <div class="mb-4">
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Nama Pegawai</label>
-                        <select name="pegawai_id" class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 bg-slate-50 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" x-model="selectedPegawaiId" @change="updatePegawaiData()" required>
-                            <option value="">-- Pilih Pegawai --</option>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Nama Pegawai</label>
+                        <select name="pegawai_id" class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" x-model="selectedPegawaiId" @change="updatePegawaiData()" required>
+                            <option value="" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">-- Pilih Pegawai --</option>
                             <template x-for="item in pegawaiList" :key="item.id">
-                                <option :value="item.id" x-text="item.nama + ' (NIP. ' + item.nip + ')'"></option>
+                                <option :value="item.id" x-text="item.nama + ' (NIP. ' + item.nip + ')'" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100"></option>
                             </template>
                         </select>
                     </div>
@@ -105,69 +105,69 @@
                     <!-- Auto-Fill Readonly Fields -->
                     <div class="grid grid-cols-2 gap-3 mb-4">
                         <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">NIP</label>
-                            <input type="text" class="w-full border border-slate-200 rounded-xl px-3 py-2 bg-slate-100 text-slate-600 font-mono text-xs" x-model="pegawaiData.nip" readonly>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">NIP</label>
+                            <input type="text" class="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 bg-slate-100 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 font-mono text-xs" x-model="pegawaiData.nip" readonly>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Pangkat / Golongan</label>
-                            <input type="text" class="w-full border border-slate-200 rounded-xl px-3 py-2 bg-slate-100 text-slate-600 text-xs" x-model="pegawaiData.pangkat_gol" readonly>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Pangkat / Golongan</label>
+                            <input type="text" class="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 bg-slate-100 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 text-xs" x-model="pegawaiData.pangkat_gol" readonly>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 mb-4">
                         <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Jabatan</label>
-                            <input type="text" class="w-full border border-slate-200 rounded-xl px-3 py-2 bg-slate-100 text-slate-600 text-xs truncate" x-model="pegawaiData.jabatan" readonly>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Jabatan</label>
+                            <input type="text" class="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 bg-slate-100 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 text-xs truncate" x-model="pegawaiData.jabatan" readonly>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Unit Kerja / Bagian</label>
-                            <input type="text" class="w-full border border-slate-200 rounded-xl px-3 py-2 bg-slate-100 text-slate-600 text-xs truncate" x-model="pegawaiData.bagian" readonly>
+                            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Unit Kerja / Bagian</label>
+                            <input type="text" class="w-full border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 bg-slate-100 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 text-xs truncate" x-model="pegawaiData.bagian" readonly>
                         </div>
                     </div>
 
                     <!-- Atasan Penandatangan -->
                     <div class="mb-4">
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Atasan Penandatangan</label>
-                        <select name="atasan_id" class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 bg-slate-50 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" x-model="selectedAtasanId" @change="updateAtasanData()" required>
-                            <option value="">-- Pilih Atasan --</option>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Atasan Penandatangan</label>
+                        <select name="atasan_id" class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" x-model="selectedAtasanId" @change="updateAtasanData()" required>
+                            <option value="" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">-- Pilih Atasan --</option>
                             <template x-for="item in pegawaiList" :key="item.id">
-                                <option :value="item.id" x-text="item.nama + ' (' + item.jabatan + ')'"></option>
+                                <option :value="item.id" x-text="item.nama + ' (' + item.jabatan + ')'" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100"></option>
                             </template>
                         </select>
                     </div>
 
                     <!-- Jenis Lupa Absen -->
                     <div class="mb-4">
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Jenis Lupa Absen</label>
-                        <select name="jenis_absen" class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 bg-slate-50 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" x-model="jenisAbsen" required>
-                            <option value="tidak mengisi absensi masuk">Tidak Mengisi Absensi Masuk (Datang)</option>
-                            <option value="tidak mengisi absensi pulang">Tidak Mengisi Absensi Pulang</option>
-                            <option value="tidak mengisi absensi masuk dan pulang">Tidak Mengisi Absensi Masuk dan Pulang</option>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Jenis Lupa Absen</label>
+                        <select name="jenis_absen" class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" x-model="jenisAbsen" required>
+                            <option value="tidak mengisi absensi masuk" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Tidak Mengisi Absensi Masuk (Datang)</option>
+                            <option value="tidak mengisi absensi pulang" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Tidak Mengisi Absensi Pulang</option>
+                            <option value="tidak mengisi absensi masuk dan pulang" class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100">Tidak Mengisi Absensi Masuk dan Pulang</option>
                         </select>
                     </div>
 
                     <!-- Alasan -->
                     <div class="mb-4">
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Alasan Lupa Absen</label>
-                        <textarea name="alasan" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 bg-slate-50 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" rows="2.5" x-model="alasan" placeholder="Contoh: Terburu-buru menghadiri rapat / sistem fingerprint error / mati lampu" required></textarea>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Alasan Lupa Absen</label>
+                        <textarea name="alasan" class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" rows="2.5" x-model="alasan" placeholder="Contoh: Terburu-buru menghadiri rapat / sistem fingerprint error / mati lampu" required></textarea>
                     </div>
 
                     <!-- Tanggal Lupa & Tanggal Pengajuan (Auto H+1 Kerja) -->
                     <div class="grid grid-cols-2 gap-3 mb-4">
                         <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Tanggal Lupa</label>
-                            <input type="date" name="tanggal_lupa" class="w-full border border-slate-300 rounded-xl px-3 py-2 bg-slate-50 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" x-model="tanggalLupa" @input="updateHariLupa()" required>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Tanggal Lupa</label>
+                            <input type="date" name="tanggal_lupa" class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" x-model="tanggalLupa" @input="updateHariLupa()" required>
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Tanggal Surat</label>
-                            <input type="date" name="tanggal_pengajuan" class="w-full border border-slate-300 rounded-xl px-3 py-2 bg-slate-50 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" x-model="tanggalPengajuan" required>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Tanggal Surat</label>
+                            <input type="date" name="tanggal_pengajuan" class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" x-model="tanggalPengajuan" required>
                         </div>
                     </div>
 
                     <!-- Kota Surat -->
                     <div class="mb-6">
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Kota Surat</label>
-                        <input type="text" name="kota_surat" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 bg-slate-50 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" x-model="kotaSurat" required>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Kota Surat</label>
+                        <input type="text" name="kota_surat" class="w-full border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-medium focus:ring-[#1769AA] focus:border-[#1769AA]" x-model="kotaSurat" required>
                     </div>
 
                     <!-- Tombol Aksi -->
@@ -175,8 +175,8 @@
                         <button type="submit" class="flex-1 bg-[#1769AA] hover:bg-[#0F2747] text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-sm cursor-pointer">
                             Simpan Permohonan
                         </button>
-                        <button type="button" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-xs cursor-pointer flex items-center justify-center space-x-1.5" @click="window.print()">
-                            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                        <button type="button" class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-xs cursor-pointer flex items-center justify-center space-x-1.5" @click="window.print()">
+                            <svg class="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                             <span>Cetak Langsung (PDF)</span>
                         </button>
                     </div>
@@ -184,56 +184,56 @@
             </div>
 
             <!-- Live Preview Naskah Dinas Format A4 (Don't Forget Realtime Preview) -->
-            <div class="lg:col-span-7 bg-slate-200/90 p-4 sm:p-6 rounded-2xl flex justify-center overflow-auto shadow-inner border border-slate-300/60">
-                <div class="bg-white shadow-xl border border-slate-200 pt-2 px-10 pb-12 text-slate-900 w-[210mm] min-h-[297mm] flex flex-col justify-between rounded-md transform scale-[0.92] origin-top">
-                    <div>
+            <div class="lg:col-span-7 bg-slate-200/90 dark:bg-slate-950/80 p-4 sm:p-6 rounded-2xl flex justify-center overflow-auto shadow-inner border border-slate-300/60 dark:border-slate-800 transition-colors">
+                <div class="bg-white shadow-xl border border-slate-200 dark:border-slate-700 pt-2 px-10 pb-12 text-slate-900 w-[210mm] min-h-[297mm] flex flex-col justify-between rounded-md transform scale-[0.92] origin-top">
+                    <div class="text-slate-900">
                         <!-- Kop Surat Resmi Balai Diklat Wil. VIII -->
                         <div class="mb-4 -mt-2">
                             <img src="{{ asset('images/kop_surat.jpg') }}" alt="Kop Surat Resmi" class="w-full h-auto object-contain">
                         </div>
 
                         <!-- Judul Surat Naskah Dinas -->
-                        <div class="text-center font-bold text-base mb-6 uppercase underline decoration-2 tracking-wide">
+                        <div class="text-center font-bold text-base mb-6 uppercase underline decoration-2 tracking-wide text-slate-900">
                             Surat Permohonan Izin / Pemberitahuan
                         </div>
 
                         <!-- Pembuka -->
-                        <div class="mb-4 text-xs leading-relaxed">
+                        <div class="mb-4 text-xs leading-relaxed text-slate-800">
                             Yang bertanda tangan di bawah ini:
                         </div>
 
                         <!-- Identitas Pemohon -->
-                        <div class="grid grid-cols-[140px_15px_1fr] gap-y-1.5 mb-6 ml-6 text-xs">
-                            <div class="text-slate-600 font-medium">Nama</div><div>:</div><div class="font-bold" x-text="pegawaiData.nama || '-'"></div>
-                            <div class="text-slate-600 font-medium">NIP</div><div>:</div><div class="font-mono" x-text="pegawaiData.nip || '-'"></div>
-                            <div class="text-slate-600 font-medium">Pangkat/Golongan</div><div>:</div><div x-text="pegawaiData.pangkat_gol || '-'"></div>
-                            <div class="text-slate-600 font-medium">Jabatan</div><div>:</div><div x-text="pegawaiData.jabatan || '-'"></div>
-                            <div class="text-slate-600 font-medium">Bagian</div><div>:</div><div x-text="pegawaiData.bagian || '-'"></div>
+                        <div class="grid grid-cols-[140px_15px_1fr] gap-y-1.5 mb-6 ml-6 text-xs text-slate-800">
+                            <div class="text-slate-600 font-medium">Nama</div><div class="text-slate-700">:</div><div class="font-bold text-slate-900" x-text="pegawaiData.nama || '-'"></div>
+                            <div class="text-slate-600 font-medium">NIP</div><div class="text-slate-700">:</div><div class="font-mono text-slate-900" x-text="pegawaiData.nip || '-'"></div>
+                            <div class="text-slate-600 font-medium">Pangkat/Golongan</div><div class="text-slate-700">:</div><div class="text-slate-900" x-text="pegawaiData.pangkat_gol || '-'"></div>
+                            <div class="text-slate-600 font-medium">Jabatan</div><div class="text-slate-700">:</div><div class="text-slate-900" x-text="pegawaiData.jabatan || '-'"></div>
+                            <div class="text-slate-600 font-medium">Bagian</div><div class="text-slate-700">:</div><div class="text-slate-900" x-text="pegawaiData.bagian || '-'"></div>
                         </div>
 
                         <!-- Pernyataan / Isi Surat -->
-                        <div class="leading-relaxed mb-6 text-xs text-justify">
-                            Dengan ini menyampaikan bahwa saya <span class="font-bold underline" x-text="jenisAbsen"></span> pada hari <span class="font-bold" x-text="hariLupa || '-'"></span>, tanggal <span class="font-bold" x-text="formatDateIndo(tanggalLupa) || '-'"></span> dikarenakan <span class="font-semibold italic" x-text="alasan || '...'"></span>.
+                        <div class="leading-relaxed mb-6 text-xs text-justify text-slate-800">
+                            Dengan ini menyampaikan bahwa saya <span class="font-bold underline text-slate-900" x-text="jenisAbsen"></span> pada hari <span class="font-bold text-slate-900" x-text="hariLupa || '-'"></span>, tanggal <span class="font-bold text-slate-900" x-text="formatDateIndo(tanggalLupa) || '-'"></span> dikarenakan <span class="font-semibold italic text-slate-900" x-text="alasan || '...'"></span>.
                         </div>
 
                         <!-- Penutup -->
-                        <div class="leading-relaxed mb-8 text-xs">
+                        <div class="leading-relaxed mb-8 text-xs text-slate-800">
                             Demikian permohonan/pemberitahuan ini saya sampaikan, atas perhatian Bapak/Ibu diucapkan terima kasih.
                         </div>
                     </div>
 
                     <!-- Tanda Tangan 2 Kolom -->
-                    <div class="text-xs">
-                        <div class="text-right mb-8" x-text="(kotaSurat || 'Makassar') + ', ' + (formatDateIndo(tanggalPengajuan) || '-')"></div>
-                        <div class="grid grid-cols-2 gap-8 text-center">
+                    <div class="text-xs text-slate-900">
+                        <div class="text-right mb-8 text-slate-800" x-text="(kotaSurat || 'Makassar') + ', ' + (formatDateIndo(tanggalPengajuan) || '-')"></div>
+                        <div class="grid grid-cols-2 gap-8 text-center text-slate-800">
                             <div>
                                 <div class="mb-20 text-slate-700">Pegawai Pemohon,</div>
-                                <div class="font-bold underline" x-text="pegawaiData.nama || 'Nama Pemohon'"></div>
+                                <div class="font-bold underline text-slate-900" x-text="pegawaiData.nama || 'Nama Pemohon'"></div>
                                 <div class="text-[11px] text-slate-600 font-mono mt-0.5" x-text="pegawaiData.nip ? 'NIP. ' + pegawaiData.nip : ''"></div>
                             </div>
                             <div>
                                 <div class="mb-20 text-slate-700">Atasan Langsung,</div>
-                                <div class="font-bold underline" x-text="atasanData.nama || 'Nama Atasan'"></div>
+                                <div class="font-bold underline text-slate-900" x-text="atasanData.nama || 'Nama Atasan'"></div>
                                 <div class="text-[11px] text-slate-600 font-mono mt-0.5" x-text="atasanData.nip ? 'NIP. ' + atasanData.nip : ''"></div>
                             </div>
                         </div>

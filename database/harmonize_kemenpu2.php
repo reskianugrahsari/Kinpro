@@ -197,17 +197,9 @@ if (!Schema::hasTable('master_ppk')) {
 
     DB::table('master_ppk')->insert([
         [
-            'nama_ppk' => 'Ir. H. Muhammad Arsyad, MT',
-            'nip_ppk' => '196805141994031003',
-            'jabatan' => 'PPK Pembinaan Teknis',
-            'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ],
-        [
-            'nama_ppk' => 'Dra. Hj. Nurhidayah, M.Si',
-            'nip_ppk' => '197103211997022001',
-            'jabatan' => 'PPK Administrasi Keuangan',
+            'nama_ppk' => 'Wahyuni A, ST, MT',
+            'nip_ppk' => '198107042009122001',
+            'jabatan' => 'Subbagian Umum dan Tata Usaha',
             'is_active' => true,
             'created_at' => now(),
             'updated_at' => now(),

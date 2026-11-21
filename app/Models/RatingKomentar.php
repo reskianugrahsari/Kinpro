@@ -13,4 +13,9 @@ class RatingKomentar extends Model
     {
         return $this->belongsTo(Pegawai::class, 'pegawai_id');
     }
+
+    public function penilai()
+    {
+        return $this->belongsTo(User::class, 'penilai_id');
+    }
 }

@@ -18,4 +18,14 @@ class MasterPpk extends Model
     {
         return $this->attributes['nip_ppk'] ?? ($this->attributes['nip'] ?? '');
     }
+
+    public function setNamaAttribute($value)
+    {
+        $this->attributes['nama_ppk'] = $value;
+    }
+
+    public function setNipAttribute($value)
+    {
+        $this->attributes['nip_ppk'] = $value;
+    }
 }

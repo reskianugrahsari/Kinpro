@@ -655,7 +655,7 @@
                 tglSelesai: '{{ old('tgl_selesai_dinas', '') }}',
                 tanggalSppd: '{{ old('tanggal_sppd', '') }}',
                 kotaTujuan: '{{ old('kota_tujuan', '') }}',
-                ppkId: '{{ old('ppk_id', '') }}',
+                ppkId: '{{ old('ppk_id', $ppks->count() === 1 ? $ppks->first()->id : '') }}',
                 selectedPelaksana: [{{ auth()->id() }}],
                 isiPointer: '{{ old('isi_pointer', '') }}',
                 pointerSubstansi: '{{ old('pointer_substansi', '') }}',
