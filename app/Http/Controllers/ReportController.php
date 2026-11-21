@@ -9,15 +9,16 @@ use App\Models\ReportAttachment;
 use App\Models\ReportExpense;
 use App\Models\ReportRevision;
 use App\Models\ReportSchedule;
-use App\Models\Pegawai;
 use App\Models\User;
 use App\Services\DocxExportService;
 use App\Services\PdfExportService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManager;
+use Illuminate\Validation\ValidationException;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class ReportController extends Controller
 {
@@ -34,11 +35,11 @@ class ReportController extends Controller
                 }
                 if ($user->name) {
                     $q->orWhereJsonContains('daftar_pelaksana', ['name' => $user->name])
-                      ->orWhereJsonContains('daftar_pelaksana', [['name' => $user->name]]);
+                        ->orWhereJsonContains('daftar_pelaksana', [['name' => $user->name]]);
                 }
                 if ($user->nip) {
                     $q->orWhereJsonContains('daftar_pelaksana', ['nip' => $user->nip])
-                      ->orWhereJsonContains('daftar_pelaksana', [['nip' => $user->nip]]);
+                        ->orWhereJsonContains('daftar_pelaksana', [['nip' => $user->nip]]);
                 }
             });
         }
@@ -64,17 +65,17 @@ class ReportController extends Controller
             $term = $request->search;
             $query->where(function ($q) use ($term) {
                 $q->where('nomor_surat_tugas', 'like', "%{$term}%")
-                  ->orWhere('nomor_surat', 'like', "%{$term}%")
-                  ->orWhere('kota_tujuan', 'like', "%{$term}%")
-                  ->orWhere('tujuan', 'like', "%{$term}%")
-                  ->orWhere('maksud_perjalanan', 'like', "%{$term}%")
-                  ->orWhereHas('user', function ($uq) use ($term) {
-                      $uq->where('name', 'like', "%{$term}%");
-                  })
-                  ->orWhereHas('pegawai', function ($pq) use ($term) {
-                      $pq->where('nama', 'like', "%{$term}%")
-                        ->orWhere('nip', 'like', "%{$term}%");
-                  });
+                    ->orWhere('nomor_surat', 'like', "%{$term}%")
+                    ->orWhere('kota_tujuan', 'like', "%{$term}%")
+                    ->orWhere('tujuan', 'like', "%{$term}%")
+                    ->orWhere('maksud_perjalanan', 'like', "%{$term}%")
+                    ->orWhereHas('user', function ($uq) use ($term) {
+                        $uq->where('name', 'like', "%{$term}%");
+                    })
+                    ->orWhereHas('pegawai', function ($pq) use ($term) {
+                        $pq->where('nama', 'like', "%{$term}%")
+                            ->orWhere('nip', 'like', "%{$term}%");
+                    });
             });
         }
 
@@ -90,9 +91,9 @@ class ReportController extends Controller
 
         if ($request->filled('tujuan') && $request->tujuan !== '') {
             $tujuan = $request->tujuan;
-            $query->where(function($q) use ($tujuan) {
+            $query->where(function ($q) use ($tujuan) {
                 $q->where('kota_tujuan', 'like', "%{$tujuan}%")
-                  ->orWhere('tujuan', 'like', "%{$tujuan}%");
+                    ->orWhere('tujuan', 'like', "%{$tujuan}%");
             });
         }
 
@@ -157,7 +158,7 @@ class ReportController extends Controller
                 'tgl_selesai_dinas' => $tglSelesai,
                 'tanggal_berangkat' => $tglMulai,
                 'tanggal_kembali' => $tglSelesai,
-                'tanggal_sppd' => $request->tanggal_sppd ?? ($tglSelesai ? \Carbon\Carbon::parse($tglSelesai)->addDays(2)->format('Y-m-d') : null),
+                'tanggal_sppd' => $request->tanggal_sppd ?? ($tglSelesai ? Carbon::parse($tglSelesai)->addDays(2)->format('Y-m-d') : null),
                 'opsi_tiket' => $request->opsi_tiket ?? 'kkp',
                 'kota_tujuan' => $kotaTujuan,
                 'tujuan' => $kotaTujuan,
@@ -173,7 +174,7 @@ class ReportController extends Controller
             // Save schedules
             if ($request->has('schedules')) {
                 foreach ($request->schedules as $schedule) {
-                    if (!empty($schedule['tanggal']) && !empty($schedule['uraian_kegiatan'])) {
+                    if (! empty($schedule['tanggal']) && ! empty($schedule['uraian_kegiatan'])) {
                         ReportSchedule::create([
                             'report_id' => $report->id,
                             'tanggal' => $schedule['tanggal'],
@@ -237,7 +238,9 @@ class ReportController extends Controller
             if ($request->hasFile('dokumentasi')) {
                 $order = 0;
                 foreach ($request->file('dokumentasi') as $docFile) {
-                    if ($order >= 8) break;
+                    if ($order >= 8) {
+                        break;
+                    }
                     $path = $this->storeOptimizedFile($docFile, "attachments/{$report->id}/dokumentasi");
                     ReportAttachment::create([
                         'report_id' => $report->id,
@@ -256,7 +259,8 @@ class ReportController extends Controller
                 ->with('success', 'Laporan perjalanan dinas berhasil dibuat dan diajukan!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Gagal menyimpan laporan: ' . $e->getMessage());
+
+            return back()->withInput()->with('error', 'Gagal menyimpan laporan: '.$e->getMessage());
         }
     }
 
@@ -273,7 +277,7 @@ class ReportController extends Controller
                     }
                 }
             }
-            if ($report->user_id !== $user->id && !$isParticipant && $report->pegawai_id !== ($user->pegawai?->id ?? null)) {
+            if ($report->user_id !== $user->id && ! $isParticipant && $report->pegawai_id !== ($user->pegawai?->id ?? null)) {
                 abort(403);
             }
         }
@@ -356,7 +360,7 @@ class ReportController extends Controller
     public function destroy(Report $report)
     {
         $user = auth()->user();
-        if (!$user->isAdmin() && $report->user_id !== $user->id) {
+        if (! $user->isAdmin() && $report->user_id !== $user->id) {
             abort(403);
         }
 
@@ -382,7 +386,7 @@ class ReportController extends Controller
     private function storeOptimizedFile($file, $directory): string
     {
         $extension = strtolower($file->getClientOriginalExtension());
-        $filename = uniqid() . '.' . $extension;
+        $filename = uniqid().'.'.$extension;
 
         if (in_array($extension, ['jpg', 'jpeg', 'png'])) {
             try {
@@ -394,7 +398,7 @@ class ReportController extends Controller
                 }
 
                 $storagePath = storage_path("app/public/{$directory}");
-                if (!file_exists($storagePath)) {
+                if (! file_exists($storagePath)) {
                     mkdir($storagePath, 0755, true);
                 }
 
@@ -422,7 +426,7 @@ class ReportController extends Controller
             if ($uploadError !== UPLOAD_ERR_OK && $uploadError !== UPLOAD_ERR_NO_FILE) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Gagal mengunggah file berkas (Error code: ' . $uploadError . ').'
+                    'message' => 'Gagal mengunggah file berkas (Error code: '.$uploadError.').',
                 ], 422);
             }
 
@@ -431,18 +435,18 @@ class ReportController extends Controller
                     'image' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx',
                     'file' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx',
                 ]);
-            } catch (\Illuminate\Validation\ValidationException $ve) {
+            } catch (ValidationException $ve) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Format file tidak sesuai. Pastikan file berformat PDF, JPG, PNG, atau DOCX.'
+                    'message' => 'Format file tidak sesuai. Pastikan file berformat PDF, JPG, PNG, atau DOCX.',
                 ], 422);
             }
 
             $file = $request->file('image') ?? $request->file('file');
-            if (!$file || !$file->isValid()) {
+            if (! $file || ! $file->isValid()) {
                 return response()->json([
-                    'status' => 'error', 
-                    'message' => 'Berkas tidak valid atau gagal diunggah.'
+                    'status' => 'error',
+                    'message' => 'Berkas tidak valid atau gagal diunggah.',
                 ], 422);
             }
 
@@ -455,24 +459,36 @@ class ReportController extends Controller
                         'status' => 'error',
                         'message' => 'Resolusi gambar terlalu rendah. Gunakan foto/scan minimal 1000px.',
                         'text' => '[ERR_LOW_RESOLUTION: Gambar terlalu kecil untuk dibaca OCR]',
-                        'ocr_confidence' => 0.0
+                        'ocr_confidence' => 0.0,
                     ]);
                 }
             }
 
-            $tempFileName = 'ocr_' . uniqid() . '.' . $ext;
+            $tempFileName = 'ocr_'.uniqid().'.'.$ext;
             $tempDirectory = storage_path('app/temp_ocr');
-            if (!file_exists($tempDirectory)) {
+            if (! file_exists($tempDirectory)) {
                 mkdir($tempDirectory, 0755, true);
             }
-            $tempFullPath = $tempDirectory . DIRECTORY_SEPARATOR . $tempFileName;
+            $tempFullPath = $tempDirectory.DIRECTORY_SEPARATOR.$tempFileName;
             $file->move($tempDirectory, $tempFileName);
 
             $winTempPath = str_replace('/', '\\', $tempFullPath);
-            $pythonBin = 'C:\\Users\\Reski_Anugrah_Sari\\AppData\\Local\\Programs\\Python\\Python311\\python.exe';
+            $pythonBin = $this->resolveOcrPythonBinary();
+            if (! $pythonBin) {
+                if (file_exists($tempFullPath)) {
+                    @unlink($tempFullPath);
+                }
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Layanan OCR Python tidak ditemukan di server. Hubungi administrator untuk mengonfigurasi OCR_PYTHON_PATH.',
+                    'text' => null,
+                ], 503);
+            }
+
             $scriptPath = str_replace('/', '\\', base_path('app/Services/ocr_extractor.py'));
 
-            $command = '"' . $pythonBin . '" "' . $scriptPath . '" "' . $winTempPath . '" 2>&1';
+            $command = '"'.$pythonBin.'" "'.$scriptPath.'" "'.$winTempPath.'" 2>&1';
             $rawOutput = trim(shell_exec($command) ?? '');
 
             if (file_exists($tempFullPath)) {
@@ -487,21 +503,31 @@ class ReportController extends Controller
                 $parsed = json_decode($jsonString, true);
             }
 
-            $extractedText = $parsed['text'] ?? '[ERR_OCR_UNREADABLE: Foto kurang jelas atau tidak memuat teks uraian]';
-            $hasExtractedData = !empty($parsed['nomor_surat']) || !empty($parsed['tanggal_surat']) || !empty($parsed['tgl_mulai_dinas']) || !empty($parsed['kota_tujuan']) || !empty($parsed['kegiatan_list']);
+            if (! is_array($parsed)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Gagal memproses berkas melalui mesin OCR. Pastikan berkas jelas dan dependensi OCR tersedia.',
+                    'text' => null,
+                ], 422);
+            }
+
+            $extractedText = trim((string) ($parsed['text'] ?? ''));
+            $isErrorMarker = $extractedText === '' || str_starts_with($extractedText, '[ERR_');
+            $hasExtractedData = ! empty($parsed['nomor_surat']) || ! empty($parsed['tanggal_surat']) || ! empty($parsed['tgl_mulai_dinas']) || ! empty($parsed['kota_tujuan']) || ! empty($parsed['kegiatan_list']);
             $ocrConfidence = $parsed['ocr_confidence'] ?? 1.0;
             $handwritingWarning = $ocrConfidence < 0.5;
+            $isSuccess = $hasExtractedData || (! $isErrorMarker && strlen($extractedText) > 20);
 
-            $message = $hasExtractedData 
-                ? 'Berhasil mengekstraksi data berkas surat via OCR!' 
-                : (!empty($extractedText) && strlen($extractedText) > 20 
-                    ? 'Teks surat berhasil dibaca via OCR.' 
+            $message = $hasExtractedData
+                ? 'Berhasil mengekstraksi data berkas surat via OCR!'
+                : ($isSuccess
+                    ? 'Teks surat berhasil dibaca via OCR.'
                     : 'Gagal mengekstraksi data. Berkas kurang jelas atau teks tidak terdeteksi.');
 
             return response()->json([
-                'status' => $hasExtractedData || (strlen($extractedText) > 20) ? 'success' : 'error',
+                'status' => $isSuccess ? 'success' : 'error',
                 'message' => $message,
-                'text' => $extractedText,
+                'text' => $isErrorMarker ? null : $extractedText,
                 'nomor_surat' => $parsed['nomor_surat'] ?? null,
                 'tanggal_surat' => $parsed['tanggal_surat'] ?? null,
                 'hal_perihal' => $parsed['hal_perihal'] ?? $parsed['hal'] ?? null,
@@ -524,9 +550,44 @@ class ReportController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Gagal memproses berkas OCR: ' . $e->getMessage(),
-                'text' => null
+                'message' => 'Gagal memproses berkas OCR: '.$e->getMessage(),
+                'text' => null,
             ], 500);
         }
+    }
+
+    private function resolveOcrPythonBinary(): ?string
+    {
+        $configured = env('OCR_PYTHON_PATH');
+        if ($configured && is_file($configured)) {
+            return $configured;
+        }
+
+        $candidates = [
+            base_path('.venv/Scripts/python.exe'),
+            base_path('.venv/bin/python'),
+            'C:\\Users\\Reski_Anugrah_Sari\\AppData\\Local\\Programs\\Python\\Python311\\python.exe',
+            'C:\\Python311\\python.exe',
+            'C:\\Python312\\python.exe',
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (is_file($candidate)) {
+                return $candidate;
+            }
+        }
+
+        $whereCmd = PHP_OS_FAMILY === 'Windows' ? 'where python 2>nul' : 'which python3 python 2>/dev/null';
+        $found = trim((string) shell_exec($whereCmd));
+        if ($found !== '') {
+            foreach (preg_split('/\r\n|\r|\n/', $found) as $line) {
+                $path = trim($line);
+                if ($path !== '' && is_file($path) && ! str_contains($path, 'WindowsApps\\python.exe')) {
+                    return $path;
+                }
+            }
+        }
+
+        return null;
     }
 }

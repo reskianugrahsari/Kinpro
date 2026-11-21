@@ -12,6 +12,7 @@ use App\Http\Controllers\RatingController;
 use App\Http\Controllers\PengajuanAbsenController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RekapController;
+use App\Http\Controllers\PanduanController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -87,6 +88,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Modul Rekap & Statistik (F5)
     Route::get('rekap', [RekapController::class, 'index'])->name('rekap.index');
     Route::get('rekap/export/{type}', [RekapController::class, 'export'])->name('rekap.export');
+
+    // Modul Panduan & Tutorial Sistem
+    Route::get('panduan', [PanduanController::class, 'index'])->name('panduan.index');
 });
 
 require __DIR__.'/auth.php';

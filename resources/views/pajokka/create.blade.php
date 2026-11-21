@@ -118,9 +118,9 @@
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-0.5">Tanggal Berangkat & Pulang</label>
                                 <div class="flex items-center gap-2">
-                                    <input type="text" x-model="tglMulai" placeholder="Tgl Mulai..." class="w-1/2 rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
-                                    <span class="text-slate-400">s/d</span>
-                                    <input type="text" x-model="tglSelesai" placeholder="Tgl Selesai..." class="w-1/2 rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
+                                    <input type="text" x-model="tglMulai" placeholder="Tgl Mulai..." class="min-w-0 flex-1 rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
+                                    <span class="text-slate-400 shrink-0 whitespace-nowrap">s/d</span>
+                                    <input type="text" x-model="tglSelesai" placeholder="Tgl Selesai..." class="min-w-0 flex-1 rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
                                 </div>
                             </div>
 
