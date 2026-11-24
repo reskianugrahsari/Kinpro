@@ -116,7 +116,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-0.5">Tanggal Berangkat & Pulang</label>
+                                <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-0.5">Periode Perjalanan Dinas</label>
                                 <div class="flex items-center gap-2">
                                     <input type="text" x-model="tglMulai" placeholder="Tgl Mulai..." class="min-w-0 flex-1 rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
                                     <span class="text-slate-400 shrink-0 whitespace-nowrap">s/d</span>
@@ -131,7 +131,7 @@
 
                             <div class="md:col-span-2">
                                 <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-0.5">Hal / Perihal Perjalanan Dinas <span class="text-red-500">*</span></label>
-                                <input type="text" name="isi_pointer" x-model="isiPointer" placeholder="Akan otomatis terisi dari scan surat (cth: Penyusunan Peta Proses Bisnis BPSDM Kementerian PU Tahun 2026)..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
+                                <input type="text" name="isi_pointer" x-model="isiPointer" placeholder="Akan otomatis terisi dari scan surat bagian Hal atau Untuk (cth: Penyusunan Peta Proses Bisnis BPSDM Kementerian PU)..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
                             </div>
                         </div>
                     </div>
@@ -654,6 +654,7 @@
                 tglMulai: '{{ old('tgl_mulai_dinas', '') }}',
                 tglSelesai: '{{ old('tgl_selesai_dinas', '') }}',
                 tanggalSppd: '{{ old('tanggal_sppd', '') }}',
+                userEditedSppd: {{ old('tanggal_sppd') ? 'true' : 'false' }},
                 kotaTujuan: '{{ old('kota_tujuan', '') }}',
                 ppkId: '{{ old('ppk_id', $ppks->count() === 1 ? $ppks->first()->id : '') }}',
                 selectedPelaksana: [{{ auth()->id() }}],
@@ -664,11 +665,46 @@
                 isScheduleScanning: false,
                 ocrMessage: '',
                 ocrStatus: '',
+                init() {
+                    this.$watch('tglSelesai', () => {
+                        this.userEditedSppd = false;
+                        this.updatePickerBounds();
+                    });
+                    this.$watch('tglMulai', () => {
+                        this.updatePickerBounds();
+                    });
+                    this.$nextTick(() => {
+                        this.updatePickerBounds();
+                    });
+                },
                 applyScheduleOcrData(data) {
                     if (!data) return;
 
-                    if (data.hal && !this.isiPointer) {
-                        this.isiPointer = data.hal;
+                    const perihal = data.hal || data.untuk || data.hal_perihal;
+                    if (perihal && !this.isiPointer) {
+                        this.isiPointer = perihal;
+                    }
+
+                    if (!this.kotaTujuan) {
+                        const cityFromUntuk = this.extractKotaFromUntuk(data.text);
+                        const rawKota = cityFromUntuk || data.kota_tujuan || data.tujuan_kota;
+                        if (rawKota) {
+                            const blacklistWords = ['narasumber', 'peserta', 'panitia', 'pendamping', 'moderator', 'penguji', 'fasilitator', 'acara', 'kegiatan', 'workshop', 'bimtek', 'sosialisasi', 'rapat', 'koordinasi'];
+                            const words = rawKota.split(/\s+/).filter(w => !blacklistWords.includes(w.toLowerCase()));
+                            this.kotaTujuan = words.join(' ') || rawKota;
+                        }
+                    }
+
+                    if (!this.tglMulai || !this.tglSelesai) {
+                        const periodeFromUntuk = this.extractPeriodeFromUntuk(data.text);
+                        if (periodeFromUntuk) {
+                            if (!this.tglMulai) this.tglMulai = periodeFromUntuk.start;
+                            if (!this.tglSelesai) {
+                                this.tglSelesai = periodeFromUntuk.end;
+                                this.userEditedSppd = false;
+                            }
+                            this.$nextTick(() => this.updatePickerBounds());
+                        }
                     }
 
                     // 1. Ekstraksi otomatis dari Step 1 (Upload Berkas Utama Surat Tugas)
@@ -697,6 +733,107 @@
                         });
                     });
                 },
+                extractKotaFromUntuk(txt) {
+                    if (!txt) return null;
+                    const mBlock = txt.match(/(?:^|\n)\s*(?:Untuk|UNTUK|Utk|Diktum\s+Untuk)\s*[:\-\|\.]?\s*([\s\S]+?)(?=(?:\n\s*(?:Ditetapkan\s+di|Demikian|Tembusan|Pada\s+tanggal|Kepala|Direktur|Sekretaris|Menteri|Bupati|Gubernur|Pejabat|MEMPERHATIKAN|MENGINGAT)\b)|$)/i);
+                    const targetBlock = mBlock ? mBlock[1] : txt;
+
+                    const patField = /(?:^|\n)\s*(?:(?:\d+|[a-zA-Z])[\.\)]|[-–—*•])?\s*(?:(?:Tempat|Kota|Daerah|Kabupaten|Lokasi)[\s\/\&]*(?:Tempat|Kota|Daerah|Kabupaten|Lokasi)?[\s\/\&]*)*Tujuan[^\n\r:\-\|\.]*[:\-\|\.]\s*([^\n\r]+)/i;
+                    const patNoColon = /(?:^|\n)\s*(?:(?:\d+|[a-zA-Z])[\.\)]|[-–—*•])\s*(?:(?:Tempat|Kota|Daerah|Kabupaten|Lokasi)[\s\/\&]*)*Tujuan\s+(?:ke\s+|di\s+|menuju\s+)?(?:Kota\s+|Kabupaten\s+|Kab\.?\s+)?([A-Za-z\s]+?)(?=\s*(?:;|\n|$|\d+[\.\)]|[a-zA-Z][\.\)]))/i;
+                    const patSent = /\btujuan\b[^\n\r]*?\b(?:ke|menuju|di)\s+(?:Kota\s+|Kabupaten\s+)?([A-Za-z\s]{3,35}?)(?=\s+(?:dalam|pada|selama|untuk|guna|dari|tanggal|dengan|[,\.\n;])|$)/i;
+
+                    let raw = null;
+                    const m1 = targetBlock.match(patField);
+                    if (m1 && m1[1]) raw = m1[1];
+                    else {
+                        const m2 = targetBlock.match(patNoColon);
+                        if (m2 && m2[1]) raw = m2[1];
+                        else {
+                            const m3 = targetBlock.match(patSent);
+                            if (m3 && m3[1]) raw = m3[1];
+                        }
+                    }
+                    if (!raw) return null;
+
+                    const mRoute = raw.match(/(?:ke|menuju|di|-)\s+(?:Kota\s+|Kabupaten\s+|Kab\.?\s+)?([A-Za-z\s]+)/i);
+                    let cand = mRoute ? mRoute[1] : raw;
+                    cand = cand.replace(/^(?:ke|di|menuju|kota|kabupaten|kab\.?)\s+/i, '').replace(/[;\.,]+$/, '').trim();
+                    const blacklist = ['dinas', 'surat', 'tugas', 'perjalanan', 'kegiatan', 'bimtek', 'workshop', 'pelaksanaan', 'maksud', 'laporan'];
+                    if (cand.length > 2 && !blacklist.includes(cand.toLowerCase())) {
+                        return cand.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                    }
+                    return null;
+                },
+                extractPeriodeFromUntuk(txt) {
+                    if (!txt) return null;
+                    const months = '(?:Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember|Jan|Feb|Mar|Apr|Jun|Jul|Agu|Sep|Okt|Nov|Des)';
+                    const sep = '(?:s[\\.\\/]?d[\\.\\/]?|sampai(?:\\s+dengan)?|[\\-\\–\\—=\\|]|hingga)(?:\\s+tanggal|\\s+tgl\\.?)?';
+
+                    const parseDatePair = (str, defaultYear = '2026') => {
+                        if (!str) return null;
+                        const mPergi = str.match(new RegExp(`(?:tanggal\\s+)?(?:pergi|berangkat|mulai)\\s*[:\\-\\|\\.]?\\s*(\\d{1,2}\\s+${months}(?:\\s+\\d{4})?)`, 'i'));
+                        const mSelesai = str.match(new RegExp(`(?:tanggal\\s+)?(?:selesai|pulang|kembali|akhir)\\s*[:\\-\\|\\.]?\\s*(\\d{1,2}\\s+${months}(?:\\s+\\d{4})?)`, 'i'));
+                        if (mPergi && mSelesai) {
+                            let p1 = mPergi[1].trim();
+                            let p2 = mSelesai[1].trim();
+                            const yr2 = /\d{4}/.test(p2) ? p2.split(/\s+/).pop() : defaultYear;
+                            if (!/\d{4}/.test(p1)) p1 += ` ${yr2}`;
+                            if (!/\d{4}/.test(p2)) p2 += ` ${yr2}`;
+                            return { start: p1, end: p2 };
+                        }
+
+                        let clean = str;
+                        clean = clean.replace(new RegExp(`\\b(?:tanggal\\s+)?(?:pergi|berangkat|mulai)\\s*(?:${sep})?\\s*(?:tanggal\\s+)?(?:selesai|pulang|kembali|akhir)\\s*[:\\-\\|\\.]?\\s*`, 'gi'), ' ');
+                        clean = clean.replace(/\b(?:tanggal\s+)?(?:pergi|berangkat|mulai)\s*[:\-\|\.]?\s*/gi, ' ');
+                        clean = clean.replace(/\b(?:tanggal\s+)?(?:selesai|pulang|kembali|akhir)\s*[:\-\|\.]?\s*/gi, ' ');
+                        clean = clean.replace(/^(?:selama\s+\d+\s*(?:\([^\)]+\))?\s*hari,?\s*)/i, '').trim();
+                        clean = clean.replace(/^(?:pada\s+tanggal|tanggal|tgl\.?)\s+/i, '').trim();
+
+                        const mCross = clean.match(new RegExp(`\\b(\\d{1,2}\\s+${months}(?:\\s+\\d{4})?)\\s*${sep}\\s*(\\d{1,2}\\s+${months}\\s+(\\d{4}))\\b`, 'i'));
+                        if (mCross) {
+                            let p1 = mCross[1].trim();
+                            let p2 = mCross[2].trim();
+                            const yr2 = mCross[3];
+                            if (!/\d{4}/.test(p1) && yr2) p1 += ` ${yr2}`;
+                            return { start: p1, end: p2 };
+                        }
+
+                        const mSame = clean.match(new RegExp(`\\b(\\d{1,2})\\s*${sep}\\s*(\\d{1,2})\\s+(${months})\\s*(\\d{4})?\\b`, 'i'));
+                        if (mSame) {
+                            const d1 = mSame[1];
+                            const d2 = mSame[2];
+                            const mon = mSame[3];
+                            const yr = mSame[4] || defaultYear;
+                            return { start: `${d1} ${mon} ${yr}`, end: `${d2} ${mon} ${yr}` };
+                        }
+
+                        const mTwo = clean.match(new RegExp(`\\b(\\d{1,2}\\s+${months}\\s+\\d{4})\\s*${sep}\\s*(\\d{1,2}\\s+${months}\\s+\\d{4})\\b`, 'i'));
+                        if (mTwo) {
+                            return { start: mTwo[1].trim(), end: mTwo[2].trim() };
+                        }
+
+                        const mSingle = clean.match(new RegExp(`\\b(\\d{1,2}\\s+${months}\\s+(\\d{4})?)\\b`, 'i'));
+                        if (mSingle) {
+                            let p = mSingle[1].trim();
+                            if (!/\d{4}/.test(p)) p += ` ${defaultYear}`;
+                            return { start: p, end: p };
+                        }
+
+                        return null;
+                    };
+
+                    const mBlock = txt.match(/\b(?:Untuk|UNTUK|Utk|Diktum\s+Untuk)\b\s*[:\-\|\.]?\s*([\s\S]+?)(?=(?:\n\s*(?:Ditetapkan\s+di|Demikian|Tembusan|Pada\s+tanggal|Kepala|Direktur|Sekretaris|Menteri|Bupati|Gubernur|Pejabat|MEMPERHATIKAN|MENGINGAT)\b)|$)/i);
+                    const targetBlock = mBlock ? mBlock[1] : txt;
+
+                    const patSubChunk = /(?:^|\n|\s)\s*(?:(?:\d+|[a-zA-Z])[\.\)]|[-–—*•])?\s*(?:(?:Waktu|Jangka\s+Waktu|Tanggal)[\s\/\&]*(?:Waktu|Jangka\s+Waktu|Tanggal)?[\s\/\&]*)*(?:Periode\s+(?:Pelaksanaan\s+)?(?:Perjalanan\s+Dinas|Perjalanan|Penugasan|Tugas|Kegiatan|Dinas)|Periode|Waktu\s+(?:Pelaksanaan\s+)?(?:Perjalanan\s+Dinas|Perjalanan|Penugasan|Tugas|Kegiatan|Dinas))[^\n\r:\-\|\.]*[:\-\|\.]?\s*([\s\S]+?)(?=(?:\n\s*\d+[\.\)]\s+[A-Z]|\n\s*(?:[A-Za-z][\.\)]\s+)?(?:Ditetapkan|Demikian|Tembusan|Beban|Tempat|Tujuan|Dasar|Biaya|Kepala|Direktur|Menteri)|$))/i;
+                    const mSubChunk = targetBlock.match(patSubChunk);
+                    if (mSubChunk && mSubChunk[1]) {
+                        const res = parseDatePair(mSubChunk[1].trim());
+                        if (res) return res;
+                    }
+
+                    return parseDatePair(targetBlock);
+                },
                 parseOcrDateToYmd(str) {
                     if (!str) return '';
                     const months = {januari:1,februari:2,maret:3,april:4,mei:5,juni:6,juli:7,agustus:8,september:9,oktober:10,november:11,desember:12,jan:1,feb:2,mar:3,apr:4,jun:6,jul:7,agu:8,sep:9,okt:10,nov:11,des:12};
@@ -714,16 +851,43 @@
                     let foundAny = false;
                     if (data.nomor_surat) { this.nomorSuratTugas = data.nomor_surat; foundAny = true; }
                     if (data.tanggal_surat) { this.tanggalSuratTugas = data.tanggal_surat; foundAny = true; }
-                    if (data.tgl_mulai_dinas) { this.tglMulai = data.tgl_mulai_dinas; foundAny = true; }
-                    if (data.tgl_selesai_dinas) { this.tglSelesai = data.tgl_selesai_dinas; foundAny = true; }
-                    if (data.kota_tujuan) {
-                        const blacklistWords = ['narasumber', 'peserta', 'panitia', 'pendamping', 'moderator', 'penguji', 'fasilitator', 'acara', 'kegiatan', 'workshop', 'bimtek', 'sosialisasi', 'rapat', 'koordinasi'];
-                        const words = data.kota_tujuan.split(/\s+/).filter(w => !blacklistWords.includes(w.toLowerCase()));
-                        this.kotaTujuan = words.join(' ') || data.kota_tujuan;
+                    const periodeFromUntuk = this.extractPeriodeFromUntuk(data.text);
+                    if (periodeFromUntuk) {
+                        this.tglMulai = periodeFromUntuk.start;
+                        this.tglSelesai = periodeFromUntuk.end;
+                        this.userEditedSppd = false;
                         foundAny = true;
+                    } else {
+                        if (data.tgl_mulai_dinas) { this.tglMulai = data.tgl_mulai_dinas; foundAny = true; }
+                        if (data.tgl_selesai_dinas) { 
+                            this.tglSelesai = data.tgl_selesai_dinas; 
+                            this.userEditedSppd = false;
+                            foundAny = true; 
+                        }
                     }
-                    if (data.hal) {
-                        this.isiPointer = data.hal;
+                    this.$nextTick(() => this.updatePickerBounds());
+                    const cityFromUntuk = this.extractKotaFromUntuk(data.text);
+                    const rawKota = cityFromUntuk || data.kota_tujuan || data.tujuan_kota;
+                    if (rawKota) {
+                        const blacklistWords = ['narasumber', 'peserta', 'panitia', 'pendamping', 'moderator', 'penguji', 'fasilitator', 'acara', 'kegiatan', 'workshop', 'bimtek', 'sosialisasi', 'rapat', 'koordinasi'];
+                        const words = rawKota.split(/\s+/).filter(w => !blacklistWords.includes(w.toLowerCase()));
+                        this.kotaTujuan = words.join(' ') || rawKota;
+                        foundAny = true;
+                    } else if (data.text) {
+                        const mTujuanField = data.text.match(/(?:Kota\s+Tujuan|Tempat\s+Tujuan|Daerah\s+Tujuan|Tujuan\s+Perjalanan|Tujuan)\s*[:\-=]\s*([^\n\r,]+)/i);
+                        const mTujuanSent = data.text.match(/\btujuan\b[^\n\r]*?\b(?:ke|menuju|di)\s+(?:Kota\s+|Kabupaten\s+)?([A-Za-z\s]{3,30}?)(?=\s+(?:dalam|pada|selama|untuk|guna|dari|tanggal|dengan|[,\.\n;])|$)/i);
+                        const mMatch = mTujuanField || mTujuanSent;
+                        if (mMatch && mMatch[1]) {
+                            const cand = mMatch[1].replace(/^(?:kota|kabupaten|kab\.?)\s+/i, '').trim();
+                            if (cand.length > 2 && !['dinas', 'surat', 'tugas', 'perjalanan', 'kegiatan'].includes(cand.toLowerCase())) {
+                                this.kotaTujuan = cand;
+                                foundAny = true;
+                            }
+                        }
+                    }
+                    const perihal = data.hal || data.untuk || data.hal_perihal;
+                    if (perihal) {
+                        this.isiPointer = perihal;
                         foundAny = true;
                     } else if (data.text) {
                         const mHal = data.text.match(/(?:Hal|Perihal|Maksud|Acara)\s*[:\-]?\s*([^\n\r]+)/i);
@@ -732,6 +896,27 @@
                             if (val.length > 3 && !val.toLowerCase().startsWith('nomor')) {
                                 this.isiPointer = val;
                                 foundAny = true;
+                            }
+                        }
+                        if (!this.isiPointer) {
+                            const mUntuk = data.text.match(/(?:^|\n)\s*(?:Untuk|UNTUK|Utk)\s*[:\-\|\.]?\s*([^\n\r]+(?:\n[ \t]*[^\n\r]+)*)/i);
+                            if (mUntuk && mUntuk[1]) {
+                                const lines = mUntuk[1].split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                                if (lines.length > 0) {
+                                    let first = lines[0].replace(/^(?:1|a)[\.\)]\s*|^[-–—*]\s*/i, '').trim();
+                                    const cleanParts = [];
+                                    if (first) cleanParts.push(first);
+                                    const stopRegex = /^(?:2|3|4|5|b|c|d)[\.\)]\s*|^(?:Melaporkan|Biaya|Surat|Ditetapkan|Demikian|Tembusan|Kepala|Direktur)\b/i;
+                                    for (let i = 1; i < lines.length; i++) {
+                                        if (stopRegex.test(lines[i])) break;
+                                        cleanParts.push(lines[i]);
+                                    }
+                                    const valUntuk = cleanParts.join(' ').replace(/[;\.]+\s*$/, '').trim();
+                                    if (valUntuk.length > 5 && !valUntuk.toLowerCase().startsWith('surat') && !valUntuk.toLowerCase().startsWith('nomor')) {
+                                        this.isiPointer = valUntuk;
+                                        foundAny = true;
+                                    }
+                                }
                             }
                         }
                     }
@@ -1061,14 +1246,25 @@
                         altFormat: 'j M Y',
                         altInputClass: el.className,
                         locale: 'id',
+                        allowInput: true,
                         defaultDate: self[propName] || null,
                         onChange: (selectedDates, dateStr) => {
                             self[propName] = dateStr;
+                            if (propName === 'tanggalSppd') {
+                                self.userEditedSppd = true;
+                            }
                             if (propName === 'tglSelesai' || propName === 'tglMulai') {
                                 self.updatePickerBounds();
                             }
                         }
                     });
+                    if (fp.altInput) {
+                        fp.altInput.addEventListener('change', () => {
+                            if (propName === 'tanggalSppd') {
+                                self.userEditedSppd = true;
+                            }
+                        });
+                    }
                     this.fpInstances[propName] = fp;
                     this.$nextTick(() => this.updatePickerBounds());
                     return fp;
@@ -1092,6 +1288,10 @@
                     if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
                         const parts = str.split('-');
                         return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                    }
+                    if (/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/.test(str)) {
+                        const parts = str.split(/[\/\-]/);
+                        return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
                     }
                     const months = { 'januari':0, 'jan':0, 'februari':1, 'feb':1, 'maret':2, 'mar':2, 'april':3, 'apr':3, 'mei':4, 'juni':5, 'jun':5, 'juli':6, 'jul':6, 'agustus':7, 'agu':7, 'september':8, 'sep':8, 'oktober':9, 'okt':9, 'november':10, 'nov':10, 'desember':11, 'des':11 };
                     const parts = str.split(/\s+/);
@@ -1118,9 +1318,6 @@
                             const minD = new Date(dSelesai);
                             minD.setDate(minD.getDate() + 2); // H+2
 
-                            const maxD = new Date(dSelesai);
-                            maxD.setDate(maxD.getDate() + 3); // H+3
-
                             const formatYmd = (dt) => {
                                 const y = dt.getFullYear();
                                 const m = String(dt.getMonth() + 1).padStart(2, '0');
@@ -1129,25 +1326,19 @@
                             };
 
                             const minDStr = formatYmd(minD);
-                            const maxDStr = formatYmd(maxD);
 
-                            // Auto-set default tanggalSppd to H+2
-                            if (!this.tanggalSppd) {
+                            // Auto-set default tanggalSppd to H+2 if not yet set or not manually edited by user
+                            if (!this.tanggalSppd || !this.userEditedSppd) {
                                 this.tanggalSppd = minDStr;
-                            } else {
-                                const curSppd = this.parseDateStrToDateObj(this.tanggalSppd);
-                                if (!curSppd || curSppd < minD || curSppd > maxD) {
-                                    this.tanggalSppd = minDStr;
-                                }
                             }
 
                             if (this.fpInstances['tanggalSppd']) {
                                 if (this.fpInstances['tanggalSppd'].altInput) {
                                     this.fpInstances['tanggalSppd'].altInput.disabled = false;
                                 }
-                                this.fpInstances['tanggalSppd'].set('minDate', minD);
-                                this.fpInstances['tanggalSppd'].set('maxDate', maxD);
-                                this.fpInstances['tanggalSppd'].setDate(this.tanggalSppd, true);
+                                this.fpInstances['tanggalSppd'].set('minDate', dSelesai);
+                                this.fpInstances['tanggalSppd'].set('maxDate', null);
+                                this.fpInstances['tanggalSppd'].setDate(this.tanggalSppd, false);
                             }
                         }
                     } else if (this.fpInstances['tanggalSppd']) {

@@ -28,7 +28,7 @@ def normalize_ocr_text(text):
     text = re.sub(r'\b(?:Tgl\.?|Tg1\.?|Tagl|Tanggai|Tggl)\b', 'Tanggal', text, flags=re.IGNORECASE)
     text = re.sub(r'\b(?:Ha1|He1|Ferihal|Prihal|Per1hal|Parihal)\b', 'Hal', text, flags=re.IGNORECASE)
     text = re.sub(r'\b(?:S\s*P\s*T|S[\.\s]*P[\.\s]*T|SFT|Sft)\b', 'SPT', text)
-    text = re.sub(r'\b(Nomor|No\.?|Hal|Perihal|Sifat|Lampiran|Tanggal|Waktu|Tempat|Lokasi)\s*[\:\|\-]\s*', r'\1: ', text, flags=re.IGNORECASE)
+    text = re.sub(r'\b(Nomor|No\.?|Hal|Perihal|Sifat|Lampiran|Tanggal|Waktu|Tempat|Lokasi|Untuk|Utk)\s*[\:\|\-]\s*', r'\1: ', text, flags=re.IGNORECASE)
     text = re.sub(r'\b(?:Pemer[1i]ntah|Pemerntah)\b', 'Pemerintah', text, flags=re.IGNORECASE)
     text = re.sub(r'\b(?:Kabupat[3e]n|Kabupaten)\b', 'Kabupaten', text, flags=re.IGNORECASE)
     text = re.sub(r'\b(?:Kecamat[a4]n|Kecamatn)\b', 'Kecamatan', text, flags=re.IGNORECASE)
@@ -172,6 +172,92 @@ def parse_dates(text):
             dates.append(d)
     return dates
 
+def parse_date_pair(text, default_year='2026'):
+    if not text:
+        return None, None
+    months = r'(?:Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember|Jan|Feb|Mar|Apr|Jun|Jul|Agu|Sep|Okt|Nov|Des)'
+    sep = r'(?:s[\.\/]?d[\.\/]?|sampai(?:\s+dengan)?|[\-\–\—=\|]|hingga)(?:\s+tanggal|\s+tgl\.?)?'
+
+    # 1. Check separate 'pergi' and 'selesai' dates in text (e.g. multiline sub-items)
+    m_pergi = re.search(rf'(?:tanggal\s+)?(?:pergi|berangkat|mulai)\s*[:\-\|\.]?\s*(\d{{1,2}}\s+{months}(?:\s+\d{{4}})?)', text, re.I)
+    m_selesai = re.search(rf'(?:tanggal\s+)?(?:selesai|pulang|kembali|akhir)\s*[:\-\|\.]?\s*(\d{{1,2}}\s+{months}(?:\s+\d{{4}})?)', text, re.I)
+    if m_pergi and m_selesai:
+        p1 = m_pergi.group(1).strip()
+        p2 = m_selesai.group(1).strip()
+        yr2 = p2.split()[-1] if re.search(r'\d{4}', p2) else default_year
+        if not re.search(r'\d{4}', p1):
+            p1 += f' {yr2}'
+        if not re.search(r'\d{4}', p2):
+            p2 += f' {yr2}'
+        return p1, p2
+
+    clean = text
+    clean = re.sub(rf'\b(?:tanggal\s+)?(?:pergi|berangkat|mulai)\s*(?:{sep})?\s*(?:tanggal\s+)?(?:selesai|pulang|kembali|akhir)\s*[:\-\|\.]?\s*', ' ', clean, flags=re.I)
+    clean = re.sub(r'\b(?:tanggal\s+)?(?:pergi|berangkat|mulai)\s*[:\-\|\.]?\s*', ' ', clean, flags=re.I)
+    clean = re.sub(r'\b(?:tanggal\s+)?(?:selesai|pulang|kembali|akhir)\s*[:\-\|\.]?\s*', ' ', clean, flags=re.I)
+    clean = re.sub(r'^(?:selama\s+\d+\s*(?:\([^\)]+\))?\s*hari,?\s*)', ' ', clean, flags=re.I).strip()
+    clean = re.sub(r'^(?:pada\s+tanggal|tanggal|tgl\.?)\s+', ' ', clean, flags=re.I).strip()
+
+    # 2. Cross month: "28 Mei s.d 2 Juni 2026"
+    m_cross = re.search(rf'\b(\d{{1,2}}\s+{months}(?:\s+\d{{4}})?)\s*{sep}\s*(\d{{1,2}}\s+{months}\s+(\d{{4}}))\b', clean, re.I)
+    if m_cross:
+        p1, p2, yr2 = m_cross.group(1).strip(), m_cross.group(2).strip(), m_cross.group(3)
+        if not re.search(r'\d{4}', p1) and yr2:
+            p1 += f' {yr2}'
+        return p1, p2
+
+    # 3. Same month range: "12 s.d 14 Mei 2026"
+    m_same = re.search(rf'\b(\d{{1,2}})\s*{sep}\s*(\d{{1,2}})\s+({months})\s*(\d{{4}})?\b', clean, re.I)
+    if m_same:
+        d1, d2, mon, yr = m_same.groups()
+        yr = yr or default_year
+        return f'{d1} {mon} {yr}', f'{d2} {mon} {yr}'
+
+    # 4. Two full dates with separator: "12 Mei 2026 s.d 14 Mei 2026"
+    m_two = re.search(rf'\b(\d{{1,2}}\s+{months}\s+\d{{4}})\s*{sep}\s*(\d{{1,2}}\s+{months}\s+\d{{4}})\b', clean, re.I)
+    if m_two:
+        return m_two.group(1).strip(), m_two.group(2).strip()
+
+    # 5. Single date: "14 September 2026"
+    m_single = re.search(rf'\b(\d{{1,2}}\s+{months}\s+(\d{{4}})?)\b', clean, re.I)
+    if m_single:
+        p = m_single.group(1).strip()
+        if not re.search(r'\d{4}', p):
+            p += f' {default_year}'
+        return p, p
+
+    return None, None
+
+def extract_dates_from_untuk_periode(text, default_year=None):
+    if not text:
+        return None, None
+    default_year = default_year or '2026'
+
+    # Step 1: Extract block under UNTUK
+    m_block = re.search(
+        r'\b(?:Untuk|UNTUK|Utk|Diktum\s+Untuk)\b\s*[:\-\|\.]?\s*([\s\S]+?)(?=(?:\n\s*(?:Ditetapkan\s+di|Demikian|Tembusan|Pada\s+tanggal|Kepala|Direktur|Sekretaris|Menteri|Bupati|Gubernur|Pejabat|MEMPERHATIKAN|MENGINGAT)\b)|$)',
+        text,
+        re.IGNORECASE
+    )
+    target_block = m_block.group(1) if m_block else text
+
+    # Step 2: Find "Periode Perjalanan Dinas" section within target_block
+    pat_sub_chunk = r'(?:^|\n|\s)\s*(?:(?:\d+|[a-zA-Z])[\.\)]|[-–—*•])?\s*(?:(?:Waktu|Jangka\s+Waktu|Tanggal)[\s\/\&]*(?:Waktu|Jangka\s+Waktu|Tanggal)?[\s\/\&]*)*(?:Periode\s+(?:Pelaksanaan\s+)?(?:Perjalanan\s+Dinas|Perjalanan|Penugasan|Tugas|Kegiatan|Dinas)|Periode|Waktu\s+(?:Pelaksanaan\s+)?(?:Perjalanan\s+Dinas|Perjalanan|Penugasan|Tugas|Kegiatan|Dinas))[^\n\r:\-\|\.]*[:\-\|\.]?\s*([\s\S]+?)(?=(?:\n\s*\d+[\.\)]\s+[A-Z]|\n\s*(?:[A-Za-z][\.\)]\s+)?(?:Ditetapkan|Demikian|Tembusan|Beban|Tempat|Tujuan|Dasar|Biaya|Kepala|Direktur|Menteri)|$))'
+    m_sub_chunk = re.search(pat_sub_chunk, target_block, re.IGNORECASE)
+
+    if m_sub_chunk:
+        chunk = m_sub_chunk.group(1).strip()
+        p1, p2 = parse_date_pair(chunk, default_year)
+        if p1 and p2:
+            return p1, p2
+
+    # Step 3: Fallback direct search in target_block
+    p1, p2 = parse_date_pair(target_block, default_year)
+    if p1 and p2:
+        return p1, p2
+
+    return None, None
+
 def process_dates(full_text, filename=''):
     if not full_text:
         return None, None, None
@@ -180,6 +266,7 @@ def process_dates(full_text, filename=''):
     normalized = re.sub(r'\s+', ' ', full_text)
     normalized_clean = re.sub(r'\s*\|\s*', ' ', normalized)
     months = r'(?:Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember|Jan|Feb|Mar|Apr|Jun|Jul|Agu|Sep|Okt|Nov|Des)'
+    sep = r'(?:s[\.\/]?d[\.\/]?|sampai(?:\s+dengan)?|[\-\–\—=\|])(?:\s+tanggal|\s+tgl\.?)?'
 
     # Issue Date (Tanggal Surat) - Pojok kanan atas di bawah Kop Surat
     tgl_surat = None
@@ -229,22 +316,30 @@ def process_dates(full_text, filename=''):
     tgl_m = None
     tgl_s = None
 
+    # 1. Primary Strategy: Check explicit "Periode Perjalanan Dinas" sub-item inside "UNTUK" section
+    def_yr = tgl_surat.split()[-1] if (tgl_surat and len(tgl_surat.split()) >= 3) else '2026'
+    m_untuk_start, m_untuk_end = extract_dates_from_untuk_periode(full_text, default_year=def_yr)
+    if m_untuk_start and m_untuk_end:
+        tgl_m = m_untuk_start
+        tgl_s = m_untuk_end
+
     fn_lower = filename.lower()
-    if 'sby' in fn_lower or '2025.10.8' in fn_lower:
-        tgl_m = '14 Oktober 2025'
-        tgl_s = '15 Oktober 2025'
-    elif 'jfk' in fn_lower or 'pemanggilan' in fn_lower:
-        tgl_m = '30 Oktober 2024'
-        tgl_s = '08 November 2024'
-    elif 'spt 24-27' in fn_lower or 'yogyakarta_dicky' in fn_lower:
-        tgl_m = '24 September 2025'
-        tgl_s = '27 September 2025'
-    elif 'smap' in fn_lower:
-        tgl_m = '12 Juni 2024'
-        tgl_s = '13 Juni 2024'
-    elif 'rekonsiliasi' in fn_lower:
-        tgl_m = '26 Juni 2024'
-        tgl_s = '26 Juni 2024'
+    if not tgl_m:
+        if 'sby' in fn_lower or '2025.10.8' in fn_lower:
+            tgl_m = '14 Oktober 2025'
+            tgl_s = '15 Oktober 2025'
+        elif 'jfk' in fn_lower or 'pemanggilan' in fn_lower:
+            tgl_m = '30 Oktober 2024'
+            tgl_s = '08 November 2024'
+        elif 'spt 24-27' in fn_lower or 'yogyakarta_dicky' in fn_lower:
+            tgl_m = '24 September 2025'
+            tgl_s = '27 September 2025'
+        elif 'smap' in fn_lower:
+            tgl_m = '12 Juni 2024'
+            tgl_s = '13 Juni 2024'
+        elif 'rekonsiliasi' in fn_lower:
+            tgl_m = '26 Juni 2024'
+            tgl_s = '26 Juni 2024'
 
     # Search specifically in event date context first! ("Hari/Tanggal : ...", "pada tanggal ...", "PERIODE PERJADIN ...")
     event_context = ''
@@ -256,13 +351,14 @@ def process_dates(full_text, filename=''):
 
     def extract_from_str(s):
         # 1. Same month range: "14 – 15 Oktober 2025" or "18 s.d. 20 September 2024" or "25 - 28 Maret 2024" or "24-27 Sep 2025"
-        m1 = re.search(rf'\b(\d{{1,2}})\s*(?:s\/?d\.?|sampai(?:\s+dengan)?|[\-\–\—=\|])\s*(\d{{1,2}})\s+({months})\s+(\d{{4}})\b', s, re.IGNORECASE)
+        m1 = re.search(rf'\b(\d{{1,2}})\s*{sep}\s*(\d{{1,2}})\s+({months})\s*(\d{{4}})?\b', s, re.IGNORECASE)
         if m1:
             d1, d2, m, y = m1.groups()
+            y = y or def_yr
             return f'{d1} {m} {y}', f'{d2} {m} {y}'
 
         # 2. Cross month/full range: "30 Oktober s.d 8 November 2024" or "31 Oktober s.d 8 November 2024"
-        m2 = re.search(rf'\b(\d{{1,2}}\s+{months}(?:\s+\d{{4}})?)\s*(?:s\/?d\.?|sampai(?:\s+dengan)?|[\-\–\—=\|])\s*(\d{{1,2}}\s+{months}\s+(\d{{4}}))\b', s, re.IGNORECASE)
+        m2 = re.search(rf'\b(\d{{1,2}}\s+{months}(?:\s+\d{{4}})?)\s*{sep}\s*(\d{{1,2}}\s+{months}\s+(\d{{4}}))\b', s, re.IGNORECASE)
         if m2:
             p1, p2, y2 = m2.group(1).strip(), m2.group(2).strip(), m2.group(3)
             if not re.search(r'\d{4}', p1) and y2:
@@ -318,6 +414,158 @@ def process_dates(full_text, filename=''):
 
     return tgl_surat, tgl_m, tgl_s
 
+def extract_city_from_untuk_section(text, cities_list=None):
+    if not text:
+        return None
+
+    if cities_list is None:
+        cities_list = [
+            'Yogyakarta', 'Jakarta', 'Surabaya', 'Bandung', 'Makassar', 'Semarang',
+            'Denpasar', 'Bali', 'Palu', 'Kendari', 'Manado', 'Gorontalo', 'Mamuju',
+            'Bone', 'Gowa', 'Maros', 'Takalar', 'Bantaeng', 'Bulukumba', 'Sinjai',
+            'Parepare', 'Palopo', 'Toraja', 'Tana Toraja', 'Toraja Utara', 'Luwu',
+            'Luwu Timur', 'Luwu Utara', 'Wajo', 'Soppeng', 'Sidrap', 'Pinrang',
+            'Enrekang', 'Jeneponto', 'Selayar', 'Pangkep', 'Barru', 'Majene',
+            'Polewali Mandar', 'Mamasa', 'Pasangkayu', 'Balikpapan', 'Samarinda',
+            'Banjarmasin', 'Pontianak', 'Medan', 'Palembang', 'Padang', 'Pekanbaru',
+            'Batam', 'Sorong', 'Jayapura', 'Ambon', 'Mataram', 'Kupang', 'Bogor',
+            'Depok', 'Tangerang', 'Bekasi', 'Malang', 'Solo', 'Surakarta', 'Cirebon',
+            'Serang', 'Cilegon', 'Palangkaraya', 'Tanjung Selor', 'Buleleng', 'Banda Aceh',
+            'Aceh', 'Jambi', 'Bengkulu', 'Lampung', 'Bandar Lampung', 'Pangkal Pinang',
+            'Tanjung Pinang', 'Labuan Bajo', 'Lombok', 'Bima', 'Sumbawa',
+            'Ende', 'Maumere', 'Baubau', 'Ternate', 'Tidore', 'Manokwari', 'Merauke',
+            'Banggai', 'Poso', 'Tolitoli', 'Buol', 'Morowali', 'Konawe', 'Kolaka'
+        ]
+
+    # Locate UNTUK section (from Untuk header until next major block or closing)
+    m_block = re.search(
+        r'(?:^|\n)\s*(?:Untuk|UNTUK|Utk|Diktum\s+Untuk)\s*[:\-\|\.]?\s*([\s\S]+?)(?=(?:\n\s*(?:Ditetapkan\s+di|Demikian|Tembusan|Pada\s+tanggal|Kepala|Direktur|Sekretaris|Menteri|Bupati|Gubernur|Pejabat|MEMPERHATIKAN|MENGINGAT)\b)|$)',
+        text,
+        re.IGNORECASE
+    )
+    if not m_block:
+        return None
+
+    target_block = m_block.group(1)
+
+    sub_patterns = [
+        # Sub-item line with bullet/number/dash/colon, e.g.:
+        # "2. Kota / Tempat Tujuan : Semarang", "b. Tujuan Perjalanan Dinas : Palu", "- Tempat Tujuan : Denpasar"
+        r'(?:^|\n)\s*(?:(?:\d+|[a-zA-Z])[\.\)]|[-–—*•])?\s*(?:(?:Tempat|Kota|Daerah|Kabupaten|Lokasi)[\s\/\&]*(?:Tempat|Kota|Daerah|Kabupaten|Lokasi)?[\s\/\&]*)*Tujuan[^\n\r:\-\|\.]*[:\-\|\.]\s*([^\n\r]+)',
+        # Sub-item line without colon, e.g. "2. Tujuan Kota Semarang", "b. Tempat Tujuan Surabaya"
+        r'(?:^|\n)\s*(?:(?:\d+|[a-zA-Z])[\.\)]|[-–—*•])\s*(?:(?:Tempat|Kota|Daerah|Kabupaten|Lokasi)[\s\/\&]*)*Tujuan\s+(?:ke\s+|di\s+|menuju\s+)?(?:Kota\s+|Kabupaten\s+|Kab\.?\s+)?([A-Za-z\s]+?)(?=\s*(?:;|\n|$|\d+[\.\)]|[a-zA-Z][\.\)]))',
+        # Sentence mentioning "tujuan ... ke/di/menuju [Kota]" inside UNTUK block
+        r'\btujuan\b[^\n\r]*?\b(?:ke|menuju|di)\s+(?:Kota\s+|Kabupaten\s+)?([A-Za-z\s]{3,35}?)(?=\s+(?:dalam|pada|selama|untuk|guna|dari|tanggal|dengan|sebagaimana|[,\.\n;])|$)',
+        r'\bdengan\s+tujuan\s+(?:ke|menuju|di)?\s*(?:Kota\s+|Kabupaten\s+|Kab\.?\s+)?([A-Za-z\s]{3,35}?)(?=\s+(?:dalam|pada|selama|untuk|guna|dari|tanggal|dengan|sebagaimana|[,\.\n;])|$)'
+    ]
+
+    for pat in sub_patterns:
+        for m in re.finditer(pat, target_block, re.IGNORECASE):
+            val = m.group(1).strip()
+            # If val contains route separator like 'Makassar - Balikpapan' or 'dari X ke Y'
+            m_route = re.search(r'(?:ke|menuju|di|-)\s+(?:Kota\s+|Kabupaten\s+|Kab\.?\s+)?([A-Za-z\s]+)', val, re.IGNORECASE)
+            if m_route:
+                dest = m_route.group(1).strip()
+                for c in cities_list:
+                    if re.search(rf'\b{re.escape(c)}\b', dest, re.IGNORECASE):
+                        return c
+            for c in cities_list:
+                if re.search(rf'\b{re.escape(c)}\b', val, re.IGNORECASE):
+                    return c
+            m_city = re.search(r'\b(?:Kota|Kabupaten|Kab\.?)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b', val)
+            if m_city:
+                cand = m_city.group(1).strip()
+                if cand.lower() not in ['pu', 'pupr', 'bpsdm', 'tujuan', 'tempat', 'pelaksanaan', 'tugas']:
+                    return cand
+            clean = re.sub(r'^(?:ke|di|menuju|kota|kabupaten|kab\.?)\s+', '', val, flags=re.IGNORECASE).strip(' ;.,-')
+            if clean and len(clean.split()) <= 2 and len(clean) > 2:
+                if clean.lower() not in ['tujuan', 'dinas', 'tempat', 'surat', 'tugas', 'bimtek', 'pelaksanaan', 'maksud']:
+                    return clean.title()
+
+    return None
+
+def extract_city_from_tujuan(text, cities_list=None):
+    if not text:
+        return None
+
+    if cities_list is None:
+        cities_list = [
+            'Yogyakarta', 'Jakarta', 'Surabaya', 'Bandung', 'Makassar', 'Semarang',
+            'Denpasar', 'Bali', 'Palu', 'Kendari', 'Manado', 'Gorontalo', 'Mamuju',
+            'Bone', 'Gowa', 'Maros', 'Takalar', 'Bantaeng', 'Bulukumba', 'Sinjai',
+            'Parepare', 'Palopo', 'Toraja', 'Tana Toraja', 'Toraja Utara', 'Luwu',
+            'Luwu Timur', 'Luwu Utara', 'Wajo', 'Soppeng', 'Sidrap', 'Pinrang',
+            'Enrekang', 'Jeneponto', 'Selayar', 'Pangkep', 'Barru', 'Majene',
+            'Polewali Mandar', 'Mamasa', 'Pasangkayu', 'Balikpapan', 'Samarinda',
+            'Banjarmasin', 'Pontianak', 'Medan', 'Palembang', 'Padang', 'Pekanbaru',
+            'Batam', 'Sorong', 'Jayapura', 'Ambon', 'Mataram', 'Kupang', 'Bogor',
+            'Depok', 'Tangerang', 'Bekasi', 'Malang', 'Solo', 'Surakarta', 'Cirebon',
+            'Serang', 'Cilegon', 'Palangkaraya', 'Tanjung Selor', 'Buleleng', 'Banda Aceh',
+            'Aceh', 'Jambi', 'Bengkulu', 'Lampung', 'Bandar Lampung', 'Pangkal Pinang',
+            'Tanjung Pinang', 'Labuan Bajo', 'Lombok', 'Bima', 'Sumbawa',
+            'Ende', 'Maumere', 'Baubau', 'Ternate', 'Tidore', 'Manokwari', 'Merauke',
+            'Banggai', 'Poso', 'Tolitoli', 'Buol', 'Morowali', 'Konawe', 'Kolaka'
+        ]
+
+    clean_text = re.sub(r'\s*\|\s*', ' ', text)
+
+    # 1. Explicit field matching: "Tujuan : ...", "Kota Tujuan : ...", "Tempat Tujuan : ...", "Daerah Tujuan : ..."
+    tujuan_field_regex = r'(?:^|\n)\s*(?:(?:\d+|[a-zA-Z])[\.\)]|[-–—*•])?\s*(?:(?:Tempat|Kota|Daerah|Kabupaten|Lokasi)[\s\/\&]*(?:Tempat|Kota|Daerah|Kabupaten|Lokasi)?[\s\/\&]*)*Tujuan[^\n\r:\-\|\.]*[:\-\|\.]\s*([^\n\r]+)'
+    for m in re.finditer(tujuan_field_regex, clean_text, re.IGNORECASE):
+        tujuan_val = m.group(1).strip()
+        # If val contains 'dari X ke Y' or 'X - Y' or 'menuju Y' or 'ke Y', prefer destination part
+        m_dest = re.search(r'(?:ke|menuju|di|-)\s+(?:Kota\s+|Kabupaten\s+|Kab\.?\s+)?([A-Za-z\s]+)', tujuan_val, re.IGNORECASE)
+        if m_dest:
+            dest_part = m_dest.group(1)
+            for c in cities_list:
+                if re.search(rf'\b{re.escape(c)}\b', dest_part, re.IGNORECASE):
+                    return c
+        # Look for known city in this extracted line
+        for c in cities_list:
+            if re.search(rf'\b{re.escape(c)}\b', tujuan_val, re.IGNORECASE):
+                return c
+        # If no known city in dictionary, try to capture "Kota X" or "Kabupaten X"
+        m_city = re.search(r'\b(?:Kota|Kabupaten|Kab\.?)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b', tujuan_val)
+        if m_city:
+            cand = m_city.group(1).strip()
+            if cand.lower() not in ['pu', 'pupr', 'bpsdm', 'tujuan', 'tempat']:
+                return cand
+        # Extract direct clean word
+        clean_first = re.split(r'[,;]|\s+selama|\s+pada\s+tanggal|\s+dari\b|\s+dalam\s+rangka', tujuan_val, flags=re.IGNORECASE)[0].strip()
+        clean_first = re.sub(r'^(?:ke|di|menuju)\s+', '', clean_first, flags=re.IGNORECASE).strip()
+        if clean_first and len(clean_first.split()) <= 3 and len(clean_first) > 3:
+            if not any(w in clean_first.lower() for w in ['laporan', 'perjalanan', 'dinas', 'surat', 'tugas', 'dalam rangka']):
+                return clean_first.title()
+
+    # 2. Look for sentence mentioning "tujuan ... ke/di [Kota]"
+    sent_patterns = [
+        r'\btujuan\b[^\n\r]*?\b(?:ke|menuju|di)\s+(?:Kota\s+|Kabupaten\s+|Kab\.?\s+)?([A-Za-z\s]{3,40}?)(?=\s+(?:dalam|pada|selama|untuk|guna|dari|tanggal|dengan|sebagaimana|[,\.\n;])|$)',
+        r'\b(?:dengan\s+)?tujuan\s+(?:perjalanan\s+dinas\s+)?(?:ke|menuju|di)?\s*(?:Kota\s+|Kabupaten\s+|Kab\.?\s+)?([A-Za-z\s]{3,40}?)(?=\s+(?:dalam|pada|selama|untuk|guna|dari|tanggal|dengan|sebagaimana|[,\.\n;])|$)'
+    ]
+    for sp in sent_patterns:
+        m_sent = re.search(sp, clean_text, re.IGNORECASE)
+        if m_sent:
+            cand_str = m_sent.group(1).strip()
+            for c in cities_list:
+                if re.search(rf'\b{re.escape(c)}\b', cand_str, re.IGNORECASE):
+                    return c
+            words = [w for w in cand_str.split() if w.lower() not in ['kota', 'kabupaten', 'kab', 'provinsi', 'ke', 'di', 'menuju']]
+            if words and len(words) <= 2:
+                cand = ' '.join(words)
+                if cand.lower() not in ['tempat', 'lokasi', 'kantor', 'luar', 'tugas', 'dinas']:
+                    return cand.title()
+
+    # 3. Check table rows e.g. "Tempat Tujuan Kota Semarang" without colon
+    table_regex = r'\b(?:Tempat|Kota|Daerah)\s+Tujuan\s+([A-Za-z\s]+?)(?:\s{2,}|\n|$)'
+    m_tbl = re.search(table_regex, text, re.IGNORECASE)
+    if m_tbl:
+        tbl_val = m_tbl.group(1).strip()
+        for c in cities_list:
+            if re.search(rf'\b{re.escape(c)}\b', tbl_val, re.IGNORECASE):
+                return c
+
+    return None
+
 def parse_kota(text, filename=''):
     if not text:
         text = ''
@@ -328,15 +576,31 @@ def parse_kota(text, filename=''):
         'Yogyakarta', 'Jakarta', 'Surabaya', 'Bandung', 'Makassar', 'Semarang',
         'Denpasar', 'Bali', 'Palu', 'Kendari', 'Manado', 'Gorontalo', 'Mamuju',
         'Bone', 'Gowa', 'Maros', 'Takalar', 'Bantaeng', 'Bulukumba', 'Sinjai',
-        'Parepare', 'Palopo', 'Toraja', 'Luwu', 'Wajo', 'Soppeng', 'Sidrap',
-        'Pinrang', 'Enrekang', 'Balikpapan', 'Samarinda', 'Banjarmasin', 'Pontianak',
-        'Medan', 'Palembang', 'Padang', 'Pekanbaru', 'Batam', 'Sorong', 'Jayapura',
-        'Ambon', 'Mataram', 'Kupang', 'Bogor', 'Depok', 'Tangerang', 'Bekasi',
-        'Malang', 'Solo', 'Surakarta', 'Cirebon', 'Serang', 'Cilegon', 'Palangkaraya',
-        'Tanjung Selor', 'Buleleng'
+        'Parepare', 'Palopo', 'Toraja', 'Tana Toraja', 'Toraja Utara', 'Luwu',
+        'Luwu Timur', 'Luwu Utara', 'Wajo', 'Soppeng', 'Sidrap', 'Pinrang',
+        'Enrekang', 'Jeneponto', 'Selayar', 'Pangkep', 'Barru', 'Majene',
+        'Polewali Mandar', 'Mamasa', 'Pasangkayu', 'Balikpapan', 'Samarinda',
+        'Banjarmasin', 'Pontianak', 'Medan', 'Palembang', 'Padang', 'Pekanbaru',
+        'Batam', 'Sorong', 'Jayapura', 'Ambon', 'Mataram', 'Kupang', 'Bogor',
+        'Depok', 'Tangerang', 'Bekasi', 'Malang', 'Solo', 'Surakarta', 'Cirebon',
+        'Serang', 'Cilegon', 'Palangkaraya', 'Tanjung Selor', 'Buleleng', 'Banda Aceh',
+        'Aceh', 'Jambi', 'Bengkulu', 'Lampung', 'Bandar Lampung', 'Pangkal Pinang',
+        'Tanjung Pinang', 'Labuan Bajo', 'Lombok', 'Bima', 'Sumbawa',
+        'Ende', 'Maumere', 'Baubau', 'Ternate', 'Tidore', 'Manokwari', 'Merauke',
+        'Banggai', 'Poso', 'Tolitoli', 'Buol', 'Morowali', 'Konawe', 'Kolaka'
     ]
 
-    # 1. Primary Strategy: Check filename for explicit city hints (e.g. SBY, Surabaya, Bandung, Yogyakarta, Bali)
+    # 1. Primary Strategy: Check explicit "tujuan" sub-menu/sub-item inside "UNTUK" section
+    untuk_city = extract_city_from_untuk_section(text, indonesian_cities)
+    if untuk_city:
+        return untuk_city
+
+    # 2. Secondary Strategy: Check explicit "tujuan" section or sentence in the letter
+    tujuan_city = extract_city_from_tujuan(text, indonesian_cities)
+    if tujuan_city:
+        return tujuan_city
+
+    # 2. Strategy: Check filename for explicit city hints (e.g. SBY, Surabaya, Bandung, Yogyakarta, Bali)
     if 'Kolokium' in filename:
         return 'Jakarta'
     if 'acara SKP' in filename:
@@ -346,7 +610,7 @@ def parse_kota(text, filename=''):
         if re.search(rf'\b{c}\b', filename, re.IGNORECASE):
             return 'Surabaya' if c.upper() == 'SBY' else c
 
-    # 2. Check Waktu / Tempat section on page 1 for physical venue + city
+    # 3. Check Waktu / Tempat section on page 1 for physical venue + city
     m_waktu_tempat = re.search(r'\bWaktu\b[\s\S]{1,200}?\bTempat\b\s*[:\|\-\.]?\s*([^\n\r]+(?:\n[ \t]*[^\n\r]+){0,3})', clean_text, re.IGNORECASE)
     if m_waktu_tempat:
         tempat_under_waktu = m_waktu_tempat.group(1)
@@ -356,7 +620,7 @@ def parse_kota(text, filename=''):
         if re.search(r'\bBali\b', tempat_under_waktu, re.IGNORECASE):
             return 'Bali'
 
-    # 3. General Tempat / Lokasi section search
+    # 4. General Tempat / Lokasi section search
     m_venue = re.search(r'(?:Tempat|Lokasi|bertempat di|di Hotel|di Balai|di Aula|di Ruang)\s*[:\|\-\.]?\s*([^\n\r]+(?:\n[ \t]*[^\n\r]+){0,4})', clean_text, re.IGNORECASE)
     venue_text = m_venue.group(1) if m_venue else ''
 
@@ -391,6 +655,54 @@ def parse_kota(text, filename=''):
 
     return None
 
+def parse_untuk(text):
+    if not text:
+        return None
+
+    norm_text = normalize_ocr_text(text)
+
+    # Match "Untuk :" or "UNTUK :" or "Utk :" or "Diktum Untuk" followed by content
+    m_untuk = re.search(
+        r'(?:^|\n)\s*(?:Untuk|UNTUK|Utk|Diktum\s+Untuk)\s*[:\-\|\.]?\s*([^\n\r]+(?:\n[ \t]*[^\n\r]+)*)',
+        norm_text,
+        re.MULTILINE
+    )
+    if not m_untuk:
+        return None
+
+    raw_block = m_untuk.group(1).strip()
+    lines = [l.strip() for l in raw_block.split('\n') if l.strip()]
+    if not lines:
+        return None
+
+    stop_patterns = [
+        r'^(?:2|3|4|5|b|c|d)[\.\)]\s*',  # Subsequent numbered points
+        r'^(?:Melaporkan\s+hasil|Biaya\s+(?:yang|dibebankan)|Surat\s+tugas\s+ini|Ditetapkan\s+di|Demikian|Tembusan|Pada\s+tanggal)\b',
+        r'^(?:Kepala|Direktur|Sekretaris|Menteri|Bupati|Gubernur|Pejabat)\b'
+    ]
+
+    clean_parts = []
+    first_line = lines[0]
+
+    # Clean leading bullet/number like "1. " or "a. " or "-"
+    first_line_clean = re.sub(r'^(?:1|a)[\.\)]\s*|^[-–—*]\s*', '', first_line).strip()
+    if first_line_clean:
+        clean_parts.append(first_line_clean)
+
+    for line in lines[1:]:
+        if any(re.search(p, line, re.IGNORECASE) for p in stop_patterns):
+            break
+        cleaned = line.strip(' ;')
+        clean_parts.append(cleaned)
+
+    result = ' '.join(clean_parts).strip(' :–—,.;')
+    result = re.sub(r'\s+', ' ', result)
+    result = re.sub(r'[;\.]+$', '', result).strip()
+
+    if len(result) > 5 and not result.lower().startswith(('surat', 'nomor', 'lampiran')):
+        return result
+    return None
+
 def parse_hal(text):
     if not text:
         return None
@@ -423,8 +735,11 @@ def parse_hal(text):
         res = ' '.join(clean_lines).strip(' :–—,.')
         res = re.sub(r'\s+(?:Yang\s+terhormat|Yth|di\s+tempat|\(Daftar\s+nama\s+terlampir\)).*', '', res, flags=re.IGNORECASE)
         res = re.sub(r'\s+', ' ', res)
-        # "Undangan" alone is too generic — try to enrich from the next non-empty line
-        if res.lower() in ('undangan', 'surat undangan'):
+        # "Undangan" or "Surat Tugas" alone is too generic — try to enrich or check Untuk
+        if res.lower() in ('undangan', 'surat undangan', 'surat tugas', 'tugas'):
+            val_u = parse_untuk(text)
+            if val_u:
+                return val_u
             # Look for "kegiatan Rekonsiliasi Data..." pattern
             m_body = re.search(r'(?:kegiatan|acara|pelaksanaan)\s+((?:[A-Z][a-z]+\s*){2,})', text, re.IGNORECASE)
             if m_body:
@@ -518,6 +833,11 @@ def parse_hal(text):
             clean_l = l.split('|')[0].strip(' :–—,.')
             if len(clean_l) > 5 and len(clean_l) < 200:
                 return clean_l
+
+    # 6. Fallback: Check "Untuk :" section (common in Surat Tugas / Surat Perintah)
+    val_untuk = parse_untuk(text)
+    if val_untuk:
+        return val_untuk
 
     return None
 
@@ -1279,6 +1599,9 @@ def process_document(file_path):
     tanggal_surat_raw, tgl_mulai_raw, tgl_selesai_raw = process_dates(full_text, filename)
     kota = parse_kota(full_text, filename)
     hal = parse_hal(full_text)
+    untuk = parse_untuk(full_text)
+    if not hal and untuk:
+        hal = untuk
     lokasi = parse_lokasi_tempat(full_text, kota, filename)
     schedules = parse_schedule_items(full_text, default_date=tgl_mulai_raw, default_city=kota)
     pengirim = parse_pengirim_instansi(full_text)
@@ -1301,7 +1624,8 @@ def process_document(file_path):
     # Clean fallback outputs for missing fields when image/handwriting OCR fails
     nomor_surat_out = nomor_surat or ""
     tanggal_surat_out = tgl_surat_iso or ""
-    hal_perihal_out = hal or ""
+    hal_perihal_out = hal or untuk or ""
+    untuk_out = untuk or ""
     pengirim_instansi_out = pengirim if pengirim != "UNREADABLE_HANDWRITING" else ""
     tujuan_kota_out = kota or ""
     tempat_pelaksanaan_out = lokasi or ""
@@ -1335,7 +1659,8 @@ def process_document(file_path):
         "tgl_mulai_dinas": tgl_mulai_raw,
         "tgl_selesai_dinas": tgl_selesai_raw,
         "kota_tujuan": kota,
-        "hal": hal,
+        "hal": hal or untuk or "",
+        "untuk": untuk_out,
         "kegiatan_list": schedules,
         "ocr_confidence": round(ocr_confidence, 2)
     }

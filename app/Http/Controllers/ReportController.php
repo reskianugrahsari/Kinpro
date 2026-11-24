@@ -513,7 +513,7 @@ class ReportController extends Controller
 
             $extractedText = trim((string) ($parsed['text'] ?? ''));
             $isErrorMarker = $extractedText === '' || str_starts_with($extractedText, '[ERR_');
-            $hasExtractedData = ! empty($parsed['nomor_surat']) || ! empty($parsed['tanggal_surat']) || ! empty($parsed['tgl_mulai_dinas']) || ! empty($parsed['kota_tujuan']) || ! empty($parsed['kegiatan_list']);
+            $hasExtractedData = ! empty($parsed['nomor_surat']) || ! empty($parsed['tanggal_surat']) || ! empty($parsed['tgl_mulai_dinas']) || ! empty($parsed['kota_tujuan']) || ! empty($parsed['kegiatan_list']) || ! empty($parsed['hal']) || ! empty($parsed['untuk']);
             $ocrConfidence = $parsed['ocr_confidence'] ?? 1.0;
             $handwritingWarning = $ocrConfidence < 0.5;
             $isSuccess = $hasExtractedData || (! $isErrorMarker && strlen($extractedText) > 20);
@@ -524,14 +524,17 @@ class ReportController extends Controller
                     ? 'Teks surat berhasil dibaca via OCR.'
                     : 'Gagal mengekstraksi data. Berkas kurang jelas atau teks tidak terdeteksi.');
 
+            $perihal = $parsed['hal_perihal'] ?? $parsed['hal'] ?? $parsed['untuk'] ?? null;
+
             return response()->json([
                 'status' => $isSuccess ? 'success' : 'error',
                 'message' => $message,
                 'text' => $isErrorMarker ? null : $extractedText,
                 'nomor_surat' => $parsed['nomor_surat'] ?? null,
                 'tanggal_surat' => $parsed['tanggal_surat'] ?? null,
-                'hal_perihal' => $parsed['hal_perihal'] ?? $parsed['hal'] ?? null,
-                'hal' => $parsed['hal'] ?? $parsed['hal_perihal'] ?? null,
+                'hal_perihal' => $perihal,
+                'hal' => $perihal,
+                'untuk' => $parsed['untuk'] ?? null,
                 'pengirim_instansi' => $parsed['pengirim_instansi'] ?? null,
                 'tujuan_kota' => $parsed['tujuan_kota'] ?? $parsed['kota_tujuan'] ?? null,
                 'tempat_pelaksanaan' => $parsed['tempat_pelaksanaan'] ?? null,
@@ -542,7 +545,7 @@ class ReportController extends Controller
                 'poin_substansi_latar_belakang' => $parsed['poin_substansi_latar_belakang'] ?? [],
                 'tgl_mulai_dinas' => $parsed['tgl_mulai_dinas'] ?? null,
                 'tgl_selesai_dinas' => $parsed['tgl_selesai_dinas'] ?? null,
-                'kota_tujuan' => $parsed['kota_tujuan'] ?? null,
+                'kota_tujuan' => $parsed['kota_tujuan'] ?? $parsed['tujuan_kota'] ?? null,
                 'kegiatan_list' => $parsed['kegiatan_list'] ?? [],
                 'ocr_confidence' => $ocrConfidence,
                 'handwriting_warning' => $handwritingWarning,
