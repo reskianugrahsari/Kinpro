@@ -47,53 +47,52 @@ class DocxExportService
                 'alignment' => Jc::CENTER,
             ]);
         } else {
+            $puLogoPath = public_path('images/logo-pu.png');
+            $hasPuLogo = file_exists($puLogoPath) && @getimagesize($puLogoPath);
+
             $headerTable = $section->addTable([
-                'borderBottomSize' => 18,
-                'borderBottomColor' => '000000',
-                'cellMarginBottom' => 100,
+                'cellMarginBottom' => 60,
             ]);
             $headerTable->addRow();
-            $cellText = $headerTable->addCell(9500);
+
+            if ($hasPuLogo) {
+                $cellLogo = $headerTable->addCell(1400, [
+                    'valign' => 'center',
+                ]);
+                $cellLogo->addImage($puLogoPath, [
+                    'width' => 60,
+                    'height' => 60,
+                    'alignment' => Jc::LEFT,
+                ]);
+            }
+
+            $cellText = $headerTable->addCell($hasPuLogo ? 8100 : 9500, [
+                'valign' => 'center',
+                'borderBottomSize' => 18,
+                'borderBottomColor' => '000000',
+            ]);
+            $kopData = KopSurat::displayData($kop);
+
             $cellText->addText(
-                $this->sanitizeText(mb_strtoupper($kop->nama_kementerian ?? 'KEMENTERIAN PEKERJAAN UMUM')),
-                ['bold' => true, 'size' => 12],
-                ['alignment' => Jc::CENTER]
+                $this->sanitizeText(mb_strtoupper($kopData['kementerian'])),
+                ['bold' => true, 'size' => 19],
+                ['alignment' => Jc::CENTER, 'spaceAfter' => 0]
             );
             $cellText->addText(
-                $this->sanitizeText(mb_strtoupper($kop->nama_badan ?? 'BADAN PENGEMBANGAN SUMBER DAYA MANUSIA')),
-                ['bold' => true, 'size' => 11],
-                ['alignment' => Jc::CENTER]
+                $this->sanitizeText(mb_strtoupper($kopData['badan'])),
+                ['bold' => true, 'size' => 12.5],
+                ['alignment' => Jc::CENTER, 'spaceAfter' => 0]
             );
             $cellText->addText(
-                $this->sanitizeText(mb_strtoupper($kop->nama_unit_kerja ?? 'BALAI PENGEMBANGAN KOMPETENSI PU WILAYAH VIII MAKASSAR')),
+                $this->sanitizeText(mb_strtoupper($kopData['unit_kerja'])),
                 ['bold' => true, 'size' => 10],
-                ['alignment' => Jc::CENTER]
+                ['alignment' => Jc::CENTER, 'spaceAfter' => 20]
             );
-
-            $addressLine = ($kop->alamat ?? 'Jalan Nuri No. 19 Makassar 90122');
-            if ($kop && $kop->telepon) {
-                $addressLine .= ' — Telepon ' . $kop->telepon;
-            }
             $cellText->addText(
-                $this->sanitizeText($addressLine),
-                ['size' => 8.5],
-                ['alignment' => Jc::CENTER]
+                $this->sanitizeText($kopData['address_line']),
+                ['size' => 8],
+                ['alignment' => Jc::CENTER, 'spaceAfter' => 40]
             );
-
-            if ($kop && ($kop->email || $kop->website)) {
-                $contactParts = [];
-                if ($kop->email) {
-                    $contactParts[] = 'Email: ' . $kop->email;
-                }
-                if ($kop->website) {
-                    $contactParts[] = 'Website: ' . $kop->website;
-                }
-                $cellText->addText(
-                    $this->sanitizeText(implode(' | ', $contactParts)),
-                    ['size' => 8.5],
-                    ['alignment' => Jc::CENTER]
-                );
-            }
         }
 
         $section->addTextBreak(1);
@@ -107,7 +106,7 @@ class DocxExportService
         $section->addTextBreak(1);
 
         // Metadata Surat
-        $pelaksanaList = $report->daftar_pelaksana ?? [];
+        $pelaksanaList = $report->resolvedPelaksanaList();
         $tanggalSurat = $report->tanggal_surat_tugas;
         $tanggalSuratStr = $tanggalSurat ? ($tanggalSurat instanceof \Carbon\Carbon ? $tanggalSurat->translatedFormat('d F Y') : \Carbon\Carbon::parse($tanggalSurat)->translatedFormat('d F Y')) : '-';
         
@@ -131,11 +130,11 @@ class DocxExportService
         $metaTable->addCell(3800)->addText('Nama Pelaksana Perjalanan Dinas');
         $cellPelaksana = $metaTable->addCell(5800);
         if (count($pelaksanaList) === 1) {
-            $cellPelaksana->addText(': ' . $this->sanitizeText($pelaksanaList[0]['name'] ?? ''));
+            $cellPelaksana->addText(': ' . $this->sanitizeText($pelaksanaList[0]['name'] . ' (NIP. ' . $pelaksanaList[0]['nip'] . ')'));
         } else {
             foreach ($pelaksanaList as $idx => $p) {
                 $prefix = $idx === 0 ? ': ' : '  ';
-                $cellPelaksana->addText($prefix . ($idx + 1) . '. ' . $this->sanitizeText($p['name'] ?? ''));
+                $cellPelaksana->addText($prefix . ($idx + 1) . '. ' . $this->sanitizeText($p['name'] . ' (NIP. ' . $p['nip'] . ')'));
             }
         }
 
@@ -268,11 +267,11 @@ class DocxExportService
         $cellUser = $ttdTable->addCell(4550);
         $dateSppd = $report->tanggal_sppd ?? ($report->tgl_selesai_dinas ?? ($report->tanggal_kembali ?? now()));
         $sppdDateStr = $dateSppd instanceof \Carbon\Carbon ? $dateSppd->translatedFormat('d F Y') : \Carbon\Carbon::parse($dateSppd)->translatedFormat('d F Y');
-        $cellUser->addText($this->sanitizeText($kotaTujuan) . ', ' . $sppdDateStr, [], ['alignment' => Jc::CENTER]);
+        $cellUser->addText('Makassar, ' . $sppdDateStr, [], ['alignment' => Jc::CENTER]);
         $cellUser->addText('Pelaksana Dinas,', [], ['alignment' => Jc::CENTER]);
         $cellUser->addTextBreak(3);
-        $pelaksanaNama = $report->daftar_pelaksana[0]['name'] ?? ($report->user?->name ?? ($report->pegawai?->nama ?? 'Pelaksana'));
-        $pelaksanaNip = $report->daftar_pelaksana[0]['nip'] ?? ($report->user?->nip ?? ($report->pegawai?->nip ?? '-'));
+        $pelaksanaNama = $pelaksanaList[0]['name'] ?? ($report->user?->name ?? ($report->pegawai?->nama ?? 'Pelaksana'));
+        $pelaksanaNip = $pelaksanaList[0]['nip'] ?? ($report->user?->nip ?? ($report->pegawai?->nip ?? '-'));
         $cellUser->addText($this->sanitizeText($pelaksanaNama), ['bold' => true, 'underline' => 'single'], ['alignment' => Jc::CENTER]);
         $cellUser->addText('NIP. ' . $this->sanitizeText($pelaksanaNip), [], ['alignment' => Jc::CENTER]);
 

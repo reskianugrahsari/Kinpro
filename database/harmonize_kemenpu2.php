@@ -349,7 +349,7 @@ if (!Schema::hasTable('kop_surat')) {
         $table->increments('id');
         $table->string('nama_kementerian')->default('KEMENTERIAN PEKERJAAN UMUM');
         $table->string('nama_badan')->default('BADAN PENGEMBANGAN SUMBER DAYA MANUSIA');
-        $table->string('nama_unit_kerja')->default('BALAI PENGEMBANGAN KOMPETENSI PUPR WILAYAH VIII MAKASSAR');
+        $table->string('nama_unit_kerja')->default('BALAI PENGEMBANGAN KOMPETENSI PU WILAYAH VIII MAKASSAR');
         $table->string('alamat')->nullable();
         $table->string('telepon')->nullable();
         $table->string('email')->nullable();
@@ -361,10 +361,10 @@ if (!Schema::hasTable('kop_surat')) {
     DB::table('kop_surat')->insert([
         'nama_kementerian' => 'KEMENTERIAN PEKERJAAN UMUM',
         'nama_badan' => 'BADAN PENGEMBANGAN SUMBER DAYA MANUSIA',
-        'nama_unit_kerja' => 'BALAI PENGEMBANGAN KOMPETENSI PUPR WILAYAH VIII MAKASSAR',
-        'alamat' => 'Jl. Pengayoman No. 1, Panakkukang, Makassar 90231',
-        'telepon' => '(0411) 453123',
-        'email' => 'bapekom8@pu.go.id',
+        'nama_unit_kerja' => 'BALAI PENGEMBANGAN KOMPETENSI PU WILAYAH VIII MAKASSAR',
+        'alamat' => 'Jalan Nuri No.19-Maksassar 90122',
+        'telepon' => '0411-873749/854547',
+        'email' => 'bapekom8makassar@pu.go.id',
         'website' => 'https://bpsdm.pu.go.id',
         'created_at' => now(),
         'updated_at' => now(),

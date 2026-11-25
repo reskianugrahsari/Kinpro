@@ -112,4 +112,92 @@ class Report extends Model
         $total = $this->expenses()->sum($col);
         $this->update(['total_cost' => $total, 'total_biaya' => $total]);
     }
+
+    /**
+     * Resolve a valid NIP string for a pelaksana, falling back to linked User/Pegawai records.
+     */
+    public static function resolveNip(?string $nip, string $name, ?User $user = null, ?Pegawai $pegawai = null): string
+    {
+        $trimmed = trim((string) $nip);
+        if ($trimmed !== '' && $trimmed !== '-') {
+            return $trimmed;
+        }
+
+        if ($user) {
+            $userNip = $user->pegawai?->nip;
+            if (!empty($userNip) && trim($userNip) !== '-') {
+                return trim($userNip);
+            }
+        }
+
+        if ($pegawai && !empty($pegawai->nip) && trim($pegawai->nip) !== '-') {
+            return trim($pegawai->nip);
+        }
+
+        $cleanName = trim($name);
+        if ($cleanName !== '') {
+            $matchedUser = User::with('pegawai')->where('name', $cleanName)->first();
+            $matchedNip = $matchedUser?->pegawai?->nip;
+            if (!empty($matchedNip) && trim($matchedNip) !== '-') {
+                return trim($matchedNip);
+            }
+
+            $hasNama = \Illuminate\Support\Facades\Schema::hasColumn('pegawai', 'nama');
+            $hasNamaLengkap = \Illuminate\Support\Facades\Schema::hasColumn('pegawai', 'nama_lengkap');
+            if ($hasNama || $hasNamaLengkap) {
+                $pegawaiQuery = Pegawai::query();
+                if ($hasNama) {
+                    $pegawaiQuery->where('nama', $cleanName);
+                }
+                if ($hasNamaLengkap) {
+                    $hasNama ? $pegawaiQuery->orWhere('nama_lengkap', $cleanName) : $pegawaiQuery->where('nama_lengkap', $cleanName);
+                }
+                $pegawaiNip = $pegawaiQuery->value('nip');
+                if (!empty($pegawaiNip) && trim((string) $pegawaiNip) !== '-') {
+                    return trim((string) $pegawaiNip);
+                }
+            }
+        }
+
+        return '-';
+    }
+
+    /**
+     * Return daftar_pelaksana entries with missing/placeholder NIPs resolved from User/Pegawai data.
+     */
+    public function resolvedPelaksanaList(): array
+    {
+        $list = is_array($this->daftar_pelaksana) ? $this->daftar_pelaksana : [];
+
+        if (empty($list)) {
+            $fallbackName = $this->user?->name ?? ($this->pegawai?->nama ?? '-');
+            $fallbackNip = self::resolveNip(null, $fallbackName, $this->user, $this->pegawai);
+            return [['name' => $fallbackName, 'nip' => $fallbackNip]];
+        }
+
+        $missingNames = collect($list)
+            ->filter(fn($p) => in_array(trim((string) ($p['nip'] ?? '')), ['', '-'], true))
+            ->pluck('name')
+            ->filter()
+            ->unique()
+            ->values();
+
+        $usersByName = $missingNames->isNotEmpty()
+            ? User::with('pegawai')->whereIn('name', $missingNames)->get()->keyBy('name')
+            : collect();
+
+        return array_map(function ($p) use ($usersByName) {
+            $name = (string) ($p['name'] ?? '-');
+            $userHint = $usersByName->get($name);
+            if (!$userHint && $this->user && $this->user->name === $name) {
+                $userHint = $this->user;
+            }
+            $pegawaiHint = ($this->pegawai && $this->pegawai->nama === $name) ? $this->pegawai : null;
+
+            return [
+                'name' => $name,
+                'nip' => self::resolveNip($p['nip'] ?? null, $name, $userHint, $pegawaiHint),
+            ];
+        }, $list);
+    }
 }

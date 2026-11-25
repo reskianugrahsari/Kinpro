@@ -130,12 +130,13 @@ class ReportController extends Controller
         DB::beginTransaction();
         try {
             $pelaksanaIds = $request->pelaksana ?? [auth()->id()];
-            $pelaksanaData = User::whereIn('id', $pelaksanaIds)
-                ->get(['name', 'email'])
+            $pelaksanaData = User::with('pegawai')
+                ->whereIn('id', $pelaksanaIds)
+                ->get(['id', 'name', 'email'])
                 ->map(function ($u) {
                     return [
                         'name' => $u->name,
-                        'nip' => $u->nip ?? ($u->pegawai?->nip ?? '-'),
+                        'nip' => Report::resolveNip($u->pegawai?->nip, $u->name, $u),
                     ];
                 })
                 ->toArray();

@@ -40,6 +40,11 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
+    public function isVerifikator(): bool
+    {
+        return $this->role === 'verifikator';
+    }
+
     public function isPegawai(): bool
     {
         return $this->role !== 'admin';

@@ -135,7 +135,7 @@
             <div>
                 <h3 class="font-bold text-xs text-[#0F2747] dark:text-white uppercase tracking-wider mb-2 border-b border-slate-200 dark:border-slate-700 pb-1">Pelaksana Perjalanan Dinas</h3>
                 <ol class="list-decimal list-inside text-xs space-y-1 text-slate-800 dark:text-slate-300">
-                    @foreach ($report->daftar_pelaksana as $p)
+                    @foreach ($report->resolvedPelaksanaList() as $p)
                         <li>
                             <span class="font-bold">{{ $p['name'] }}</span>
                             <span class="text-slate-500 dark:text-slate-400">(NIP. {{ $p['nip'] }})</span>

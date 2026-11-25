@@ -148,7 +148,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_kementerian')->default('KEMENTERIAN PEKERJAAN UMUM');
             $table->string('nama_badan')->default('BADAN PENGEMBANGAN SUMBER DAYA MANUSIA');
-            $table->string('nama_unit_kerja')->default('BALAI PENGEMBANGAN KOMPETENSI PUPR WILAYAH VIII MAKASSAR');
+            $table->string('nama_unit_kerja')->default('BALAI PENGEMBANGAN KOMPETENSI PU WILAYAH VIII MAKASSAR');
             $table->string('alamat')->nullable();
             $table->string('telepon')->nullable();
             $table->string('email')->nullable();

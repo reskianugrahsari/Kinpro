@@ -85,12 +85,12 @@
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4 text-[#1769AA] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             <div>
-                                <p class="font-extrabold text-xs text-[#0F2747] dark:text-white">Unggah Berkas Surat Undangan</p>
+                                <p class="font-extrabold text-xs text-[#0F2747] dark:text-white">Unggah Berkas Surat Tugas (SPT)</p>
                             </div>
                         </div>
                         <label class="px-3 py-1.5 bg-[#1769AA] hover:bg-[#0F2747] text-white rounded-xl text-[11px] font-bold transition cursor-pointer shrink-0 flex items-center gap-1.5 shadow-sm">
-                            <span x-text="isNomorSuratScanning ? 'Membaca...' : 'Unggah Surat'"></span>
-                            <input type="file" accept="application/pdf,image/*" class="hidden" :disabled="isNomorSuratScanning" @change="triggerOcrScan($event, (text, data) => applyOcrData(data), () => isNomorSuratScanning = true, () => isNomorSuratScanning = false)">
+                            <span x-text="isNomorSuratScanning ? 'Membaca SPT...' : 'Unggah SPT'"></span>
+                            <input type="file" accept="application/pdf,image/*" class="hidden" :disabled="isNomorSuratScanning" @change="triggerOcrScan($event, (text, data) => applyOcrData(data), () => isNomorSuratScanning = true, () => isNomorSuratScanning = false, 'spt')">
                         </label>
                     </div>
 
@@ -99,20 +99,20 @@
                         <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
                             <h4 class="font-bold text-xs text-[#0F2747] dark:text-sky-300 flex items-center gap-1.5">
                                 <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <span>Hasil Ekstraksi OCR Surat</span>
+                                <span>Hasil Ekstraksi OCR Surat Tugas (SPT)</span>
                             </h4>
-                            <span class="text-[10px] px-2 py-0.5 rounded-md font-semibold transition-all" :class="nomorSuratTugas ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400'" x-text="nomorSuratTugas ? 'Terbaca dari Scan Surat' : 'Belum Unggah Surat'"></span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-md font-semibold transition-all" :class="nomorSuratTugas ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400'" x-text="nomorSuratTugas ? 'Terbaca dari Scan SPT' : 'Belum Unggah SPT'"></span>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-0.5">Nomor Surat Tugas</label>
-                                <input type="text" x-model="nomorSuratTugas" placeholder="Akan otomatis terisi dari scan surat..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
+                                <input type="text" x-model="nomorSuratTugas" placeholder="Akan otomatis terisi dari scan SPT..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
                             </div>
 
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-0.5">Tanggal Surat Tugas</label>
-                                <input type="text" x-model="tanggalSuratTugas" placeholder="Akan otomatis terisi dari scan surat..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
+                                <input type="text" x-model="tanggalSuratTugas" placeholder="Akan otomatis terisi dari scan SPT..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
                             </div>
 
                             <div>
@@ -126,12 +126,12 @@
 
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-0.5">Kota Tujuan Perjalanan</label>
-                                <input type="text" x-model="kotaTujuan" placeholder="Akan otomatis terisi dari scan surat..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
+                                <input type="text" x-model="kotaTujuan" placeholder="Akan otomatis terisi dari scan SPT..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
                             </div>
 
                             <div class="md:col-span-2">
                                 <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-300 mb-0.5">Hal / Perihal Perjalanan Dinas <span class="text-red-500">*</span></label>
-                                <input type="text" name="isi_pointer" x-model="isiPointer" placeholder="Akan otomatis terisi dari scan surat bagian Hal atau Untuk (cth: Penyusunan Peta Proses Bisnis BPSDM Kementerian PU)..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
+                                <input type="text" name="isi_pointer" x-model="isiPointer" placeholder="Akan otomatis terisi dari scan SPT bagian Hal atau Untuk (cth: Penyusunan Peta Proses Bisnis BPSDM Kementerian PU)..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs focus:border-[#1769AA]">
                             </div>
                         </div>
                     </div>
@@ -183,9 +183,17 @@
                     </div>
                 </div>
 
-                <!-- Prominent File Upload Dropzone for Step 2 Agenda File -->
+                <!-- Step 2 OCR Message Banner -->
+                <template x-if="scheduleOcrMessage">
+                    <div :class="scheduleOcrStatus === 'success' ? 'bg-emerald-100 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200' : scheduleOcrStatus === 'warning' ? 'bg-amber-100 dark:bg-amber-950/80 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200' : 'bg-rose-100 dark:bg-rose-950/80 border-rose-300 dark:border-rose-800 text-rose-900 dark:text-rose-200'" class="p-2.5 rounded-xl border text-[11px] font-bold flex items-center justify-between transition-all">
+                        <span x-text="scheduleOcrMessage"></span>
+                        <button type="button" @click="scheduleOcrMessage = ''" class="font-bold text-sm opacity-75 hover:opacity-100">&times;</button>
+                    </div>
+                </template>
+
+                <!-- Prominent File Upload Dropzone for Step 2 SPPD File -->
                 <div class="border-2 border-dashed border-[#1769AA]/40 dark:border-blue-500/40 rounded-2xl p-5 bg-blue-50/40 dark:bg-blue-950/20 text-center relative hover:border-[#1769AA] transition cursor-pointer group">
-                    <input type="file" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" :disabled="isScheduleScanning" @change="triggerOcrScan($event, (text, data) => applyScheduleOcrData(data), () => isScheduleScanning = true, () => isScheduleScanning = false)">
+                    <input type="file" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" :disabled="isScheduleScanning" @change="triggerOcrScan($event, (text, data) => applyScheduleOcrData(data), () => isScheduleScanning = true, () => isScheduleScanning = false, 'schedule')">
                     <div class="flex flex-col items-center justify-center space-y-2 pointer-events-none">
                         <div class="w-10 h-10 rounded-full bg-[#1769AA]/10 dark:bg-blue-400/10 flex items-center justify-center text-[#1769AA] dark:text-blue-400 group-hover:scale-110 transition-transform">
                             <template x-if="!isScheduleScanning">
@@ -196,8 +204,8 @@
                             </template>
                         </div>
                         <div>
-                            <span class="font-bold text-xs text-[#0F2747] dark:text-white" x-text="isScheduleScanning ? 'Mengekstrak Agenda & Membaca Tabel...' : 'Klik atau Seret Berkas Agenda/Jadwal Kegiatan Di Sini'"></span>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Unggah foto/PDF jadwal kegiatan (seperti tabel di atas). Hasil Tanggal, Lokasi, dan Uraian Kegiatan akan muncul otomatis di tabel bawah.</p>
+                            <span class="font-bold text-xs text-[#0F2747] dark:text-white" x-text="isScheduleScanning ? 'Membaca SPPD & Mengekstrak Kegiatan...' : 'Klik atau Seret Berkas SPPD Di Sini'"></span>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Unggah foto/PDF berkas SPPD. Hasil Tanggal, Lokasi, dan Uraian Kegiatan akan muncul otomatis di tabel bawah.</p>
                         </div>
                     </div>
                 </div>
@@ -206,7 +214,7 @@
                 <template x-if="schedules.length === 0">
                     <div class="p-6 text-center border border-slate-200 dark:border-slate-700/60 rounded-xl bg-slate-50/50 dark:bg-[#0B1727]/50 text-slate-500 dark:text-slate-400 text-xs space-y-2">
                         <p class="font-semibold text-slate-700 dark:text-slate-300">Belum ada rincian kegiatan.</p>
-                        <p class="text-[11px]">Silakan unggah berkas agenda pada area di atas untuk membaca hasil Tanggal, Lokasi, dan Uraian Kegiatan secara otomatis, atau klik <strong class="text-[#1769AA] dark:text-blue-400">+ Tambah Manual</strong>.</p>
+                        <p class="text-[11px]">Silakan unggah berkas SPPD pada area di atas untuk membaca hasil Tanggal, Lokasi, dan Uraian Kegiatan secara otomatis, atau klik <strong class="text-[#1769AA] dark:text-blue-400">+ Tambah Manual</strong>.</p>
                     </div>
                 </template>
 
@@ -323,7 +331,18 @@
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
                                 <div class="md:col-span-2">
                                     <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Jenis / Uraian Biaya <span class="text-red-500">*</span></label>
-                                    <input type="text" :name="`expenses[${idx}][expense_type]`" x-model="exp.type" required placeholder="Misal: Tiket Pergi / Taksi Bandara / Uang Harian" class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs">
+                                    <div class="relative">
+                                        <select :name="`expenses[${idx}][expense_type]`" x-model="exp.type" required class="w-full rounded-xl border-slate-300 dark:border-slate-600 bg-white dark:bg-[#11223A] text-slate-900 dark:text-slate-100 text-xs pl-3 pr-8 py-2 appearance-none">
+                                            <option value="">-- Pilih Jenis / Uraian Biaya --</option>
+                                            <option value="Tiket Pesawat Utama Pergi">Tiket Pesawat Utama Pergi</option>
+                                            <option value="Tiket Pesawat Utama Pulang">Tiket Pesawat Utama Pulang</option>
+                                            <option value="Taksi Hotel → Bandara Tujuan">Taksi Hotel → Bandara Tujuan</option>
+                                            <option value="Taksi Bandara Asal → Rumah">Taksi Bandara Asal → Rumah</option>
+                                            <option value="Taksi Rumah → Bandara Asal">Taksi Rumah → Bandara Asal</option>
+                                            <option value="Taksi Bandara Tujuan → Hotel">Taksi Bandara Tujuan → Hotel</option>
+                                        </select>
+                                        <span class="material-symbols-outlined text-[16px] text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">expand_more</span>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Nominal (Rp) <span class="text-red-500">*</span></label>
@@ -665,6 +684,8 @@
                 isScheduleScanning: false,
                 ocrMessage: '',
                 ocrStatus: '',
+                scheduleOcrMessage: '',
+                scheduleOcrStatus: '',
                 init() {
                     this.$watch('tglSelesai', () => {
                         this.userEditedSppd = false;
@@ -680,46 +701,43 @@
                 applyScheduleOcrData(data) {
                     if (!data) return;
 
-                    const perihal = data.hal || data.untuk || data.hal_perihal;
-                    if (perihal && !this.isiPointer) {
-                        this.isiPointer = perihal;
-                    }
-
-                    if (!this.kotaTujuan) {
-                        const cityFromUntuk = this.extractKotaFromUntuk(data.text);
-                        const rawKota = cityFromUntuk || data.kota_tujuan || data.tujuan_kota;
-                        if (rawKota) {
-                            const blacklistWords = ['narasumber', 'peserta', 'panitia', 'pendamping', 'moderator', 'penguji', 'fasilitator', 'acara', 'kegiatan', 'workshop', 'bimtek', 'sosialisasi', 'rapat', 'koordinasi'];
-                            const words = rawKota.split(/\s+/).filter(w => !blacklistWords.includes(w.toLowerCase()));
-                            this.kotaTujuan = words.join(' ') || rawKota;
-                        }
-                    }
-
-                    if (!this.tglMulai || !this.tglSelesai) {
-                        const periodeFromUntuk = this.extractPeriodeFromUntuk(data.text);
-                        if (periodeFromUntuk) {
-                            if (!this.tglMulai) this.tglMulai = periodeFromUntuk.start;
-                            if (!this.tglSelesai) {
-                                this.tglSelesai = periodeFromUntuk.end;
-                                this.userEditedSppd = false;
-                            }
-                            this.$nextTick(() => this.updatePickerBounds());
-                        }
-                    }
-
-                    // 1. Ekstraksi otomatis dari Step 1 (Upload Berkas Utama Surat Tugas)
+                    // Ekstraksi khusus Step 2 (berkas SPPD) — terpisah dari Step 1 (SPT)
+                    let foundSchedule = false;
                     if (data.kegiatan_list && data.kegiatan_list.length > 0) {
                         this.schedules = data.kegiatan_list.map((s, idx) => ({
                             id: Date.now() + idx,
-                            tanggal: this.parseOcrDateToYmd(s.tanggal) || this.tglMulai || '',
-                            lokasi: s.lokasi_keterangan || data.tempat_pelaksanaan || this.kotaTujuan || 'Lokasi Kegiatan',
+                            tanggal: this.parseOcrDateToYmd(s.tanggal || data.tanggal_mulai_acara || data.tgl_mulai_dinas) || '',
+                            lokasi: s.lokasi_keterangan || data.tempat_pelaksanaan || data.kota_tujuan || data.tujuan_kota || 'Lokasi Kegiatan',
                             uraian: s.uraian_kegiatan || '',
                             isScanning: false
                         }));
+                        foundSchedule = true;
                     } else if (data.text && data.text.length > 10) {
                         // Fallback teks murni jika format tabel tidak terpisah
                         if (this.schedules.length === 0) this.addSchedule();
+                        if (!this.schedules[0].tanggal && (data.tanggal_mulai_acara || data.tgl_mulai_dinas)) {
+                            this.schedules[0].tanggal = this.parseOcrDateToYmd(data.tanggal_mulai_acara || data.tgl_mulai_dinas) || '';
+                        }
+                        if (!this.schedules[0].lokasi) {
+                            this.schedules[0].lokasi = data.tempat_pelaksanaan || data.kota_tujuan || data.tujuan_kota || '';
+                        }
                         this.schedules[0].uraian = data.text;
+                        foundSchedule = true;
+                    }
+
+                    if (foundSchedule) {
+                        if (data.handwriting_warning) {
+                            this.scheduleOcrStatus = 'warning';
+                            this.scheduleOcrMessage = 'Terdeteksi tulisan tangan pada SPPD — hasil OCR mungkin kurang akurat. Silakan periksa dan koreksi rincian kegiatan secara manual.';
+                        } else {
+                            this.scheduleOcrStatus = 'success';
+                            this.scheduleOcrMessage = data.kegiatan_list && data.kegiatan_list.length > 0
+                                ? 'Berhasil mengekstraksi rincian kegiatan dari SPPD via OCR!'
+                                : 'Teks SPPD berhasil dibaca via OCR. Silakan sesuaikan rincian kegiatan di bawah.';
+                        }
+                    } else {
+                        this.scheduleOcrStatus = 'error';
+                        this.scheduleOcrMessage = data.message || 'Berkas SPPD kurang jelas atau rincian kegiatan tidak terdeteksi. Silakan isi secara manual.';
                     }
 
                     this.$nextTick(() => {
@@ -952,26 +970,28 @@
                         }
                     }
 
-                    if (this.applyScheduleOcrData) {
-                        this.applyScheduleOcrData(data);
-                    }
-
                     if (foundAny || (data.text && data.text.length > 15)) {
                         this.ocrStatus = 'success';
                         if (data.handwriting_warning) {
                             this.ocrStatus = 'warning';
                             this.ocrMessage = 'Terdeteksi tulisan tangan — hasil OCR mungkin kurang akurat. Silakan periksa dan koreksi data di bawah secara manual.';
                         } else {
-                            this.ocrMessage = data.message || 'Berhasil mengekstraksi data surat undangan via OCR!';
+                            this.ocrMessage = data.message || 'Berhasil mengekstraksi data Surat Tugas (SPT) via OCR!';
                         }
                     } else {
                         this.ocrStatus = 'error';
-                        this.ocrMessage = data.message || 'Berkas kurang jelas atau teks tidak terdeteksi. Silakan periksa kembali.';
+                        this.ocrMessage = data.message || 'Berkas SPT kurang jelas atau teks tidak terdeteksi. Silakan periksa kembali.';
                     }
                 },
-                processOcrFile(file, onSuccess, onStart, onEnd) {
+                processOcrFile(file, onSuccess, onStart, onEnd, target = 'spt') {
                     if (!file) return;
                     if (onStart) onStart();
+
+                    const msgKey = target === 'schedule' ? 'scheduleOcrMessage' : 'ocrMessage';
+                    const statusKey = target === 'schedule' ? 'scheduleOcrStatus' : 'ocrStatus';
+                    const docLabel = target === 'schedule' ? 'SPPD' : 'Surat Tugas (SPT)';
+                    this[msgKey] = '';
+                    this[statusKey] = '';
 
                     const formData = new FormData();
                     formData.append('image', file);
@@ -1011,29 +1031,29 @@
                     .then(({ ok, data }) => {
                         if (data.status === 'success') {
                             if (onSuccess) onSuccess(data.text, data);
-                            if (!this.ocrMessage) {
-                                this.ocrStatus = data.handwriting_warning ? 'warning' : 'success';
-                                this.ocrMessage = data.message || 'Berhasil mengekstraksi berkas surat!';
+                            if (!this[msgKey]) {
+                                this[statusKey] = data.handwriting_warning ? 'warning' : 'success';
+                                this[msgKey] = data.message || `Berhasil mengekstraksi berkas ${docLabel}!`;
                             }
                         } else {
-                            this.ocrStatus = 'error';
-                            this.ocrMessage = (data.message || 'Gagal mengekstraksi berkas surat undangan.');
+                            this[statusKey] = 'error';
+                            this[msgKey] = (data.message || `Gagal mengekstraksi berkas ${docLabel}.`);
                         }
                     })
                     .catch(err => {
                         console.error('OCR Error:', err);
-                        this.ocrStatus = 'error';
-                        this.ocrMessage = 'Gagal terhubung ke server pemroses OCR: ' + (err.message || 'Koneksi terputus');
+                        this[statusKey] = 'error';
+                        this[msgKey] = 'Gagal terhubung ke server pemroses OCR: ' + (err.message || 'Koneksi terputus');
                     })
                     .finally(() => {
                         if (onEnd) onEnd();
                     });
                 },
 
-                triggerOcrScan(event, onSuccess, onStart, onEnd) {
+                triggerOcrScan(event, onSuccess, onStart, onEnd, target = 'spt') {
                     const file = event.target.files[0];
                     if (!file) return;
-                    this.processOcrFile(file, onSuccess, onStart, onEnd);
+                    this.processOcrFile(file, onSuccess, onStart, onEnd, target);
                     event.target.value = '';
                 },
                 sptUploaded: false,
@@ -1366,8 +1386,8 @@
                     ? @json(old('schedules', [])).map((s, idx) => ({ id: Date.now() + idx, tanggal: s.tanggal || '', lokasi: s.lokasi_keterangan || '', uraian: s.uraian_kegiatan || '', isScanning: false })) 
                     : [],
                 expenses: [
-                    { type: 'Tiket Pesawat Utama (Pergi / Pulang)', amount: 0, payment_method: 'kkp', description: '' },
-                    { type: 'Taksi / Transportasi Lokal Bandara', amount: 0, payment_method: 'cash', description: '' }
+                    { type: 'Tiket Pesawat Utama Pergi', amount: 0, payment_method: 'kkp', description: '' },
+                    { type: 'Taksi Rumah \u2192 Bandara Asal', amount: 0, payment_method: 'cash', description: '' }
                 ],
                 addSchedule() {
                     this.schedules.push({ id: Date.now() + Math.random(), tanggal: '', lokasi: '', uraian: '', isScanning: false });

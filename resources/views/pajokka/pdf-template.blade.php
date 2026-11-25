@@ -17,38 +17,50 @@
         .header-table {
             width: 100%;
             border-collapse: collapse;
-            border-bottom: 3px double #000;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
+            margin-bottom: 16px;
         }
         .header-table td {
             vertical-align: middle;
         }
+        .instansi-logo-cell {
+            width: 72pt;
+            text-align: left;
+            vertical-align: middle;
+            padding-right: 8pt;
+            padding-bottom: 3pt;
+        }
         .instansi-title {
             text-align: center;
+            border-bottom: 2.5px solid #000;
+            padding-bottom: 4pt;
         }
         .instansi-kementerian {
-            font-size: 13pt;
+            font-size: 19.5pt;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            line-height: 1.05;
+            letter-spacing: 0.2px;
         }
         .instansi-badan {
-            font-size: 12pt;
+            font-size: 12.8pt;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            line-height: 1.15;
+            margin-top: 2px;
+            letter-spacing: 0.1px;
         }
         .instansi-unit {
-            font-size: 11pt;
+            font-size: 10.2pt;
             font-weight: bold;
             text-transform: uppercase;
+            line-height: 1.15;
             margin-top: 2px;
             margin-bottom: 3px;
         }
         .instansi-address {
-            font-size: 8.5pt;
+            font-size: 8pt;
             font-weight: normal;
+            line-height: 1.2;
         }
         .title-doc {
             text-align: center;
@@ -154,6 +166,12 @@
 <body>
 
     <!-- Header / Kop Surat -->
+    @php
+        $puLogoPath = public_path('images/logo-pu.png');
+        $puLogoSrc = file_exists($puLogoPath)
+            ? 'data:image/png;base64,' . base64_encode(file_get_contents($puLogoPath))
+            : null;
+    @endphp
     @if ($kop && $kop->logo_path && file_exists(storage_path('app/public/' . $kop->logo_path)))
         <div style="width: 100%; text-align: center; margin-bottom: 15px;">
             <img src="{{ storage_path('app/public/' . $kop->logo_path) }}" style="width: 100%; max-height: 120px; object-fit: contain;">
@@ -161,22 +179,17 @@
     @else
         <table class="header-table">
             <tr>
+                @if ($puLogoSrc)
+                    <td class="instansi-logo-cell">
+                        <img src="{{ $puLogoSrc }}" style="width: 64pt; height: 64pt;">
+                    </td>
+                @endif
                 <td class="instansi-title">
-                    <div class="instansi-kementerian">{{ $kop->nama_kementerian ?? 'KEMENTERIAN PEKERJAAN UMUM' }}</div>
-                    <div class="instansi-badan">{{ $kop->nama_badan ?? 'BADAN PENGEMBANGAN SUMBER DAYA MANUSIA' }}</div>
-                    <div class="instansi-unit">{{ $kop->nama_unit_kerja ?? 'BALAI PENGEMBANGAN KOMPETENSI PU WILAYAH VIII MAKASSAR' }}</div>
-                    <div class="instansi-address">
-                        {{ $kop->alamat ?? 'Jalan Nuri No. 19 Makassar 90122' }}
-                        @if ($kop && $kop->telepon)
-                            — Telepon {{ $kop->telepon }}
-                        @endif
-                    </div>
-                    @if ($kop && ($kop->email || $kop->website))
-                        <div class="instansi-address">
-                            @if ($kop->email) Email: {{ $kop->email }} @endif
-                            @if ($kop->website) | Website: {{ $kop->website }} @endif
-                        </div>
-                    @endif
+                    @php $kopData = \App\Models\KopSurat::displayData($kop); @endphp
+                    <div class="instansi-kementerian">{{ $kopData['kementerian'] }}</div>
+                    <div class="instansi-badan">{{ $kopData['badan'] }}</div>
+                    <div class="instansi-unit">{{ $kopData['unit_kerja'] }}</div>
+                    <div class="instansi-address">{{ $kopData['address_line'] }}</div>
                 </td>
             </tr>
         </table>
@@ -189,7 +202,7 @@
 
     <!-- Metadata Surat -->
     @php
-        $pelaksanaList = $report->daftar_pelaksana ?? [];
+        $pelaksanaList = $report->resolvedPelaksanaList();
         $tanggalSuratStr = $report->tanggal_surat_tugas ? $report->tanggal_surat_tugas->translatedFormat('d F Y') : '-';
         $periodeStr = $report->tgl_mulai_dinas->translatedFormat('d') . ' s.d ' . $report->tgl_selesai_dinas->translatedFormat('d F Y');
     @endphp
@@ -220,10 +233,10 @@
             <td class="meta-sep">:</td>
             <td>
                 @if (count($pelaksanaList) === 1)
-                    {{ $pelaksanaList[0]['name'] }}
+                    {{ $pelaksanaList[0]['name'] }} (NIP. {{ $pelaksanaList[0]['nip'] }})
                 @else
                     @foreach ($pelaksanaList as $idx => $p)
-                        {{ $idx + 1 }}. {{ $p['name'] }}<br>
+                        {{ $idx + 1 }}. {{ $p['name'] }} (NIP. {{ $p['nip'] }})@if (!$loop->last)<br>@endif
                     @endforeach
                 @endif
             </td>
@@ -343,11 +356,11 @@
                 NIP. {{ $report->ppk->nip ?? '-' }}
             </td>
             <td style="text-align: center;">
-                {{ $report->kota_tujuan }}, {{ $report->tanggal_sppd ? $report->tanggal_sppd->translatedFormat('d F Y') : $report->tgl_selesai_dinas->translatedFormat('d F Y') }}<br>
+                Makassar, {{ $report->tanggal_sppd ? $report->tanggal_sppd->translatedFormat('d F Y') : $report->tgl_selesai_dinas->translatedFormat('d F Y') }}<br>
                 Pelaksana Dinas,
                 <br><br><br><br>
-                <strong><u>{{ $report->daftar_pelaksana[0]['name'] ?? $report->user->name }}</u></strong><br>
-                NIP. {{ $report->daftar_pelaksana[0]['nip'] ?? $report->user->nip }}
+                <strong><u>{{ $pelaksanaList[0]['name'] ?? $report->user->name }}</u></strong><br>
+                NIP. {{ $pelaksanaList[0]['nip'] ?? ($report->user->nip ?? '-') }}
             </td>
         </tr>
     </table>
