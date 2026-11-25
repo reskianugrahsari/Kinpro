@@ -130,11 +130,11 @@ class DocxExportService
         $metaTable->addCell(3800)->addText('Nama Pelaksana Perjalanan Dinas');
         $cellPelaksana = $metaTable->addCell(5800);
         if (count($pelaksanaList) === 1) {
-            $cellPelaksana->addText(': ' . $this->sanitizeText($pelaksanaList[0]['name'] . ' (NIP. ' . $pelaksanaList[0]['nip'] . ')'));
+            $cellPelaksana->addText(': ' . $this->sanitizeText($pelaksanaList[0]['name']));
         } else {
             foreach ($pelaksanaList as $idx => $p) {
                 $prefix = $idx === 0 ? ': ' : '  ';
-                $cellPelaksana->addText($prefix . ($idx + 1) . '. ' . $this->sanitizeText($p['name'] . ' (NIP. ' . $p['nip'] . ')'));
+                $cellPelaksana->addText($prefix . ($idx + 1) . '. ' . $this->sanitizeText($p['name']));
             }
         }
 
@@ -277,67 +277,31 @@ class DocxExportService
 
         // Lampiran Berkas & Dokumentasi Gambar
         $attachments = $report->attachments;
-        $docPhotos = $attachments->filter(fn($a) => $a->category === 'dokumentasi')->take(8);
-        $otherFiles = $attachments->filter(fn($a) => $a->category !== 'dokumentasi');
+        $docPhotos = $attachments->filter(fn($a) => $a->category === 'dokumentasi' && file_exists(storage_path('app/public/' . $a->file_path)))->take(8)->values();
+        $renderedOtherFiles = app(PdfAttachmentRenderer::class)->collectOtherAttachmentImages($attachments);
 
-        if ($otherFiles->count() > 0 || $docPhotos->count() > 0) {
+        if ($renderedOtherFiles->count() > 0 || $docPhotos->count() > 0) {
             $section->addPageBreak();
 
-            if ($otherFiles->count() > 0) {
+            if ($renderedOtherFiles->count() > 0) {
                 $section->addText($this->sanitizeText('LAMPIRAN BUKTI FISIK & STRUK PENGELUARAN'), ['bold' => true, 'size' => 12, 'underline' => 'single'], ['alignment' => Jc::CENTER]);
                 $section->addTextBreak(1);
 
-                $imgTable = $section->addTable();
-                $colCount = 0;
-                $row = null;
-
-                foreach ($otherFiles as $att) {
-                    $ext = strtolower(pathinfo($att->file_path, PATHINFO_EXTENSION));
-                    $fullPath = storage_path('app/public/' . $att->file_path);
-                    if (file_exists($fullPath) && in_array($ext, ['jpg', 'jpeg', 'png']) && @getimagesize($fullPath)) {
-                        if ($colCount % 2 === 0) {
-                            $row = $imgTable->addRow();
-                        }
-                        $cell = $row->addCell(4550);
-                        $dim = $this->getProportionalDimensions($fullPath, 210, 150);
-                        $cell->addImage($fullPath, [
-                            'width' => $dim['width'],
-                            'height' => $dim['height'],
-                            'alignment' => Jc::CENTER,
-                        ]);
-                        $cell->addText($this->sanitizeText($att->label), ['bold' => true, 'size' => 9], ['alignment' => Jc::CENTER]);
-                        $cell->addTextBreak(1);
-                        $colCount++;
-                    }
+                foreach ($renderedOtherFiles as $item) {
+                    $this->addAttachmentImageBlock($section, $item['path'], $item['label']);
                 }
             }
 
             if ($docPhotos->count() > 0) {
-                $section->addTextBreak(1);
+                if ($renderedOtherFiles->count() > 0) {
+                    $section->addPageBreak();
+                }
                 $section->addText($this->sanitizeText('LAMPIRAN DOKUMENTASI KEGIATAN (MAKS 8 FOTO)'), ['bold' => true, 'size' => 12, 'underline' => 'single'], ['alignment' => Jc::CENTER]);
                 $section->addTextBreak(1);
 
-                $imgTableDoc = $section->addTable();
-                $colCount = 0;
-                $row = null;
-
                 foreach ($docPhotos as $idx => $att) {
                     $fullPath = storage_path('app/public/' . $att->file_path);
-                    if (file_exists($fullPath) && @getimagesize($fullPath)) {
-                        if ($colCount % 2 === 0) {
-                            $row = $imgTableDoc->addRow();
-                        }
-                        $cell = $row->addCell(4550);
-                        $dim = $this->getProportionalDimensions($fullPath, 210, 150);
-                        $cell->addImage($fullPath, [
-                            'width' => $dim['width'],
-                            'height' => $dim['height'],
-                            'alignment' => Jc::CENTER,
-                        ]);
-                        $cell->addText('Dokumentasi Foto ' . ($idx + 1), ['bold' => true, 'size' => 9], ['alignment' => Jc::CENTER]);
-                        $cell->addTextBreak(1);
-                        $colCount++;
-                    }
+                    $this->addAttachmentImageBlock($section, $fullPath, 'Dokumentasi Foto ' . ($idx + 1));
                 }
             }
         }
@@ -360,6 +324,22 @@ class DocxExportService
             'Cache-Control' => 'max-age=0, no-store, no-cache, must-revalidate',
             'Pragma' => 'public',
         ])->deleteFileAfterSend(true);
+    }
+
+    private function addAttachmentImageBlock($section, string $fullPath, string $caption): void
+    {
+        if (! file_exists($fullPath) || ! @getimagesize($fullPath)) {
+            return;
+        }
+
+        $dim = $this->getProportionalDimensions($fullPath, 460, 520);
+        $section->addImage($fullPath, [
+            'width' => $dim['width'],
+            'height' => $dim['height'],
+            'alignment' => Jc::CENTER,
+        ]);
+        $section->addText($this->sanitizeText($caption), ['bold' => true, 'size' => 10], ['alignment' => Jc::CENTER]);
+        $section->addTextBreak(1);
     }
 
     private function addMetaRow($table, $label, $value, $bold = false): void

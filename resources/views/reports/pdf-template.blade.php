@@ -129,36 +129,30 @@
         .page-break {
             page-break-before: always;
         }
-        .img-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        .img-table td {
-            width: 50%;
-            vertical-align: top;
-            padding: 6px;
+        .img-item {
+            margin-top: 12px;
+            margin-bottom: 18px;
             text-align: center;
             page-break-inside: avoid;
         }
         .img-box {
             border: 1px solid #d1d5db;
-            padding: 6px;
+            padding: 8px;
             background-color: #f9fafb;
             text-align: center;
         }
         .img-box img {
             max-width: 100%;
-            max-height: 220px;
+            max-height: 540px;
             width: auto;
             height: auto;
             display: block;
             margin: 0 auto;
         }
         .img-caption {
-            font-size: 9pt;
+            font-size: 10pt;
             font-weight: bold;
-            margin-top: 6px;
+            margin-top: 8px;
             color: #111827;
         }
     </style>
@@ -233,10 +227,10 @@
             <td class="meta-sep">:</td>
             <td>
                 @if (count($pelaksanaList) === 1)
-                    {{ $pelaksanaList[0]['name'] }} (NIP. {{ $pelaksanaList[0]['nip'] }})
+                    {{ $pelaksanaList[0]['name'] }}
                 @else
                     @foreach ($pelaksanaList as $idx => $p)
-                        {{ $idx + 1 }}. {{ $p['name'] }} (NIP. {{ $p['nip'] }})@if (!$loop->last)<br>@endif
+                        {{ $idx + 1 }}. {{ $p['name'] }}@if (!$loop->last)<br>@endif
                     @endforeach
                 @endif
             </td>
@@ -368,70 +362,42 @@
     <!-- Lampiran Berkas & Dokumentasi Gambar (Halaman Baru) -->
     @php
         $attachments = $report->attachments;
-        $docPhotos = $attachments->filter(fn($a) => $a->category === 'dokumentasi')->take(8);
-        $otherFiles = $attachments->filter(fn($a) => $a->category !== 'dokumentasi');
+        $validDocs = $attachments->filter(fn($a) => $a->category === 'dokumentasi' && file_exists(storage_path('app/public/' . $a->file_path)))->take(8)->values();
+        $validFiles = $renderedOtherFiles ?? app(\App\Services\PdfAttachmentRenderer::class)->collectOtherAttachmentImages($attachments);
     @endphp
 
-    @if ($otherFiles->count() > 0 || $docPhotos->count() > 0)
+    @if ($validFiles->count() > 0 || $validDocs->count() > 0)
         <div class="page-break"></div>
 
-        @if ($otherFiles->count() > 0)
+        @if ($validFiles->count() > 0)
             <div class="title-doc">
                 LAMPIRAN BUKTI FISIK & STRUK PENGELUARAN
             </div>
-            <table class="img-table">
-                @php
-                    $validFiles = $otherFiles->filter(function($att) {
-                        return file_exists(storage_path('app/public/' . $att->file_path)) && 
-                               in_array(strtolower(pathinfo($att->file_path, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png']);
-                    })->values();
-                @endphp
-
-                @foreach ($validFiles->chunk(2) as $rowFiles)
-                    <tr>
-                        @foreach ($rowFiles as $att)
-                            <td>
-                                <div class="img-box">
-                                    <img src="{{ storage_path('app/public/' . $att->file_path) }}">
-                                    <div class="img-caption">{{ $att->label }}</div>
-                                </div>
-                            </td>
-                        @endforeach
-                        @if ($rowFiles->count() === 1)
-                            <td></td>
-                        @endif
-                    </tr>
-                @endforeach
-            </table>
+            @foreach ($validFiles as $item)
+                <div class="img-item">
+                    <div class="img-box">
+                        <img src="{{ $item['path'] }}">
+                        <div class="img-caption">{{ $item['label'] }}</div>
+                    </div>
+                </div>
+            @endforeach
         @endif
 
-        @if ($docPhotos->count() > 0)
-            <div class="title-doc" style="margin-top: 20px;">
+        @if ($validDocs->count() > 0)
+            @if ($validFiles->count() > 0)
+                <div class="page-break"></div>
+            @endif
+            <div class="title-doc">
                 LAMPIRAN DOKUMENTASI KEGIATAN (MAKS 8 FOTO)
             </div>
-            <table class="img-table">
-                @php
-                    $validDocs = $docPhotos->filter(function($att) {
-                        return file_exists(storage_path('app/public/' . $att->file_path));
-                    })->values();
-                @endphp
-
-                @foreach ($validDocs->chunk(2) as $rowDocs)
-                    <tr>
-                        @foreach ($rowDocs as $idx => $att)
-                            <td>
-                                <div class="img-box">
-                                    <img src="{{ storage_path('app/public/' . $att->file_path) }}">
-                                    <div class="img-caption">Dokumentasi Foto</div>
-                                </div>
-                            </td>
-                        @endforeach
-                        @if ($rowDocs->count() === 1)
-                            <td></td>
-                        @endif
-                    </tr>
-                @endforeach
-            </table>
+            @foreach ($validDocs as $idx => $att)
+                <div class="img-item">
+                    <div class="img-box">
+                        <img src="{{ storage_path('app/public/' . $att->file_path) }}">
+                        <div class="img-caption">Dokumentasi Foto {{ $idx + 1 }}</div>
+                    </div>
+                </div>
+            @endforeach
         @endif
     @endif
 

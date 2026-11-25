@@ -11,6 +11,7 @@ use App\Models\ReportRevision;
 use App\Models\ReportSchedule;
 use App\Models\User;
 use App\Services\DocxExportService;
+use App\Services\PdfAttachmentRenderer;
 use App\Services\PdfExportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -562,36 +563,6 @@ class ReportController extends Controller
 
     private function resolveOcrPythonBinary(): ?string
     {
-        $configured = env('OCR_PYTHON_PATH');
-        if ($configured && is_file($configured)) {
-            return $configured;
-        }
-
-        $candidates = [
-            base_path('.venv/Scripts/python.exe'),
-            base_path('.venv/bin/python'),
-            'C:\\Users\\Reski_Anugrah_Sari\\AppData\\Local\\Programs\\Python\\Python311\\python.exe',
-            'C:\\Python311\\python.exe',
-            'C:\\Python312\\python.exe',
-        ];
-
-        foreach ($candidates as $candidate) {
-            if (is_file($candidate)) {
-                return $candidate;
-            }
-        }
-
-        $whereCmd = PHP_OS_FAMILY === 'Windows' ? 'where python 2>nul' : 'which python3 python 2>/dev/null';
-        $found = trim((string) shell_exec($whereCmd));
-        if ($found !== '') {
-            foreach (preg_split('/\r\n|\r|\n/', $found) as $line) {
-                $path = trim($line);
-                if ($path !== '' && is_file($path) && ! str_contains($path, 'WindowsApps\\python.exe')) {
-                    return $path;
-                }
-            }
-        }
-
-        return null;
+        return PdfAttachmentRenderer::resolvePythonBinary();
     }
 }
