@@ -152,7 +152,7 @@ class PengajuanAbsenController extends Controller
         return back()->with('success', 'Status pengajuan absen berhasil diperbarui.');
     }
 
-    public function destroy(PengajuanAbsen $absen)
+    public function destroy(Request $request, PengajuanAbsen $absen)
     {
         $user = auth()->user();
         if ($user->role !== 'admin' && $absen->status !== 'pending') {
@@ -160,6 +160,11 @@ class PengajuanAbsenController extends Controller
         }
 
         $absen->delete();
+
+        if ($request->input('redirect_to') === 'absen-admin' || $user->role === 'admin') {
+            return redirect()->route('admin.absen.index')->with('success', 'Pengajuan absen berhasil dihapus.');
+        }
+
         return redirect()->route('absen.index')->with('success', 'Pengajuan absen berhasil dihapus.');
     }
 

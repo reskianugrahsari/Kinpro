@@ -450,10 +450,14 @@
                 <!-- Direct Operational Shortcuts -->
                 <div class="pt-3 border-t border-slate-100 dark:border-slate-700 space-y-2">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Tindakan Cepat Administrator:</span>
-                    <div class="grid grid-cols-2 gap-2.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                         <a href="{{ route('izin.index') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-brand-navy hover:bg-[#202C3B] text-white rounded-xl text-xs font-bold transition shadow-xs">
                             <span class="material-symbols-outlined text-[16px]">check_circle</span>
                             <span>Validasi Izin ({{ $pendingIzinCount ?? 0 }})</span>
+                        </a>
+                        <a href="{{ route('admin.pajokka.index') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition shadow-xs">
+                            <span class="material-symbols-outlined text-[16px]">flight_takeoff</span>
+                            <span>Kelola Pajokka ({{ $reviewDinasCount ?? 0 }})</span>
                         </a>
                         <a href="{{ route('penilaian.create') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-brand-white dark:bg-slate-700 border border-brand-sky dark:border-slate-600 text-brand-navy dark:text-slate-200 rounded-xl text-xs font-bold hover:bg-brand-beige dark:hover:bg-slate-600 transition">
                             <span class="material-symbols-outlined text-[16px]">edit_note</span>

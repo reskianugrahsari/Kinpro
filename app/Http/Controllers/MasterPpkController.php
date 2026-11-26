@@ -26,7 +26,11 @@ class MasterPpkController extends Controller
             'jabatan' => 'required|string|max:255',
         ]);
 
-        MasterPpk::create($request->all());
+        MasterPpk::create($request->only(['nama', 'nip', 'jabatan']));
+
+        if ($request->input('redirect_to') === 'pajokka-admin') {
+            return redirect()->route('admin.pajokka.index', ['tab' => 'master-ppk'])->with('success', 'Master PPK berhasil ditambahkan.');
+        }
 
         return redirect()->route('admin.master-ppk.index')->with('success', 'Master PPK berhasil ditambahkan.');
     }
@@ -44,14 +48,23 @@ class MasterPpkController extends Controller
             'jabatan' => 'required|string|max:255',
         ]);
 
-        $masterPpk->update($request->all());
+        $masterPpk->update($request->only(['nama', 'nip', 'jabatan']));
+
+        if ($request->input('redirect_to') === 'pajokka-admin') {
+            return redirect()->route('admin.pajokka.index', ['tab' => 'master-ppk'])->with('success', 'Master PPK berhasil diperbarui.');
+        }
 
         return redirect()->route('admin.master-ppk.index')->with('success', 'Master PPK berhasil diperbarui.');
     }
 
-    public function destroy(MasterPpk $masterPpk)
+    public function destroy(Request $request, MasterPpk $masterPpk)
     {
         $masterPpk->delete();
+
+        if ($request->input('redirect_to') === 'pajokka-admin') {
+            return redirect()->route('admin.pajokka.index', ['tab' => 'master-ppk'])->with('success', 'Master PPK berhasil dihapus.');
+        }
+
         return redirect()->route('admin.master-ppk.index')->with('success', 'Master PPK berhasil dihapus.');
     }
 }

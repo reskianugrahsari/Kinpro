@@ -227,33 +227,111 @@
                                         <span class="sidebar-text sidebar-badge bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ $badgeCounts['pengaduan'] }}</span>
                                     @endif
                                 </a>
-                                <a href="{{ route('absen.index') }}" title="Kelola Lupa Absen" class="sidebar-item group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('absen.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                            </div>
+                        </div>
+
+                        <!-- Lupa Absen (Don't Forget) -->
+                        @php
+                            $absenTab = request()->routeIs('admin.absen.*') ? request('tab', 'pengajuan') : null;
+                            $isAbsenPengajuanActive = ($absenTab === 'pengajuan') || request()->routeIs('absen.index') || request()->routeIs('absen.show');
+                            $isAbsenRekapActive = ($absenTab === 'rekap') || request()->routeIs('absen.rekap-bulanan');
+                            $isAbsenArsipActive = ($absenTab === 'arsip');
+                        @endphp
+                        <div>
+                            <div class="sidebar-category px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
+                                LUPA ABSEN (DON'T FORGET)
+                            </div>
+                            <div class="sidebar-divider hidden my-2 mx-auto w-6 border-t border-slate-800"></div>
+                            <div class="space-y-1">
+                                <a href="{{ route('admin.absen.index', ['tab' => 'pengajuan']) }}" title="Verifikasi & Pengajuan Lupa Absen" class="sidebar-item group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ $isAbsenPengajuanActive ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
                                     <span class="flex items-center space-x-3 min-w-0">
-                                        <div class="relative w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('absen.*') ? 'bg-white/20 text-white' : 'bg-sky-500/15 text-sky-300 group-hover:bg-sky-500/25 group-hover:text-white' }}">
+                                        <div class="relative w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ $isAbsenPengajuanActive ? 'bg-white/20 text-white' : 'bg-sky-500/15 text-sky-300 group-hover:bg-sky-500/25 group-hover:text-white' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                             @if(($badgeCounts['absen'] ?? 0) > 0)
                                                 <span class="sidebar-badge-dot hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-sky-400 rounded-full ring-2 ring-[#0A1931]"></span>
                                             @endif
                                         </div>
-                                        <span class="sidebar-text truncate">Kelola Lupa Absen</span>
+                                        <span class="sidebar-text truncate">Verifikasi Lupa Absen</span>
                                     </span>
                                     @if(($badgeCounts['absen'] ?? 0) > 0)
                                         <span class="sidebar-text sidebar-badge bg-sky-500/20 text-sky-300 border border-sky-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ $badgeCounts['absen'] }}</span>
                                     @endif
                                 </a>
-                                <a href="{{ route('pajokka.index') }}" title="Review Perjalanan Dinas" class="sidebar-item group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ request()->routeIs('pajokka.*') ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+
+                                <a href="{{ route('admin.absen.index', ['tab' => 'rekap']) }}" title="Rekap Bulanan Lupa Absen" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ $isAbsenRekapActive ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
                                     <span class="flex items-center space-x-3 min-w-0">
-                                        <div class="relative w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ request()->routeIs('pajokka.*') ? 'bg-white/20 text-white' : 'bg-teal-500/15 text-teal-300 group-hover:bg-teal-500/25 group-hover:text-white' }}">
+                                        <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ $isAbsenRekapActive ? 'bg-white/20 text-white' : 'bg-blue-500/15 text-blue-300 group-hover:bg-blue-500/25 group-hover:text-white' }}">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                                        </div>
+                                        <span class="sidebar-text truncate">Rekap Bulanan Absen</span>
+                                    </span>
+                                </a>
+
+                                <a href="{{ route('admin.absen.index', ['tab' => 'arsip']) }}" title="Arsip Surat Disetujui" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ $isAbsenArsipActive ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <span class="flex items-center space-x-3 min-w-0">
+                                        <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ $isAbsenArsipActive ? 'bg-white/20 text-white' : 'bg-emerald-500/15 text-emerald-300 group-hover:bg-emerald-500/25 group-hover:text-white' }}">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                        </div>
+                                        <span class="sidebar-text truncate">Arsip Surat Disetujui</span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Perjalanan Dinas (Pajokka) -->
+                        @php
+                            $pajokkaTab = request()->routeIs('admin.pajokka.*') ? request('tab', 'laporan') : null;
+                            $isPajokkaLaporanActive = ($pajokkaTab === 'laporan') || request()->routeIs('pajokka.*') || request()->routeIs('reports.*');
+                            $isPajokkaPpkActive = ($pajokkaTab === 'master-ppk') || request()->routeIs('admin.master-ppk.*');
+                            $isPajokkaKopActive = ($pajokkaTab === 'kop-surat');
+                            $isPajokkaRekapActive = ($pajokkaTab === 'rekap');
+                        @endphp
+                        <div>
+                            <div class="sidebar-category px-3 pb-2 text-[10px] uppercase tracking-wider text-sky-200/80 font-bold">
+                                PERJALANAN DINAS (PAJOKKA)
+                            </div>
+                            <div class="sidebar-divider hidden my-2 mx-auto w-6 border-t border-slate-800"></div>
+                            <div class="space-y-1">
+                                <a href="{{ route('admin.pajokka.index', ['tab' => 'laporan']) }}" title="Verifikasi & Laporan Dinas" class="sidebar-item group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all {{ $isPajokkaLaporanActive ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <span class="flex items-center space-x-3 min-w-0">
+                                        <div class="relative w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ $isPajokkaLaporanActive ? 'bg-white/20 text-white' : 'bg-teal-500/15 text-teal-300 group-hover:bg-teal-500/25 group-hover:text-white' }}">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                             @if(($badgeCounts['pajokka'] ?? 0) > 0)
                                                 <span class="sidebar-badge-dot hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-[#0A1931]"></span>
                                             @endif
                                         </div>
-                                        <span class="sidebar-text truncate">Review Perjalanan Dinas</span>
+                                        <span class="sidebar-text truncate">Verifikasi &amp; Laporan</span>
                                     </span>
                                     @if(($badgeCounts['pajokka'] ?? 0) > 0)
                                         <span class="sidebar-text sidebar-badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] px-2 py-0.5 rounded-full font-bold shadow-2xs">{{ $badgeCounts['pajokka'] }}</span>
                                     @endif
+                                </a>
+
+                                <a href="{{ route('admin.pajokka.index', ['tab' => 'master-ppk']) }}" title="Master Data PPK" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ $isPajokkaPpkActive ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <span class="flex items-center space-x-3 min-w-0">
+                                        <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ $isPajokkaPpkActive ? 'bg-white/20 text-white' : 'bg-cyan-500/15 text-cyan-300 group-hover:bg-cyan-500/25 group-hover:text-white' }}">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2H9.17A3.001 3.001 0 0112 14z"/></svg>
+                                        </div>
+                                        <span class="sidebar-text truncate">Master Data PPK</span>
+                                    </span>
+                                </a>
+
+                                <a href="{{ route('admin.pajokka.index', ['tab' => 'kop-surat']) }}" title="Pengaturan Kop Surat" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ $isPajokkaKopActive ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <span class="flex items-center space-x-3 min-w-0">
+                                        <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ $isPajokkaKopActive ? 'bg-white/20 text-white' : 'bg-indigo-500/15 text-indigo-300 group-hover:bg-indigo-500/25 group-hover:text-white' }}">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                                        </div>
+                                        <span class="sidebar-text truncate">Pengaturan Kop Surat</span>
+                                    </span>
+                                </a>
+
+                                <a href="{{ route('admin.pajokka.index', ['tab' => 'rekap']) }}" title="Rekap & Anggaran Dinas" class="sidebar-item group flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all {{ $isPajokkaRekapActive ? 'bg-brand-teal text-white font-bold shadow-md ring-1 ring-white/20' : 'text-slate-200 hover:bg-white/10 hover:text-white' }}">
+                                    <span class="flex items-center space-x-3 min-w-0">
+                                        <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors {{ $isPajokkaRekapActive ? 'bg-white/20 text-white' : 'bg-emerald-500/15 text-emerald-300 group-hover:bg-emerald-500/25 group-hover:text-white' }}">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        </div>
+                                        <span class="sidebar-text truncate">Rekap &amp; Anggaran</span>
+                                    </span>
                                 </a>
                             </div>
                         </div>

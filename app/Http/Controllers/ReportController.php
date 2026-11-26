@@ -351,10 +351,35 @@ class ReportController extends Controller
         }
 
         $request->validate([
-            'status' => 'required|string',
+            'status' => 'required|string|in:approved,revision_required,revision,rejected,submitted,pending,under_review',
+            'admin_notes' => 'nullable|string',
         ]);
 
-        $report->update(['status' => $request->status]);
+        $payload = [
+            'status' => $request->status,
+            'reviewed_by' => auth()->id(),
+            'reviewed_at' => now(),
+        ];
+
+        if ($request->status === 'approved') {
+            $payload['approved_by'] = auth()->id();
+            $payload['approved_at'] = now();
+        } elseif ($request->status === 'rejected') {
+            $payload['rejected_at'] = now();
+        } elseif (in_array($request->status, ['revision_required', 'revision'], true)) {
+            $payload['revision_count'] = ($report->revision_count ?? 0) + 1;
+            if ($request->filled('admin_notes')) {
+                ReportRevision::create([
+                    'report_id' => $report->id,
+                    'requested_by' => auth()->id(),
+                    'section' => 'Verifikasi Admin',
+                    'notes' => $request->admin_notes,
+                    'created_at' => now(),
+                ]);
+            }
+        }
+
+        $report->update($payload);
 
         return back()->with('success', 'Status laporan perjalanan dinas berhasil diperbarui.');
     }
@@ -372,7 +397,9 @@ class ReportController extends Controller
 
         $report->delete();
 
-        return redirect()->route('pajokka.index')->with('success', 'Laporan berhasil dihapus.');
+        $redirectRoute = $user->isAdmin() ? 'admin.pajokka.index' : 'pajokka.index';
+
+        return redirect()->route($redirectRoute)->with('success', 'Laporan berhasil dihapus.');
     }
 
     public function exportPdf(Report $report, PdfExportService $service)

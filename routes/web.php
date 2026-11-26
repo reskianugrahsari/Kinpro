@@ -10,7 +10,9 @@ use App\Http\Controllers\IzinController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\PengajuanAbsenController;
+use App\Http\Controllers\AbsenAdminController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PajokkaAdminController;
 use App\Http\Controllers\RekapController;
 use App\Http\Controllers\PanduanController;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +36,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('unit-kerja', UnitKerjaController::class);
         Route::resource('master-ppk', MasterPpkController::class);
         Route::resource('pegawai', PegawaiController::class);
+
+        // Admin Khusus Pengelolaan Laporan Perjalanan Dinas (Pajokka)
+        Route::get('pajokka', [PajokkaAdminController::class, 'index'])->name('pajokka.index');
+        Route::patch('pajokka/kop-surat', [PajokkaAdminController::class, 'updateKopSurat'])->name('pajokka.kop-surat.update');
+
+        // Admin Khusus Pengelolaan Lupa Absen (Don't Forget)
+        Route::get('absen', [AbsenAdminController::class, 'index'])->name('absen.index');
+        Route::get('absen/export', [AbsenAdminController::class, 'export'])->name('absen.export');
     });
 
     // Penilaian Kinerja (F2.4)

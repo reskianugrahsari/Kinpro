@@ -84,7 +84,7 @@ class AppServiceProvider extends ServiceProvider
                         'title' => 'Klaim Lupa Absen',
                         'desc' => ($item->pegawai?->nama ?? 'Pegawai') . ': ' . ($item->jenis_absen ?? 'Lupa absen'),
                         'time' => $item->created_at,
-                        'url' => route('absen.index'),
+                        'url' => route('admin.absen.index'),
                         'icon' => 'schedule',
                         'color' => 'text-blue-500 bg-blue-50 dark:bg-blue-950/60 dark:text-blue-400',
                     ]);
@@ -95,7 +95,7 @@ class AppServiceProvider extends ServiceProvider
                         'title' => 'Laporan Pajokka / SPPD',
                         'desc' => ($item->user?->name ?? 'Pegawai') . ': ' . ($item->nomor_surat_tugas ?? $item->kota_tujuan ?? 'Laporan dinas'),
                         'time' => $item->created_at,
-                        'url' => route('pajokka.index'),
+                        'url' => route('admin.pajokka.index'),
                         'icon' => 'flight_takeoff',
                         'color' => 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-400',
                     ]);
