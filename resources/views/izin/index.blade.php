@@ -66,10 +66,10 @@
             </div>
         </div>
 
-        <!-- 4 KPI Summary Cards with 4px Accent Strips -->
+        <!-- 4 KPI Summary Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- KPI 1: Menunggu Persetujuan -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-lg border border-outline-variant/50 dark:border-slate-800 p-4 border-l-4 border-l-[#F59E0B] flex items-start justify-between shadow-xs transition-colors">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-lg border border-outline-variant/50 dark:border-slate-800 p-4 flex items-start justify-between shadow-xs transition-colors">
                 <div class="space-y-1">
                     <span class="text-label-caps font-label-caps uppercase text-on-surface-variant dark:text-slate-400 font-bold tracking-wider">MENUNGGU PERSETUJUAN</span>
                     <div class="flex items-baseline gap-2">
@@ -87,7 +87,7 @@
             </div>
 
             <!-- KPI 2: Disetujui Bulan Ini -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-lg border border-outline-variant/50 dark:border-slate-800 p-4 border-l-4 border-l-[#10B981] flex items-start justify-between shadow-xs transition-colors">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-lg border border-outline-variant/50 dark:border-slate-800 p-4 flex items-start justify-between shadow-xs transition-colors">
                 <div class="space-y-1">
                     <span class="text-label-caps font-label-caps uppercase text-on-surface-variant dark:text-slate-400 font-bold tracking-wider">DISETUJUI BULAN {{ strtoupper(Carbon\Carbon::now()->translatedFormat('F')) }}</span>
                     <div class="flex items-baseline gap-2">
@@ -105,7 +105,7 @@
             </div>
 
             <!-- KPI 3: Sedang Berlangsung Hari Ini -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-lg border border-outline-variant/50 dark:border-slate-800 p-4 border-l-4 border-l-[#1D4ED8] flex items-start justify-between shadow-xs transition-colors">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-lg border border-outline-variant/50 dark:border-slate-800 p-4 flex items-start justify-between shadow-xs transition-colors">
                 <div class="space-y-1">
                     <span class="text-label-caps font-label-caps uppercase text-on-surface-variant dark:text-slate-400 font-bold tracking-wider">SEDANG BERLANGSUNG HARI INI</span>
                     <div class="flex items-baseline gap-2">
@@ -123,7 +123,7 @@
             </div>
 
             <!-- KPI 4: Sisa Kuota Cuti Kolektif -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-lg border border-outline-variant/50 dark:border-slate-800 p-4 border-l-4 border-l-[#7C3AED] flex items-start justify-between shadow-xs transition-colors">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-lg border border-outline-variant/50 dark:border-slate-800 p-4 flex items-start justify-between shadow-xs transition-colors">
                 <div class="space-y-1">
                     <span class="text-label-caps font-label-caps uppercase text-on-surface-variant dark:text-slate-400 font-bold tracking-wider">KUOTA CUTI TAHUNAN BALAI</span>
                     <div class="flex items-baseline gap-2">

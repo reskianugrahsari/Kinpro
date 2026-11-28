@@ -64,10 +64,10 @@
             </div>
         @endif
 
-        <!-- 4 KPI Summary Cards with 4px Accent Strips -->
+        <!-- 4 KPI Summary Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
             <!-- Card 1: Total Evaluasi -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between border-l-4 border-l-emerald-500 shadow-xs hover:border-emerald-500/40 transition-all">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition-all">
                 <div class="flex items-start justify-between">
                     <div>
                         <span class="text-[10px] text-emerald-700 dark:text-emerald-400 uppercase font-bold tracking-wider">TOTAL EVALUASI PERIODE INI</span>
@@ -84,7 +84,7 @@
             </div>
 
             <!-- Card 2: Rata-Rata Skor Balai -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between border-l-4 border-l-blue-500 shadow-xs hover:border-blue-500/40 transition-all">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition-all">
                 <div class="flex items-start justify-between">
                     <div>
                         <span class="text-[10px] text-blue-700 dark:text-blue-400 uppercase font-bold tracking-wider">RATA-RATA SKOR BALAI</span>
@@ -101,7 +101,7 @@
             </div>
 
             <!-- Card 3: Distribusi Predikat -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between border-l-4 border-l-purple-500 shadow-xs hover:border-purple-500/40 transition-all">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition-all">
                 <div class="flex items-start justify-between">
                     <div>
                         <span class="text-[10px] text-purple-700 dark:text-purple-400 uppercase font-bold tracking-wider">DISTRIBUSI PREDIKAT</span>
@@ -123,7 +123,7 @@
             </div>
 
             <!-- Card 4: Indeks Aspek Balai -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between border-l-4 border-l-amber-500 shadow-xs hover:border-amber-500/40 transition-all">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 border border-outline-variant/60 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-between shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition-all">
                 <div class="flex items-start justify-between">
                     <div>
                         <span class="text-[10px] text-amber-700 dark:text-amber-400 uppercase font-bold tracking-wider">INDEKS ASPEK BALAI</span>
@@ -450,7 +450,7 @@
                     </div>
 
                     <!-- Info Item 1 -->
-                    <div class="bg-slate-50 dark:bg-slate-800/60 border-l-4 border-blue-600 p-3 rounded-r-lg">
+                    <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-3 rounded-lg">
                         <h3 class="text-xs font-bold text-slate-900 dark:text-slate-100">PermenPAN-RB No. 6 Tahun 2022</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                             Pengelolaan Kinerja Pegawai ASN didasarkan pada dialog kinerja periodik dan ekspektasi pimpinan.
@@ -458,7 +458,7 @@
                     </div>
 
                     <!-- Info Item 2 -->
-                    <div class="bg-slate-50 dark:bg-slate-800/60 border-l-4 border-emerald-600 p-3 rounded-r-lg">
+                    <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-3 rounded-lg">
                         <h3 class="text-xs font-bold text-slate-900 dark:text-slate-100">Kewajiban Penginputan Bulanan</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                             Batas akhir penginputan penilaian oleh atasan langsung selambat-lambatnya tanggal 5 setiap bulan berjalan.
@@ -466,7 +466,7 @@
                     </div>
 
                     <!-- Info Item 3 -->
-                    <div class="bg-slate-50 dark:bg-slate-800/60 border-l-4 border-amber-500 p-3 rounded-r-lg">
+                    <div class="bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-3 rounded-lg">
                         <h3 class="text-xs font-bold text-slate-900 dark:text-slate-100">Sanksi Keterlambatan</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                             Keterlambatan input berdampak pada penundaan proses pencairan Tukin (Tunjangan Kinerja) pegawai terkait.

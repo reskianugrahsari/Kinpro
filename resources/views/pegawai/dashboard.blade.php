@@ -1,13 +1,13 @@
 <x-app-layout>
     <div class="space-y-6">
-        <!-- 1. HERO IDENTITY & WELCOME CARD (Navy #0A1931) -->
-        <section class="bg-[#0A1931] border border-slate-800/80 rounded-xl p-6 text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-md">
+        <!-- 1. HERO IDENTITY & WELCOME CARD (Light: White | Dark: Navy #0A1931) -->
+        <section class="bg-white dark:bg-[#0A1931] border border-slate-200/90 dark:border-slate-800/80 rounded-xl p-6 text-brand-navy dark:text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xs dark:shadow-md transition-colors duration-200">
             <!-- Left Info -->
             <div class="max-w-3xl">
-                <h1 class="text-[40px] font-bold tracking-tight text-white leading-tight">
+                <h1 class="text-[40px] font-bold tracking-tight text-brand-navy dark:text-white leading-tight">
                     Halo, {{ $pegawai->nama_lengkap ?? ($pegawai->nama ?? Auth::user()->name) }}
                 </h1>
-                <p class="text-xs text-slate-200 mt-0.5">
+                <p class="text-xs text-slate-600 dark:text-slate-200 mt-0.5">
                     Selamat datang di Sistem Manajemen Kinerja & Layanan Mandiri Terpadu Bapekom PUPR Wilayah VIII Makassar.
                 </p>
             </div>
@@ -27,14 +27,14 @@
                      }
                  }"
                  x-init="update(); setInterval(() => update(), 1000);">
-                <div class="text-[10px] font-bold text-brand-sky uppercase tracking-widest" x-text="dateStr">
+                <div class="text-[10px] font-bold text-brand-teal dark:text-brand-sky uppercase tracking-widest" x-text="dateStr">
                     {{ strtoupper(now()->timezone('Asia/Makassar')->translatedFormat('l, d F Y')) }}
                 </div>
                 <div class="flex items-baseline md:justify-end gap-1.5 my-0.5">
-                    <span class="text-3xl font-mono font-bold text-white tracking-tight tabular-nums" x-text="timeStr">
+                    <span class="text-3xl font-mono font-bold text-brand-navy dark:text-white tracking-tight tabular-nums" x-text="timeStr">
                         {{ now()->timezone('Asia/Makassar')->format('H:i:s') }}
                     </span>
-                    <span class="text-xs font-bold text-brand-sky font-mono">
+                    <span class="text-xs font-bold text-brand-teal dark:text-brand-sky font-mono">
                         WITA
                     </span>
                 </div>
@@ -44,7 +44,7 @@
         <!-- 2. QUICK ACTION SHORTCUTS (4 Action Tiles) -->
         <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- 1. Laporan Pajokka (Teal/Cyan theme) -->
-            <a href="{{ route('pajokka.create') }}" class="group bg-brand-white dark:bg-slate-800 border border-teal-200 dark:border-teal-900/60 rounded-xl p-4 flex items-center justify-between hover:bg-teal-50/70 dark:hover:bg-teal-950/40 hover:border-teal-400 dark:hover:border-teal-600 hover:shadow-md transition duration-150 border-l-4 border-l-teal-600 dark:border-l-teal-400">
+            <a href="{{ route('pajokka.create') }}" class="group bg-brand-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-4 flex items-center justify-between hover:bg-teal-50/70 dark:hover:bg-teal-950/40 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md transition duration-150">
                 <div class="flex items-center gap-3.5">
                     <div class="w-11 h-11 rounded-xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-teal-600 group-hover:text-white dark:group-hover:bg-teal-500 transition-all shadow-xs">
                         <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24">
@@ -62,7 +62,7 @@
             </a>
 
             <!-- 2. Pengajuan Izin (Blue/Sky theme) -->
-            <a href="{{ route('izin.create') }}" class="group bg-brand-white dark:bg-slate-800 border border-blue-200 dark:border-blue-900/60 rounded-xl p-4 flex items-center justify-between hover:bg-blue-50/70 dark:hover:bg-blue-950/40 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md transition duration-150 border-l-4 border-l-blue-600 dark:border-l-blue-400">
+            <a href="{{ route('izin.create') }}" class="group bg-brand-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-4 flex items-center justify-between hover:bg-blue-50/70 dark:hover:bg-blue-950/40 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md transition duration-150">
                 <div class="flex items-center gap-3.5">
                     <div class="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-blue-600 group-hover:text-white dark:group-hover:bg-blue-500 transition-all shadow-xs">
                         <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24">
@@ -80,7 +80,7 @@
             </a>
 
             <!-- 3. Lupa Presensi (Amber/Orange theme) -->
-            <a href="{{ route('absen.create') }}" class="group bg-brand-white dark:bg-slate-800 border border-amber-200 dark:border-amber-900/60 rounded-xl p-4 flex items-center justify-between hover:bg-amber-50/70 dark:hover:bg-amber-950/40 hover:border-amber-400 dark:hover:border-amber-600 hover:shadow-md transition duration-150 border-l-4 border-l-amber-500 dark:border-l-amber-400">
+            <a href="{{ route('absen.create') }}" class="group bg-brand-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-4 flex items-center justify-between hover:bg-amber-50/70 dark:hover:bg-amber-950/40 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md transition duration-150">
                 <div class="flex items-center gap-3.5">
                     <div class="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-amber-600 group-hover:text-white dark:group-hover:bg-amber-500 transition-all shadow-xs">
                         <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24">
@@ -98,7 +98,7 @@
             </a>
 
             <!-- 4. Aspirasi & Lapor (Rose/Red theme) -->
-            <a href="{{ route('pengaduan.create') }}" class="group bg-brand-white dark:bg-slate-800 border border-rose-200 dark:border-rose-900/60 rounded-xl p-4 flex items-center justify-between hover:bg-rose-50/70 dark:hover:bg-rose-950/40 hover:border-rose-400 dark:hover:border-rose-600 hover:shadow-md transition duration-150 border-l-4 border-l-rose-500 dark:border-l-rose-400">
+            <a href="{{ route('pengaduan.create') }}" class="group bg-brand-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-4 flex items-center justify-between hover:bg-rose-50/70 dark:hover:bg-rose-950/40 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md transition duration-150">
                 <div class="flex items-center gap-3.5">
                     <div class="w-11 h-11 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-rose-600 group-hover:text-white dark:group-hover:bg-rose-500 transition-all shadow-xs">
                         <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24">
@@ -119,7 +119,7 @@
         <!-- 3. 4 SOLID KPI METRIC CARDS (Exact match to Code.html style) -->
         <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Metric 1: Skor Kinerja -->
-            <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-5 border-l-4 border-l-[#10B981] flex flex-col justify-between shadow-xs">
+            <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-5 flex flex-col justify-between shadow-xs">
                 <div class="flex items-start justify-between">
                     <div>
                         <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">SKOR KINERJA PEGAWAI</span>
@@ -141,7 +141,7 @@
             </div>
 
             <!-- Metric 2: Tugas Dinas (Pajokka) -->
-            <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-5 border-l-4 border-l-[#7C3AED] flex flex-col justify-between shadow-xs">
+            <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-5 flex flex-col justify-between shadow-xs">
                 <div class="flex items-start justify-between">
                     <div>
                         <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">TUGAS DINAS (PAJOKKA)</span>
@@ -162,7 +162,7 @@
             </div>
 
             <!-- Metric 3: Pengajuan Izin / Cuti -->
-            <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-5 border-l-4 border-l-[#F59E0B] flex flex-col justify-between shadow-xs">
+            <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-5 flex flex-col justify-between shadow-xs">
                 <div class="flex items-start justify-between">
                     <div>
                         <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">PENGAJUAN IZIN / CUTI</span>
@@ -183,7 +183,7 @@
             </div>
 
             <!-- Metric 4: Lupa Presensi -->
-            <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-5 border-l-4 border-l-[#3B82F6] flex flex-col justify-between shadow-xs">
+            <div class="bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 rounded-xl p-5 flex flex-col justify-between shadow-xs">
                 <div class="flex items-start justify-between">
                     <div>
                         <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">LUPA PRESENSI</span>

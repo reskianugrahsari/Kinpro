@@ -71,7 +71,7 @@
         <!-- Compact Structured KPI Cards (3 Cards) -->
         <section class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             <!-- Card 1: Menunggu Verifikasi -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/40 dark:border-slate-800 p-4 border-l-4 border-l-amber-500 flex items-center justify-between shadow-2xs transition-colors">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/40 dark:border-slate-800 p-4 flex items-center justify-between shadow-2xs transition-colors">
                 <div class="space-y-0.5">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Menunggu Verifikasi</p>
                     <div class="flex items-baseline gap-2">
@@ -85,7 +85,7 @@
             </div>
 
             <!-- Card 2: Telah Disetujui -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/40 dark:border-slate-800 p-4 border-l-4 border-l-emerald-600 flex items-center justify-between shadow-2xs transition-colors">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/40 dark:border-slate-800 p-4 flex items-center justify-between shadow-2xs transition-colors">
                 <div class="space-y-0.5">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Disetujui Bulan Ini</p>
                     <div class="flex items-baseline gap-2">
@@ -99,7 +99,7 @@
             </div>
 
             <!-- Card 3: Total Permohonan -->
-            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/40 dark:border-slate-800 p-4 border-l-4 border-l-primary-container flex items-center justify-between shadow-2xs transition-colors">
+            <div class="bg-surface-container-lowest dark:bg-slate-900 rounded-xl border border-outline-variant/40 dark:border-slate-800 p-4 flex items-center justify-between shadow-2xs transition-colors">
                 <div class="space-y-0.5">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Laporan Periode</p>
                     <div class="flex items-baseline gap-2">

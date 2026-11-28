@@ -543,7 +543,7 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Akumulasi dari {{ $totalCount }} laporan</p>
                     </div>
 
-                    <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-blue-200/70 dark:border-blue-800/50 shadow-xs">
+                    <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
                         <p class="text-[11px] font-bold uppercase tracking-wider text-[#1769AA] dark:text-blue-400">Total Pembayaran KKP</p>
                         <div class="text-2xl font-extrabold text-[#1769AA] dark:text-blue-400 font-mono mt-1.5">
                             Rp {{ number_format($totalKkp, 0, ',', '.') }}
@@ -551,7 +551,7 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Kartu Kredit Pemerintah</p>
                     </div>
 
-                    <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-amber-200/70 dark:border-amber-800/50 shadow-xs">
+                    <div class="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
                         <p class="text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">Total Pembayaran Cash</p>
                         <div class="text-2xl font-extrabold text-amber-700 dark:text-amber-400 font-mono mt-1.5">
                             Rp {{ number_format($totalCash, 0, ',', '.') }}

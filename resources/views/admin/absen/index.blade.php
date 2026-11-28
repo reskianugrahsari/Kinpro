@@ -98,7 +98,7 @@
                     </div>
                 </div>
 
-                <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-amber-200/70 dark:border-amber-800/50 shadow-xs flex items-center justify-between">
+                <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">Menunggu Verifikasi</p>
                         <div class="text-2xl font-bold text-amber-900 dark:text-amber-300 font-mono mt-1">{{ $pendingCount }}</div>
@@ -109,7 +109,7 @@
                     </div>
                 </div>
 
-                <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-emerald-200/70 dark:border-emerald-800/50 shadow-xs flex items-center justify-between">
+                <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Disetujui</p>
                         <div class="text-2xl font-bold text-emerald-900 dark:text-emerald-300 font-mono mt-1">{{ $approvedCount }}</div>
@@ -120,7 +120,7 @@
                     </div>
                 </div>
 
-                <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-rose-200/70 dark:border-rose-800/50 shadow-xs flex items-center justify-between">
+                <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs flex items-center justify-between">
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400">Ditolak</p>
                         <div class="text-2xl font-bold text-rose-900 dark:text-rose-300 font-mono mt-1">{{ $rejectedCount }}</div>
@@ -284,15 +284,15 @@
                     <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Kasus Periode</p>
                     <div class="text-2xl font-bold text-slate-900 dark:text-white font-mono mt-1">{{ $rekapSummary['total'] }}</div>
                 </div>
-                <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-amber-200/70 dark:border-amber-800/50 shadow-xs">
+                <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
                     <p class="text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">Lupa Absen Masuk</p>
                     <div class="text-2xl font-bold text-amber-700 dark:text-amber-300 font-mono mt-1">{{ $rekapSummary['masuk'] }}</div>
                 </div>
-                <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-blue-200/70 dark:border-blue-800/50 shadow-xs">
+                <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
                     <p class="text-[10px] font-bold uppercase tracking-wider text-[#1769AA] dark:text-blue-400">Lupa Absen Pulang</p>
                     <div class="text-2xl font-bold text-[#1769AA] dark:text-blue-300 font-mono mt-1">{{ $rekapSummary['pulang'] }}</div>
                 </div>
-                <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-emerald-200/70 dark:border-emerald-800/50 shadow-xs">
+                <div class="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs">
                     <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Sudah Diverifikasi</p>
                     <div class="text-2xl font-bold text-emerald-700 dark:text-emerald-300 font-mono mt-1">{{ $rekapSummary['approved'] }}</div>
                 </div>

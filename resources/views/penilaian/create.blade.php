@@ -154,7 +154,7 @@
             </div>
 
             <!-- Compact Status Indicator Card -->
-            <div class="flex-shrink-0 bg-surface-container-low dark:bg-slate-800/80 border-l-4 border-primary-container p-4 rounded-r-lg w-full md:w-64 border border-outline-variant/30 dark:border-slate-700">
+            <div class="flex-shrink-0 bg-surface-container-low dark:bg-slate-800/80 p-4 rounded-lg w-full md:w-64 border border-outline-variant/30 dark:border-slate-700">
                 <p class="text-[10px] font-bold text-secondary dark:text-slate-400 uppercase tracking-wider">Periode Berjalan</p>
                 <p class="text-sm font-bold text-on-surface dark:text-slate-100 mt-0.5" x-text="periodeKinerja + ' - ' + selectedTahun"></p>
                 <div class="mt-2 flex items-center justify-between text-xs text-on-surface-variant dark:text-slate-400">
@@ -301,7 +301,7 @@
                         <!-- Grid 6 Mini Interactive Indicator Cards -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                             <!-- Aspek 1: Kedisiplinan (Card Sesuai Desain Kehadiran) -->
-                            <div class="col-span-1 md:col-span-2 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-[#2F4156] dark:border-t-blue-500 bg-[#F8FAFC] dark:bg-slate-900/80 shadow-xs space-y-4">
+                            <div class="col-span-1 md:col-span-2 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900/80 shadow-xs space-y-4">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-3.5">
                                         <div class="w-11 h-11 rounded-xl bg-[#2F4156] dark:bg-slate-800 text-white flex items-center justify-center shrink-0 shadow-sm">
@@ -364,7 +364,7 @@
                             </div>
 
                             <!-- Aspek 2: Kinerja (Card Sesuai Desain Capaian SKP) -->
-                            <div class="col-span-1 md:col-span-2 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 border-t-4 border-t-[#2F4156] dark:border-t-blue-500 bg-[#F8FAFC] dark:bg-slate-900/80 shadow-xs space-y-4">
+                            <div class="col-span-1 md:col-span-2 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900/80 shadow-xs space-y-4">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-3.5">
                                         <div class="w-11 h-11 rounded-xl bg-[#2F4156] dark:bg-slate-800 text-white flex items-center justify-center shrink-0 shadow-sm">

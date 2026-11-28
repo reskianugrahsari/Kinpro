@@ -55,7 +55,7 @@
         <!-- KPI SUMMARY OVERVIEW CARDS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Card 1: Rata-Rata Rating Balai -->
-            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 border-l-4 border-l-amber-500 p-4 flex items-center justify-between shadow-2xs transition-colors">
+            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between shadow-2xs transition-colors">
                 <div>
                     <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Rata-rata Rating Balai</span>
                     <div class="flex items-baseline gap-1.5 mt-1">
@@ -73,7 +73,7 @@
             </div>
 
             <!-- Card 2: Total Ulasan Terverifikasi -->
-            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 border-l-4 border-l-blue-600 p-4 flex items-center justify-between shadow-2xs transition-colors">
+            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between shadow-2xs transition-colors">
                 <div>
                     <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Ulasan Terverifikasi</span>
                     <div class="flex items-baseline gap-1.5 mt-1">
@@ -91,7 +91,7 @@
             </div>
 
             <!-- Card 3: Pegawai Terbaik Bulan Ini -->
-            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 border-l-4 border-l-purple-600 p-4 flex items-center justify-between shadow-2xs transition-colors">
+            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between shadow-2xs transition-colors">
                 <div class="min-w-0 pr-2">
                     <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Peringkat 1 Balai</span>
                     <div class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate mt-1">
@@ -107,7 +107,7 @@
             </div>
 
             <!-- Card 4: Partisipasi ASN -->
-            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 border-l-4 border-l-emerald-600 p-4 flex items-center justify-between shadow-2xs transition-colors">
+            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between shadow-2xs transition-colors">
                 <div>
                     <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Partisipasi Penilai</span>
                     <div class="flex items-baseline gap-1.5 mt-1">

@@ -1,18 +1,18 @@
 <x-app-layout>
     <div class="space-y-6">
-        <!-- 1. HERO WELCOME BANNER (Navy #0A1931) -->
-        <div class="bg-[#0A1931] rounded-2xl p-6 lg:p-7 text-white shadow-md relative overflow-hidden flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border border-slate-800/80">
+        <!-- 1. HERO WELCOME BANNER (Light: White | Dark: Navy #0A1931) -->
+        <div class="bg-white dark:bg-[#0A1931] rounded-2xl p-6 lg:p-7 text-brand-navy dark:text-white shadow-xs dark:shadow-md relative overflow-hidden flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border border-slate-200/90 dark:border-slate-800/80 transition-colors duration-200">
             <!-- Left Info -->
             <div class="max-w-3xl">
-                <div class="inline-flex items-center gap-1.5 bg-brand-teal/40 text-brand-sky border border-brand-teal/60 px-2.5 py-0.5 rounded-full text-[11px] font-semibold mb-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-brand-sky"></span>
+                <div class="inline-flex items-center gap-1.5 bg-brand-teal/10 dark:bg-brand-teal/40 text-brand-teal dark:text-brand-sky border border-brand-teal/25 dark:border-brand-teal/60 px-2.5 py-0.5 rounded-full text-[11px] font-semibold mb-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand-teal dark:bg-brand-sky"></span>
                     <span>Selamat Datang!</span>
                 </div>
-                <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white mb-1.5">
+                <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-brand-navy dark:text-white mb-1.5">
                     Halo Administrator KinPro, berikut ringkasan aktivitas Anda
                 </h1>
-                <p class="text-slate-200 text-xs leading-relaxed">
-                    Platform monitoring & penilaian kinerja pegawai terintegrasi Balai Pengembangan Kompetensi PUPR Wilayah VIII Makassar. Status operasional sinkronisasi SIASN: <span class="text-brand-sky font-semibold">Aktif</span>.
+                <p class="text-slate-600 dark:text-slate-200 text-xs leading-relaxed">
+                    Platform monitoring & penilaian kinerja pegawai terintegrasi Balai Pengembangan Kompetensi PUPR Wilayah VIII Makassar. Status operasional sinkronisasi SIASN: <span class="text-brand-teal dark:text-brand-sky font-semibold">Aktif</span>.
                 </p>
             </div>
 
@@ -31,14 +31,14 @@
                      }
                  }"
                  x-init="update(); setInterval(() => update(), 1000);">
-                <div class="text-[10px] font-bold text-brand-sky uppercase tracking-widest" x-text="dateStr">
+                <div class="text-[10px] font-bold text-brand-teal dark:text-brand-sky uppercase tracking-widest" x-text="dateStr">
                     {{ strtoupper(now()->timezone('Asia/Makassar')->translatedFormat('l, d F Y')) }}
                 </div>
                 <div class="flex items-baseline lg:justify-end gap-1.5 my-0.5">
-                    <span class="text-3xl font-bold font-mono tracking-wider text-white tabular-nums" x-text="timeStr">
+                    <span class="text-3xl font-bold font-mono tracking-wider text-brand-navy dark:text-white tabular-nums" x-text="timeStr">
                         {{ now()->timezone('Asia/Makassar')->format('H:i:s') }}
                     </span>
-                    <span class="text-xs font-bold text-brand-sky font-mono">
+                    <span class="text-xs font-bold text-brand-teal dark:text-brand-sky font-mono">
                         WITA
                     </span>
                 </div>
@@ -196,7 +196,7 @@
         <!-- 3. METRIC CARDS (4 Columns) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- 1. Total Pegawai -->
-            <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs border-l-4 border-l-emerald-500 flex flex-col justify-between">
+            <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">TOTAL PEGAWAI</span>
@@ -216,7 +216,7 @@
             </div>
 
             <!-- 2. Penilaian Selesai -->
-            <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs border-l-4 border-l-purple-500 flex flex-col justify-between">
+            <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">PENILAIAN SELESAI</span>
@@ -236,7 +236,7 @@
             </div>
 
             <!-- 3. Izin & Cuti Pending -->
-            <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs border-l-4 border-l-amber-500 flex flex-col justify-between">
+            <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">IZIN & CUTI PENDING</span>
@@ -256,7 +256,7 @@
             </div>
 
             <!-- 4. Pengaduan Terbuka -->
-            <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs border-l-4 border-l-rose-500 flex flex-col justify-between">
+            <div class="bg-brand-white dark:bg-slate-800 p-4 rounded-xl border border-brand-sky dark:border-slate-700 shadow-xs flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">PENGADUAN TERBUKA</span>

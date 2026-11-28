@@ -5,9 +5,8 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
-                        <img src="{{ asset('images/logo-kinpro.png') }}?v={{ file_exists(public_path('images/logo-kinpro.png')) ? filemtime(public_path('images/logo-kinpro.png')) : time() }}" alt="KinPro" class="block h-10 w-auto object-contain">
-                        <span class="font-bold text-lg text-[#0F2747]">KinPro</span>
+                    <a href="{{ route('dashboard') }}" class="flex items-center">
+                        <img src="{{ asset('images/logo-kinpro-up.png') }}?v={{ file_exists(public_path('images/logo-kinpro-up.png')) ? filemtime(public_path('images/logo-kinpro-up.png')) : time() }}" alt="KINPRO" class="block h-9 sm:h-10 w-auto object-contain">
                     </a>
                 </div>
 
